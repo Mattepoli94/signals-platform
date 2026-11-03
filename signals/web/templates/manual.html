@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% block title %}Manual trading{% endblock %}
+{% block body %}
+{% set MT = snap.manual or {} %}
+{% set S = MT.settings or {} %}
+{% macro money(v, sign=False) %}{% if v is none %}—{% else %}{{ v|gbp(sign) }}{% endif %}{% endmacro %}
+{% macro rnum(v) %}{% if v is none %}—{% else %}{{ '%+.2f'|format(v) }}R{% endif %}{% endmacro %}
+{% macro px(v, ccy) %}{% if v is none %}—{% elif ccy == 'USD' %}${{ '{:,.2f}'.format(v) }}{% elif ccy == 'GBX' %}{{ '{:,.1f}'.format(v) }}p{% else %}£{{ '{:,.2f}'.format(v) }}{% endif %}{% endmacro %}
+
+<div class="pagehead">
+  <div>
+    <div class="kicker">Discretionary · you decide, the site keeps the score</div>
+    <h1>Manual trading</h1>
+    <p class="sub">Your five discretionary systems, the risk rules, a position-size calculator and a journal that scores every trade by system. Log a trade when you open it, update the stop as you trail it, and close it with the exit price: the site works out risk, reward-to-risk, time in the trade, P&amp;L in pounds and the R multiple.</p>
+  </div>
+  <a class="btn primary" href="#new">Log a new trade</a>
+</div>
+
+{% if MT.error %}<div class="banner warn">Manual trading could not be computed: {{ MT.error }}</div>{% endif %}
+
+<section class="card" aria-label="Manual pot">
+  <div class="stats">
+    <div class="stat"><div class="l">Manual pot value</div><div class="v">{{ money(MT.equity) }}</div></div>
+    <div class="stat"><div class="l">Share of portfolio (target {{ S.target_share_pct|int }}%)</div><div class="v">{{ '%.0f'|format(MT.share_pct or 0) }}%</div></div>
+    <div class="stat"><div class="l">Risk per trade ({{ S.risk_pct }}%)</div><div class="v">{{ money(MT.risk_budget_gbp) }}</div></div>
+    <div class="stat"><div class="l">Open trades</div><div class="v {{ 'neg' if MT.open_count >= S.max_open }}">{{ MT.open_count }} / {{ S.max_open }}</div></div>
+    <div class="stat"><div class="l">Open risk to stops</div><div class="v">{{ money(MT.open_risk_gbp) }}</div></div>
+    <div class="stat"><div class="l">Realised P&amp;L</div><div class="v {{ MT.realised|cls }}">{{ money(MT.realised, True) }}</div></div>
+    <div class="stat"><div class="l">Win rate · avg R</div><div class="v">{% if MT.overall and MT.overall.win_rate is not none %}{{ MT.overall.win_rate|pct(False) }} · {{ rnum(MT.overall.avg_r) }}{% else %}—{% endif %}</div></div>
+  </div>
+</section>
+
+<div class="row">
+  <section class="card grow" aria-label="Rules">
+    <h2>Risk rules</h2>
+    <ul class="rules">
+      <li><b>Allocation:</b> manual trading gets {{ S.target_share_pct|int }}% of the portfolio. The pot starts at {{ money(S.capital) }} and grows or shrinks with your realised P&amp;L.</li>
+      <li><b>Risk per trade:</b> {{ S.risk_pct }}% of the {{ 'whole portfolio' if S.risk_base == 'portfolio' else 'manual pot' }} ({{ money(MT.risk_base_gbp) }}) = <b>{{ money(MT.risk_budget_gbp) }}</b> lost if the stop is hit. Size = risk ÷ (entry − stop).</li>
+      <li><b>At most {{ S.max_open }} open trades</b>, and <b>no more than {{ S.max_per_system }} from the same system</b>.</li>
+      <li>The site blocks a new trade that breaks a limit, and warns when a trade risks more than the budget.</li>
+    </ul>
+    <details class="small" style="margin-top:8px"><summary>Change these settings</summary>
+      <form data-op="manual_settings" class="inline" style="margin-top:10px">
+        <label class="f">Pot capital (£)<input name="capital" class="amt" inputmode="decimal" placeholder="{{ S.capital }}"></label>
+        <label class="f">Target share (%)<input name="target_share_pct" class="w100" inputmode="decimal" placeholder="{{ S.target_share_pct }}"></label>
+        <label class="f">Risk per trade (%)<input name="risk_pct" class="w100" inputmode="decimal" placeholder="{{ S.risk_pct }}"></label>
+        <label class="f">Risk measured on<select name="risk_base"><option value="portfolio" {{ 'selected' if S.risk_base == 'portfolio' }}>whole portfolio</option><option value="manual" {{ 'selected' if S.risk_base == 'manual' }}>manual pot</option></select></label>
+        <label class="f">Max open<input name="max_open" class="w100" inputmode="numeric" placeholder="{{ S.max_open }}"></label>
+        <label class="f">Max per system<input name="max_per_system" class="w100" inputmode="numeric" placeholder="{{ S.max_per_system }}"></label>
+        <button class="btn primary" type="submit">Save</button>
+      </form>
+    </details>
+  </section>
+  <section class="card grow" aria-label="Market context">
+    <h2>Index conditions now</h2>
+    <p class="note">Systems 1, 2 and 4 need trending indices, or (system 1) a 9-week MA reclaim after a flush and breadth washout.</p>
+    <div class="scroll"><table class="t" style="margin-top:8px"><thead><tr><th>Index</th><th>Regime</th><th class="n">From 1y high</th><th>9-week MA</th></tr></thead><tbody>
+    {% for c in MT.context or [] %}<tr><td><b>{{ c.name }}</b><div class="small muted">data to {{ c.asof|d }}</div></td>
+      <td><span class="pill {{ 't-green' if c.trending else ('t-blue' if c.regime.startswith('Range') else 't-red') }}">{{ c.regime }}</span></td>
+      <td class="n">{{ (c.off_high)|pct }}</td>
+      <td>{% if c.reclaim_this_week %}<span class="pill t-green">reclaimed this week</span>{% elif c.above_w9 %}<span class="pill t-green">above</span>{% else %}<span class="pill t-amber">below</span>{% endif %}<div class="small muted mono">{{ '{:,.2f}'.format(c.w9) }}</div></td></tr>{% endfor %}
+    </tbody></table></div>
+    <p class="small muted" style="margin:8px 0 0">Flush, breadth and bottom signals: see the <a href="risk.html">Risk radar</a>. The research behind the 9-week setup is in the project notes (weekly 9-MA study).</p>
+  </section>
+</div>
+
+<section class="card" id="new" aria-label="Log a new trade">
+  <h2>Log a new trade</h2>
+  <p class="note">Pick the system, tick the conditions that are met (the journal later checks whether more confluence means better trades), and use the calculator to size it.</p>
+  <form data-op="manual_open" id="mt-form" style="margin-top:14px">
+    <div class="form-grid">
+      <label class="f">System<select name="system" id="mt-sys" required>
+        <option value="">Choose…</option>{% for k, s in (MT.systems or {}).items() %}<option value="{{ k }}">{{ k }} · {{ s.name }}</option>{% endfor %}</select></label>
+      <label class="f">Ticker<input name="ticker" required placeholder="e.g. NVDA" autocapitalize="characters"></label>
+      <label class="f">Direction<select name="side" id="mt-side"><option value="long">Long</option><option value="short">Short</option></select></label>
+      <label class="f">Price currency<select name="ccy" id="mt-ccy"><option value="USD">USD ($)</option><option value="GBP">GBP (£)</option><option value="GBX">GBX (pence)</option></select></label>
+      <label class="f">Opened<input type="date" name="opened" value="{{ today }}" class="dt"></label>
+      <label class="f">Entry<input name="entry" id="mt-entry" inputmode="decimal" required></label>
+      <label class="f">Stop loss<input name="stop" id="mt-stop" inputmode="decimal" required></label>
+      <label class="f">Take profit<input name="target" id="mt-tgt" inputmode="decimal"></label>
+      <label class="f">Units (shares)<input name="units" id="mt-units" inputmode="decimal" required></label>
+      <label class="f">Fees (£)<input name="fees_gbp" inputmode="decimal" placeholder="0"></label>
+    </div>
+    <div class="calc" id="mt-calc" aria-live="polite">
+      <div><span class="l">Risk per share</span><b id="c-ru">—</b></div>
+      <div><span class="l">Reward : risk</span><b id="c-rr">—</b></div>
+      <div><span class="l">Suggested size for {{ money(MT.risk_budget_gbp) }} risk</span><b id="c-sz">—</b> <button type="button" class="btn small" id="c-use">Use</button></div>
+      <div><span class="l">£ at risk with these units</span><b id="c-risk">—</b></div>
+      <div><span class="l">Position value</span><b id="c-val">—</b></div>
+    </div>
+    <div id="mt-warn" class="banner warn small" style="display:none;margin-top:10px"></div>
+    {% for k, s in (MT.systems or {}).items() %}
+    <fieldset class="syschk" data-sys="{{ k }}" hidden><legend>{{ s.name }}: conditions met</legend>
+      {% for r in s.rules %}<label class="cb"><input type="checkbox" name="chk_{{ k }}_{{ loop.index0 }}"> {{ r }}</label>{% endfor %}
+    </fieldset>{% endfor %}
+    <label class="f" style="margin-top:12px">Notes (setup, why now, plan)<textarea name="notes" rows="3"></textarea></label>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:12px">
+      <button class="btn primary" type="submit">Save trade</button>
+      <label class="cb small"><input type="checkbox" name="over_risk"> allow above the risk budget</label>
+    </div>
+  </form>
+</section>
+
+<section class="card" aria-label="Open trades">
+  <h2>Open trades</h2>
+  {% if MT.open %}
+  <div class="scroll" style="margin-top:10px"><table class="t"><thead><tr><th>Ticker</th><th>System</th><th>Opened</th><th class="n">Days</th><th class="n">Entry</th><th class="n">Stop</th><th class="n">Target</th><th class="n">R:R</th><th class="n">Units</th><th class="n">Risk at open</th><th class="n">Risk now</th><th></th></tr></thead><tbody>
+  {% for t in MT.open %}
+  <tr><td><b>{{ t.ticker }}</b> <span class="pill {{ 't-red' if t.side == 'short' else 't-blue' }}">{{ t.side }}</span></td><td>{{ t.system }} · {{ t.system_name }}</td><td class="mono">{{ t.opened|d }}</td><td class="n">{{ t.days }}</td>
+    <td class="n">{{ px(t.avg_entry, t.ccy) }}</td><td class="n">{{ px(t.stop, t.ccy) }}</td><td class="n">{{ px(t.target, t.ccy) }}</td><td class="n">{{ '%.1f'|format(t.rr_planned) if t.rr_planned else '—' }}</td>
+    <td class="n">{{ '{:,.4g}'.format(t.units_total) }}</td><td class="n">{{ money(t.risk_gbp) }}</td><td class="n">{{ money(t.open_risk_gbp) }}</td>
+    <td><details class="act"><summary class="btn small">Manage</summary>
+      <div class="actbox">
+        <form data-op="manual_close" class="inline"><input type="hidden" name="id" value="{{ t.id }}">
+          <b class="small" style="width:100%">Close</b>
+          <label class="f">Exit price<input name="exit" class="amt" inputmode="decimal" required></label>
+          <label class="f">Date<input type="date" name="closed" value="{{ today }}" class="dt"></label>
+          <label class="f">Exit fees (£)<input name="exit_fees_gbp" class="w100" inputmode="decimal"></label>
+          <label class="f">Why<select name="exit_reason"><option>target</option><option>stop</option><option>trailing stop</option><option>failed setup</option><option>time</option><option>manual</option></select></label>
+          <label class="f">Note<input name="notes"></label>
+          <button class="btn primary" type="submit">Close trade</button></form>
+        <form data-op="manual_update" class="inline"><input type="hidden" name="id" value="{{ t.id }}">
+          <b class="small" style="width:100%">Move stop / target</b>
+          <label class="f">New stop<input name="stop" class="amt" inputmode="decimal"></label>
+          <label class="f">New target<input name="target" class="amt" inputmode="decimal"></label>
+          <label class="f">Note<input name="notes"></label>
+          <button class="btn" type="submit">Update</button></form>
+        <form data-op="manual_add" class="inline"><input type="hidden" name="id" value="{{ t.id }}">
+          <b class="small" style="width:100%">Add to position</b>
+          <label class="f">Price<input name="price" class="amt" inputmode="decimal" required></label>
+          <label class="f">Units<input name="units" class="w100" inputmode="decimal" required></label>
+          <label class="f">Date<input type="date" name="date" value="{{ today }}" class="dt"></label>
+          <button class="btn" type="submit">Add</button></form>
+        <form data-op="manual_delete" data-confirm="Delete this trade from the journal? This cannot be undone." class="inline"><input type="hidden" name="id" value="{{ t.id }}"><button class="btn danger small" type="submit">Delete (logged by mistake)</button></form>
+      </div></details></td></tr>
+  {% if t.notes %}<tr class="notes"><td colspan="12" class="small muted">{{ t.notes }}</td></tr>{% endif %}
+  {% endfor %}</tbody></table></div>
+  {% else %}<p class="note">No open trades.</p>{% endif %}
+</section>
+
+<section class="card" aria-label="Performance by system">
+  <h2>Journal: performance by system</h2>
+  <p class="note">R = profit or loss divided by the risk taken at entry (1R = the £ you planned to lose). Expectancy is the average R per trade: above 0 means the system makes money.</p>
+  <div class="scroll" style="margin-top:10px"><table class="t"><thead><tr><th>System</th><th class="n">Closed</th><th class="n">Open</th><th class="n">Win rate</th><th class="n">Expectancy</th><th class="n">Total R</th><th class="n">P&amp;L</th><th class="n">Avg win / loss</th><th class="n">Profit factor</th><th class="n">Planned R:R</th><th class="n">Avg days</th><th class="n">Worst streak</th><th class="n">Conditions ticked</th></tr></thead><tbody>
+  {% for k, s in (MT.by_system or {}).items() %}
+  <tr><td><b>{{ k }} · {{ s.name }}</b></td><td class="n">{{ s.trades }}</td><td class="n">{{ s.open_now }}</td>
+    <td class="n">{{ s.win_rate|pct(False) if s.win_rate is not none else '—' }}</td><td class="n {{ (s.avg_r or 0)|cls }}">{{ rnum(s.avg_r) }}</td><td class="n">{{ rnum(s.total_r) if s.trades else '—' }}</td>
+    <td class="n {{ s.pnl|cls }}">{{ money(s.pnl, True) if s.trades else '—' }}</td>
+    <td class="n">{{ money(s.avg_win) }} / {{ money(s.avg_loss) }}</td><td class="n">{{ '%.2f'|format(s.profit_factor) if s.profit_factor else '—' }}</td>
+    <td class="n">{{ '%.1f'|format(s.avg_rr_planned) if s.avg_rr_planned else '—' }}</td><td class="n">{{ '%.0f'|format(s.avg_days) if s.avg_days is not none else '—' }}</td>
+    <td class="n">{{ s.max_losing_streak if s.trades else '—' }}</td><td class="n">{{ (s.avg_checks)|pct(False) if s.avg_checks is not none else '—' }}</td></tr>
+  {% endfor %}
+  {% set o = MT.overall or {} %}
+  <tr class="tot"><td><b>All systems</b></td><td class="n">{{ o.trades }}</td><td class="n">{{ o.open }}</td><td class="n">{{ o.win_rate|pct(False) if o.win_rate is not none else '—' }}</td>
+    <td class="n">{{ rnum(o.avg_r) }}</td><td class="n">{{ rnum(o.total_r) if o.trades else '—' }}</td><td class="n {{ (o.pnl or 0)|cls }}">{{ money(o.pnl, True) if o.trades else '—' }}</td>
+    <td class="n">{{ money(o.avg_win) }} / {{ money(o.avg_loss) }}</td><td class="n">{{ '%.2f'|format(o.profit_factor) if o.profit_factor else '—' }}</td>
+    <td class="n">{{ '%.1f'|format(o.avg_rr_planned) if o.avg_rr_planned else '—' }}</td><td class="n">{{ '%.0f'|format(o.avg_days) if o.avg_days is not none else '—' }}</td><td class="n">{{ o.max_losing_streak if o.trades else '—' }}</td><td class="n">{{ (o.avg_checks)|pct(False) if o.avg_checks is not none else '—' }}</td></tr>
+  </tbody></table></div>
+  {% if charts.manual %}<div style="margin-top:16px"><h3>Manual pot over time</h3><div class="scroll">{{ charts.manual|safe }}</div></div>{% endif %}
+</section>
+
+<section class="card" aria-label="Closed trades">
+  <div class="row" style="justify-content:space-between;align-items:flex-end"><h2>Closed trades</h2>
+    <label class="f">System<select id="mt-filter"><option value="">All</option>{% for k, s in (MT.systems or {}).items() %}<option value="{{ k }}">{{ k }} · {{ s.short }}</option>{% endfor %}</select></label></div>
+  {% if MT.closed %}
+  <div class="scroll" style="margin-top:10px"><table class="t" id="mt-closed"><thead><tr><th>Ticker</th><th>System</th><th>Opened</th><th>Closed</th><th class="n">Days</th><th class="n">Entry</th><th class="n">Stop</th><th class="n">Target</th><th class="n">Exit</th><th class="n">Planned R:R</th><th class="n">Result</th><th class="n">P&amp;L</th><th>Why</th><th></th></tr></thead><tbody>
+  {% for t in MT.closed %}
+  <tr data-sys="{{ t.system }}"><td><b>{{ t.ticker }}</b>{% if t.side == 'short' %} <span class="pill t-red">short</span>{% endif %}</td><td>{{ t.system }} · {{ t.system_name }}</td><td class="mono">{{ t.opened|d }}</td><td class="mono">{{ t.closed|d }}</td><td class="n">{{ t.days }}</td>
+    <td class="n">{{ px(t.avg_entry, t.ccy) }}</td><td class="n">{{ px(t.initial_stop or t.stop, t.ccy) }}</td><td class="n">{{ px(t.target, t.ccy) }}</td><td class="n">{{ px(t.exit, t.ccy) }}</td>
+    <td class="n">{{ '%.1f'|format(t.rr_planned) if t.rr_planned else '—' }}</td><td class="n {{ (t.r_multiple or 0)|cls }}">{{ rnum(t.r_multiple) }}</td><td class="n {{ t.pnl_gbp|cls }}">{{ money(t.pnl_gbp, True) }}</td>
+    <td class="small">{{ t.exit_reason }}{% if t.checks_n %} · {{ t.checks_n }}/{{ t.rules_n }} conditions{% endif %}</td>
+    <td><form data-op="manual_reopen" data-confirm="Reopen this trade (undo the close)?"><input type="hidden" name="id" value="{{ t.id }}"><button class="btn small" type="submit">Undo close</button></form></td></tr>
+  {% if t.notes %}<tr class="notes" data-sys="{{ t.system }}"><td colspan="14" class="small muted">{{ t.notes }}</td></tr>{% endif %}
+  {% endfor %}</tbody></table></div>
+  {% else %}<p class="note">No closed trades yet. Results by system appear here once you close your first trade.</p>{% endif %}
+</section>
+
+<section class="card" id="playbook" aria-label="Systems playbook">
+  <h2>Systems playbook</h2>
+  <p class="note">The conditions for each system. The same lists appear as tick boxes when you log a trade.</p>
+  <div class="play">
+  {% for k, s in (MT.systems or {}).items() %}
+    <article class="playcard"><div class="kicker">System {{ k }} · {{ s.side }}</div><h3>{{ s.name }}</h3><p class="small">{{ s.idea }}</p>
+      <ol class="small">{% for r in s.rules %}<li>{{ r }}</li>{% endfor %}</ol></article>
+  {% endfor %}
+  </div>
+</section>
+
+<script>
+(function () {
+  var M = {{ {'budget': MT.risk_budget_gbp, 'fx': MT.fx_now, 'open': MT.open_count, 'max_open': S.max_open, 'max_sys': S.max_per_system,
+              'by_sys': (MT.by_system or {}), 'sides': ((MT.systems or {}).items()|map('last')|map(attribute='side')|list)}|tojson }};
+  var keys = {{ (MT.systems or {}).keys()|list|tojson }};
+  function $(id) { return document.getElementById(id); }
+  function num(id) { var v = parseFloat(($(id).value || '').replace(/[,£$]/g, '')); return isFinite(v) ? v : null; }
+  function toGbp(x, ccy) { return ccy === 'USD' ? x / M.fx : (ccy === 'GBX' ? x / 100 : x); }
+  function fmt(x) { return '£' + x.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function calc() {
+    var e = num('mt-entry'), s = num('mt-stop'), t = num('mt-tgt'), u = num('mt-units'), ccy = $('mt-ccy').value, side = $('mt-side').value;
+    var warn = [];
+    var sys = $('mt-sys').value;
+    if (M.open >= M.max_open) warn.push('You already have ' + M.open + ' open trades (max ' + M.max_open + ').');
+    if (sys && M.by_sys[sys] && M.by_sys[sys].open_now >= M.max_sys) warn.push('System ' + sys + ' already has ' + M.by_sys[sys].open_now + ' open trades (max ' + M.max_sys + ').');
+    if (e && s) {
+      var ru = Math.abs(e - s);
+      if ((side === 'long' && s >= e) || (side === 'short' && s <= e)) warn.push('The stop is on the wrong side of the entry for a ' + side + '.');
+      $('c-ru').textContent = ru ? (ccy === 'USD' ? '$' : (ccy === 'GBX' ? '' : '£')) + ru.toFixed(2) + (ccy === 'GBX' ? 'p' : '') : '—';
+      $('c-rr').textContent = (t && ru) ? (Math.abs(t - e) / ru).toFixed(2) + ' : 1' : '—';
+      var sz = ru ? M.budget / toGbp(ru, ccy) : null;
+      $('c-sz').textContent = sz ? (sz >= 10 ? Math.floor(sz) : sz.toFixed(3)) + ' units' : '—';
+      $('c-use').dataset.v = sz ? (sz >= 10 ? Math.floor(sz) : sz.toFixed(3)) : '';
+      if (u) {
+        var r = toGbp(ru * u, ccy); $('c-risk').textContent = fmt(r); $('c-val').textContent = fmt(toGbp(e * u, ccy));
+        if (r > M.budget * 1.1) warn.push('This size risks ' + fmt(r) + ', above the ' + fmt(M.budget) + ' budget.');
+      } else { $('c-risk').textContent = '—'; $('c-val').textContent = '—'; }
+      if (t && ru && Math.abs(t - e) / ru < 1.5) warn.push('Reward : risk is below 1.5 : 1.');
+    }
+    var w = $('mt-warn'); w.style.display = warn.length ? 'block' : 'none'; w.innerHTML = warn.join('<br>');
+  }
+  $('mt-sys').addEventListener('change', function () {
+    var v = this.value;
+    document.querySelectorAll('.syschk').forEach(function (f) { f.hidden = f.dataset.sys !== v; });
+    var i = keys.indexOf(v); if (i >= 0) { $('mt-side').value = M.sides[i]; }
+    calc();
+  });
+  ['mt-entry', 'mt-stop', 'mt-tgt', 'mt-units', 'mt-ccy', 'mt-side'].forEach(function (id) { $(id).addEventListener('input', calc); $(id).addEventListener('change', calc); });
+  $('c-use').addEventListener('click', function () { if (this.dataset.v) { $('mt-units').value = this.dataset.v; calc(); } });
+  var f = $('mt-filter');
+  if (f) f.addEventListener('change', function () { var v = f.value; document.querySelectorAll('#mt-closed tbody tr').forEach(function (r) { r.style.display = (!v || r.dataset.sys === v) ? '' : 'none'; }); });
+  calc();
+})();
+</script>
+{% endblock %}

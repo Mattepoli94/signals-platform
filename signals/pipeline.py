@@ -90,6 +90,32 @@ def _history(key: str, t: pd.DataFrame, n: int = 120) -> list:
     return list(reversed(ev))[:25]
 
 
+def _market_context(data: dict) -> list:
+    """Index conditions the manual systems refer to: trend regime and the 9-week MA."""
+    from .strategies.qqq_regime import regime_core
+    from .indicators import sma
+    out = []
+    series = [('QQQ (Nasdaq-100)', data['QQQ']['adj_close'].dropna())]
+    try:
+        from .radar import _read
+        g = _read('yahoo_GSPC', 'close').dropna()
+        if len(g) > 300:
+            series.append(('S&P 500', g))
+    except Exception:  # noqa: BLE001
+        pass
+    for name, c in series:
+        reg = regime_core(c, STRATEGIES['qqq_regime'].params)['regime'].iloc[-1]
+        w = c.groupby(c.index.to_period('W-FRI')).last()
+        w9 = w.rolling(9).mean()
+        off = c.iloc[-1] / c.rolling(252).max().iloc[-1] - 1
+        above = bool(w.iloc[-1] > w9.iloc[-1])
+        crossed = bool(above and w.iloc[-2] <= w9.iloc[-2])
+        out.append({'name': name, 'regime': reg, 'off_high': float(off), 'w9': float(w9.iloc[-1]), 'close': float(c.iloc[-1]),
+                    'above_w9': above, 'reclaim_this_week': crossed, 'asof': c.index[-1].strftime('%Y-%m-%d'),
+                    'trending': reg == 'Trending'})
+    return out
+
+
 def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
     keys = sorted({k for s in STRATEGIES.values() for k in s.inputs} | {'GBPUSD'})
     data = D.load_all(keys)
@@ -196,6 +222,12 @@ def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
         'assets': [{'key': a.key, 'name': a.name, 'symbol': a.symbol, 'source': a.source} for a in ASSETS.values()],
         'email_configured': A.configured(),
     }
+    try:
+        from . import manual
+        snap['manual'] = manual.compute(cfg, tot_eq, fx, now.astimezone(D.LDN).strftime('%Y-%m-%d'))
+        snap['manual']['context'] = _market_context(data)
+    except Exception as e:  # noqa: BLE001
+        snap['manual'] = {'error': str(e)[:300]}
     return _clean(snap), tables
 
 

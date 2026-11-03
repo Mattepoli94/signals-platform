@@ -9,10 +9,11 @@ import yaml
 
 from . import CONFIG
 
-HEADER = """# Signals platform: your settings.
+HEADER = """# Poli's Hedge Fund: your settings.
 # Edit this file directly, or use the Settings and Portfolio pages (they write here for you).
 # All money is in GBP. EQQQ is priced in pence; BTC in USD, converted with the GBP/USD close of the day.
 # Pots follow their systems from the first close on or after start_date.
+# manual: Manual trading settings and your logged trades (written by the Manual trading page).
 # topups: one-off deposits. fills: your real executions (price in the asset's own unit: pence for EQQQ,
 # USD for BTC, the GBP/USD rate for USD cash; optional fx, fee_gbp, units).
 
@@ -97,6 +98,9 @@ def apply(op: dict) -> str:
             if k in op:
                 cfg['alerts'][k] = bool(op[k]) if not isinstance(op[k], str) else op[k].lower() in ('1', 'true', 'yes', 'on')
         msg = 'alert settings updated'
+    elif str(kind).startswith('manual_'):
+        from . import manual
+        msg = manual.apply(cfg, op, _date)
     else:
         raise ValueError(f'unknown operation {kind}')
     save(cfg)

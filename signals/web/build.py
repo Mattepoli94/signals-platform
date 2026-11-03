@@ -44,6 +44,7 @@ PAPERS = [
      'period': 'Platform rules and fees, GBP. 2021–26 is in-sample for all three systems.'},
 ]
 CHANGELOG = [
+    ('2026-11-03', 'Manual trading', 'New page: five discretionary systems with their conditions, risk rules (0.5% risk per trade, max 5 open, max 3 per system, 30% allocation), a position-size calculator and a trade journal scored by system (R multiples, win rate, expectancy, P&L).'),
     ('2026-11-03', 'Risk radar page', 'Display only, rules unchanged: the fast-crash plan is shown as four steps (fast crash, override, BUY 1, BUY 2), each with its requirements and an ON / NOT YET / LOCKED state; the capitulation groups are listed separately; the washout is shown per market. Every panel has a two-line "How to use".'),
     ('2026-11-03', 'Platform', "v2.0: renamed Poli's Hedge Fund. Review and tidy-up: the retired risk flag and unused feeds (TLT, GLD, T-bill, dollar index, Fed liquidity) removed; radar inputs listed in Settings; daily routine on Today. Fixes: “Trend leg off” was labelled BUY in the signal history; the value plan card could show the live pre-close QQQ price as the confirmed close."),
     ('2026-11-03', 'Value plan', 'v1.2: adds the fast-crash buys (buy 1 = 50% of cash at −10.8% from the high, buy 2 = all cash on 3+ capitulation groups; skipped when the override is on). Trading system unchanged.'),
@@ -231,6 +232,10 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
     for p in pots:
         charts['exp_' + p['key']] = _expect_chart(p)
     charts['total'] = _total_chart(pots)
+    mc = (snap.get('manual') or {}).get('curve') or []
+    if len(mc) >= 2:
+        charts['manual'] = line_chart([{'name': 'Manual pot', 'color': '#1D4ED8', 'width': 2, 'points': [(r[0], r[1]) for r in mc]}],
+                                      height=200, yfmt='£{:,.0f}', label='Manual pot value after each closed trade')
     for rp in ((snap.get('radar') or {}).get('panels') or []) + ((snap.get('radar') or {}).get('bottoms') or []):
         if rp.get('hist') and rp.get('amber') is not None:
             charts['radar_' + rp['key']] = _radar_chart(rp)
@@ -256,7 +261,7 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
                 rules=[(r['short'], r['version']) for r in PAPERS if r.get('short')],
                 js_ctx={'generated': snap['generated_utc'], 'repo': os.environ.get('GITHUB_REPOSITORY', 'Mattepoli94/signals-platform')})
     base['journal'] = snap.get('journal') or []
-    for page in ('index', 'investing', 'trading', 'risk', 'journal', 'portfolio', 'research', 'settings'):
+    for page in ('index', 'investing', 'trading', 'manual', 'risk', 'journal', 'portfolio', 'research', 'settings'):
         html = env.get_template(f'{page}.html').render(page=page, root='', **base)
         (out / f'{page}.html').write_text(html)
     (out / 'research').mkdir(exist_ok=True)

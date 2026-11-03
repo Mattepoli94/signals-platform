@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual trading · Poli's Hedge Fund</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/app.css">
+<link rel="icon" type="image/svg+xml" href="static/flag.svg">
+</head>
+<body data-root="">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="index.html">
+      <img src="static/flag.svg" width="30" height="30" alt="">
+      Poli's Hedge Fund
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="index.html" class="">Today</a>
+      
+      <a href="investing.html" class="">Investing</a>
+      
+      <a href="trading.html" class="">Trading</a>
+      
+      <a href="manual.html" class="on" aria-current="page">Manual</a>
+      
+      <a href="risk.html" class="">Risk radar</a>
+      
+      <a href="journal.html" class="">Journal</a>
+      
+      <a href="portfolio.html" class="">Portfolio</a>
+      
+      <a href="research.html" class="">Research</a>
+      
+      <a href="settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">GBP/USD <b class="mono">1.3425</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-03"><span class="dot ok"></span>EQQQ <span class="mono">03 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-03"><span class="dot ok"></span>QQQ <span class="mono">03 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-03"><span class="dot ok"></span>GBPUSD <span class="mono">03 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 22:53</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+
+
+
+
+
+
+<div class="pagehead">
+  <div>
+    <div class="kicker">Discretionary · you decide, the site keeps the score</div>
+    <h1>Manual trading</h1>
+    <p class="sub">Your five discretionary systems, the risk rules, a position-size calculator and a journal that scores every trade by system. Log a trade when you open it, update the stop as you trail it, and close it with the exit price: the site works out risk, reward-to-risk, time in the trade, P&amp;L in pounds and the R multiple.</p>
+  </div>
+  <a class="btn primary" href="#new">Log a new trade</a>
+</div>
+
+
+
+<section class="card" aria-label="Manual pot">
+  <div class="stats">
+    <div class="stat"><div class="l">Manual pot value</div><div class="v">£857.00</div></div>
+    <div class="stat"><div class="l">Share of portfolio (target 30%)</div><div class="v">30%</div></div>
+    <div class="stat"><div class="l">Risk per trade (0.5%)</div><div class="v">£14.28</div></div>
+    <div class="stat"><div class="l">Open trades</div><div class="v ">0 / 5</div></div>
+    <div class="stat"><div class="l">Open risk to stops</div><div class="v">£0.00</div></div>
+    <div class="stat"><div class="l">Realised P&amp;L</div><div class="v ">£0.00</div></div>
+    <div class="stat"><div class="l">Win rate · avg R</div><div class="v">—</div></div>
+  </div>
+</section>
+
+<div class="row">
+  <section class="card grow" aria-label="Rules">
+    <h2>Risk rules</h2>
+    <ul class="rules">
+      <li><b>Allocation:</b> manual trading gets 30% of the portfolio. The pot starts at £857.00 and grows or shrinks with your realised P&amp;L.</li>
+      <li><b>Risk per trade:</b> 0.5% of the whole portfolio (£2,856.75) = <b>£14.28</b> lost if the stop is hit. Size = risk ÷ (entry − stop).</li>
+      <li><b>At most 5 open trades</b>, and <b>no more than 3 from the same system</b>.</li>
+      <li>The site blocks a new trade that breaks a limit, and warns when a trade risks more than the budget.</li>
+    </ul>
+    <details class="small" style="margin-top:8px"><summary>Change these settings</summary>
+      <form data-op="manual_settings" class="inline" style="margin-top:10px">
+        <label class="f">Pot capital (£)<input name="capital" class="amt" inputmode="decimal" placeholder="857.0"></label>
+        <label class="f">Target share (%)<input name="target_share_pct" class="w100" inputmode="decimal" placeholder="30.0"></label>
+        <label class="f">Risk per trade (%)<input name="risk_pct" class="w100" inputmode="decimal" placeholder="0.5"></label>
+        <label class="f">Risk measured on<select name="risk_base"><option value="portfolio" selected>whole portfolio</option><option value="manual" >manual pot</option></select></label>
+        <label class="f">Max open<input name="max_open" class="w100" inputmode="numeric" placeholder="5"></label>
+        <label class="f">Max per system<input name="max_per_system" class="w100" inputmode="numeric" placeholder="3"></label>
+        <button class="btn primary" type="submit">Save</button>
+      </form>
+    </details>
+  </section>
+  <section class="card grow" aria-label="Market context">
+    <h2>Index conditions now</h2>
+    <p class="note">Systems 1, 2 and 4 need trending indices, or (system 1) a 9-week MA reclaim after a flush and breadth washout.</p>
+    <div class="scroll"><table class="t" style="margin-top:8px"><thead><tr><th>Index</th><th>Regime</th><th class="n">From 1y high</th><th>9-week MA</th></tr></thead><tbody>
+    <tr><td><b>QQQ (Nasdaq-100)</b><div class="small muted">data to 03 Nov 2026</div></td>
+      <td><span class="pill t-blue">Range above 200-day</span></td>
+      <td class="n">−9.8%</td>
+      <td><span class="pill t-amber">below</span><div class="small muted mono">718.91</div></td></tr><tr><td><b>S&amp;P 500</b><div class="small muted">data to 03 Nov 2026</div></td>
+      <td><span class="pill t-blue">Range above 200-day</span></td>
+      <td class="n">−3.2%</td>
+      <td><span class="pill t-amber">below</span><div class="small muted mono">7,668.58</div></td></tr>
+    </tbody></table></div>
+    <p class="small muted" style="margin:8px 0 0">Flush, breadth and bottom signals: see the <a href="risk.html">Risk radar</a>. The research behind the 9-week setup is in the project notes (weekly 9-MA study).</p>
+  </section>
+</div>
+
+<section class="card" id="new" aria-label="Log a new trade">
+  <h2>Log a new trade</h2>
+  <p class="note">Pick the system, tick the conditions that are met (the journal later checks whether more confluence means better trades), and use the calculator to size it.</p>
+  <form data-op="manual_open" id="mt-form" style="margin-top:14px">
+    <div class="form-grid">
+      <label class="f">System<select name="system" id="mt-sys" required>
+        <option value="">Choose…</option><option value="1">1 · Box system: early entry</option><option value="2">2 · Breakout trading</option><option value="3">3 · Mean reversion</option><option value="4">4 · Trend following: long</option><option value="5">5 · Trend following: short</option></select></label>
+      <label class="f">Ticker<input name="ticker" required placeholder="e.g. NVDA" autocapitalize="characters"></label>
+      <label class="f">Direction<select name="side" id="mt-side"><option value="long">Long</option><option value="short">Short</option></select></label>
+      <label class="f">Price currency<select name="ccy" id="mt-ccy"><option value="USD">USD ($)</option><option value="GBP">GBP (£)</option><option value="GBX">GBX (pence)</option></select></label>
+      <label class="f">Opened<input type="date" name="opened" value="2026-11-03" class="dt"></label>
+      <label class="f">Entry<input name="entry" id="mt-entry" inputmode="decimal" required></label>
+      <label class="f">Stop loss<input name="stop" id="mt-stop" inputmode="decimal" required></label>
+      <label class="f">Take profit<input name="target" id="mt-tgt" inputmode="decimal"></label>
+      <label class="f">Units (shares)<input name="units" id="mt-units" inputmode="decimal" required></label>
+      <label class="f">Fees (£)<input name="fees_gbp" inputmode="decimal" placeholder="0"></label>
+    </div>
+    <div class="calc" id="mt-calc" aria-live="polite">
+      <div><span class="l">Risk per share</span><b id="c-ru">—</b></div>
+      <div><span class="l">Reward : risk</span><b id="c-rr">—</b></div>
+      <div><span class="l">Suggested size for £14.28 risk</span><b id="c-sz">—</b> <button type="button" class="btn small" id="c-use">Use</button></div>
+      <div><span class="l">£ at risk with these units</span><b id="c-risk">—</b></div>
+      <div><span class="l">Position value</span><b id="c-val">—</b></div>
+    </div>
+    <div id="mt-warn" class="banner warn small" style="display:none;margin-top:10px"></div>
+    
+    <fieldset class="syschk" data-sys="1" hidden><legend>Box system: early entry: conditions met</legend>
+      <label class="cb"><input type="checkbox" name="chk_1_0"> Indices trending (not consolidating), or indices reclaiming the 9-week MA after a flush and a breadth washout</label><label class="cb"><input type="checkbox" name="chk_1_1"> A previous mark-up, then a consolidation before the next leg up</label><label class="cb"><input type="checkbox" name="chk_1_2"> No more than 1 push so far: not 2 higher highs and higher lows on the monthly chart (wicks count), as moves usually come in 2 pushes</label><label class="cb"><input type="checkbox" name="chk_1_3"> A fake breakdown (liquidity grab) raises the odds</label><label class="cb"><input type="checkbox" name="chk_1_4"> A leader: one of the strongest names in one of the strongest sectors</label><label class="cb"><input type="checkbox" name="chk_1_5"> Fundamentals add confluence: earnings, forecasts, profit, balance sheet, insider buying</label><label class="cb"><input type="checkbox" name="chk_1_6"> Above all the MAs, with the MAs curling up</label><label class="cb"><input type="checkbox" name="chk_1_7"> Squeeze Pro on the weekly shows a red or yellow (consolidation) squeeze</label><label class="cb"><input type="checkbox" name="chk_1_8"> Variation B: an undercut of the box that closes back inside on strong volume is a valid early entry</label>
+    </fieldset>
+    <fieldset class="syschk" data-sys="2" hidden><legend>Breakout trading: conditions met</legend>
+      <label class="cb"><input type="checkbox" name="chk_2_0"> Indices trending and not chopping</label><label class="cb"><input type="checkbox" name="chk_2_1"> A leader with strong fundamentals</label><label class="cb"><input type="checkbox" name="chk_2_2"> Stop at the first resistance or MA inside the box</label><label class="cb"><input type="checkbox" name="chk_2_3"> The break has momentum and follow-through</label><label class="cb"><input type="checkbox" name="chk_2_4"> An indecision candle or a failed breakout usually sends price back to the origin of the move: exit quickly</label>
+    </fieldset>
+    <fieldset class="syschk" data-sys="3" hidden><legend>Mean reversion: conditions met</legend>
+      <label class="cb"><input type="checkbox" name="chk_3_0"> Volatile stock, preferably with strong fundamentals</label><label class="cb"><input type="checkbox" name="chk_3_1"> Levels and value zones marked on the 1-hour or daily chart</label><label class="cb"><input type="checkbox" name="chk_3_2"> Early entry at an imbalance block in the extreme zone (value-area high or low)</label><label class="cb"><input type="checkbox" name="chk_3_3"> First retest only, closing back within the swing low: that is where the reaction is strongest</label><label class="cb"><input type="checkbox" name="chk_3_4"> Tight stop: 1.2× beyond the swing-low wick</label><label class="cb"><input type="checkbox" name="chk_3_5"> Add to the position on a break of structure on a smaller timeframe</label><label class="cb"><input type="checkbox" name="chk_3_6"> Target a 50% retracement or a key level (POC, MAs, resistance)</label>
+    </fieldset>
+    <fieldset class="syschk" data-sys="4" hidden><legend>Trend following: long: conditions met</legend>
+      <label class="cb"><input type="checkbox" name="chk_4_0"> Uptrend in place; stop on a close below the slow MA or a market-structure break (MSB)</label><label class="cb"><input type="checkbox" name="chk_4_1"> Low-risk entry on a retest of the fast or slow MA</label>
+    </fieldset>
+    <fieldset class="syschk" data-sys="5" hidden><legend>Trend following: short: conditions met</legend>
+      <label class="cb"><input type="checkbox" name="chk_5_0"> Downtrend in place; stop on a close above the slow MA or a market-structure break (MSB)</label><label class="cb"><input type="checkbox" name="chk_5_1"> Low-risk entry on a retest of the fast or slow MA</label>
+    </fieldset>
+    <label class="f" style="margin-top:12px">Notes (setup, why now, plan)<textarea name="notes" rows="3"></textarea></label>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:12px">
+      <button class="btn primary" type="submit">Save trade</button>
+      <label class="cb small"><input type="checkbox" name="over_risk"> allow above the risk budget</label>
+    </div>
+  </form>
+</section>
+
+<section class="card" aria-label="Open trades">
+  <h2>Open trades</h2>
+  <p class="note">No open trades.</p>
+</section>
+
+<section class="card" aria-label="Performance by system">
+  <h2>Journal: performance by system</h2>
+  <p class="note">R = profit or loss divided by the risk taken at entry (1R = the £ you planned to lose). Expectancy is the average R per trade: above 0 means the system makes money.</p>
+  <div class="scroll" style="margin-top:10px"><table class="t"><thead><tr><th>System</th><th class="n">Closed</th><th class="n">Open</th><th class="n">Win rate</th><th class="n">Expectancy</th><th class="n">Total R</th><th class="n">P&amp;L</th><th class="n">Avg win / loss</th><th class="n">Profit factor</th><th class="n">Planned R:R</th><th class="n">Avg days</th><th class="n">Worst streak</th><th class="n">Conditions ticked</th></tr></thead><tbody>
+  
+  <tr><td><b>1 · Box system: early entry</b></td><td class="n">0</td><td class="n">0</td>
+    <td class="n">—</td><td class="n ">—</td><td class="n">—</td>
+    <td class="n ">—</td>
+    <td class="n">— / —</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td></tr>
+  
+  <tr><td><b>2 · Breakout trading</b></td><td class="n">0</td><td class="n">0</td>
+    <td class="n">—</td><td class="n ">—</td><td class="n">—</td>
+    <td class="n ">—</td>
+    <td class="n">— / —</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td></tr>
+  
+  <tr><td><b>3 · Mean reversion</b></td><td class="n">0</td><td class="n">0</td>
+    <td class="n">—</td><td class="n ">—</td><td class="n">—</td>
+    <td class="n ">—</td>
+    <td class="n">— / —</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td></tr>
+  
+  <tr><td><b>4 · Trend following: long</b></td><td class="n">0</td><td class="n">0</td>
+    <td class="n">—</td><td class="n ">—</td><td class="n">—</td>
+    <td class="n ">—</td>
+    <td class="n">— / —</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td></tr>
+  
+  <tr><td><b>5 · Trend following: short</b></td><td class="n">0</td><td class="n">0</td>
+    <td class="n">—</td><td class="n ">—</td><td class="n">—</td>
+    <td class="n ">—</td>
+    <td class="n">— / —</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td></tr>
+  
+  
+  <tr class="tot"><td><b>All systems</b></td><td class="n">0</td><td class="n">0</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td><td class="n ">—</td>
+    <td class="n">— / —</td><td class="n">—</td>
+    <td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+  </tbody></table></div>
+  
+</section>
+
+<section class="card" aria-label="Closed trades">
+  <div class="row" style="justify-content:space-between;align-items:flex-end"><h2>Closed trades</h2>
+    <label class="f">System<select id="mt-filter"><option value="">All</option><option value="1">1 · Box</option><option value="2">2 · Breakout</option><option value="3">3 · Mean rev.</option><option value="4">4 · Trend long</option><option value="5">5 · Trend short</option></select></label></div>
+  <p class="note">No closed trades yet. Results by system appear here once you close your first trade.</p>
+</section>
+
+<section class="card" id="playbook" aria-label="Systems playbook">
+  <h2>Systems playbook</h2>
+  <p class="note">The conditions for each system. The same lists appear as tick boxes when you log a trade.</p>
+  <div class="play">
+  
+    <article class="playcard"><div class="kicker">System 1 · long</div><h3>Box system: early entry</h3><p class="small">Enter early inside a consolidation box after a mark-up, before the next leg up.</p>
+      <ol class="small"><li>Indices trending (not consolidating), or indices reclaiming the 9-week MA after a flush and a breadth washout</li><li>A previous mark-up, then a consolidation before the next leg up</li><li>No more than 1 push so far: not 2 higher highs and higher lows on the monthly chart (wicks count), as moves usually come in 2 pushes</li><li>A fake breakdown (liquidity grab) raises the odds</li><li>A leader: one of the strongest names in one of the strongest sectors</li><li>Fundamentals add confluence: earnings, forecasts, profit, balance sheet, insider buying</li><li>Above all the MAs, with the MAs curling up</li><li>Squeeze Pro on the weekly shows a red or yellow (consolidation) squeeze</li><li>Variation B: an undercut of the box that closes back inside on strong volume is a valid early entry</li></ol></article>
+  
+    <article class="playcard"><div class="kicker">System 2 · long</div><h3>Breakout trading</h3><p class="small">Buy the break of the box when the market is trending; get out fast if the break fails.</p>
+      <ol class="small"><li>Indices trending and not chopping</li><li>A leader with strong fundamentals</li><li>Stop at the first resistance or MA inside the box</li><li>The break has momentum and follow-through</li><li>An indecision candle or a failed breakout usually sends price back to the origin of the move: exit quickly</li></ol></article>
+  
+    <article class="playcard"><div class="kicker">System 3 · long</div><h3>Mean reversion</h3><p class="small">Buy the first retest of an extreme value zone, with a tight stop, targeting a 50% retracement.</p>
+      <ol class="small"><li>Volatile stock, preferably with strong fundamentals</li><li>Levels and value zones marked on the 1-hour or daily chart</li><li>Early entry at an imbalance block in the extreme zone (value-area high or low)</li><li>First retest only, closing back within the swing low: that is where the reaction is strongest</li><li>Tight stop: 1.2× beyond the swing-low wick</li><li>Add to the position on a break of structure on a smaller timeframe</li><li>Target a 50% retracement or a key level (POC, MAs, resistance)</li></ol></article>
+  
+    <article class="playcard"><div class="kicker">System 4 · long</div><h3>Trend following: long</h3><p class="small">Ride an uptrend; enter on a pullback to a moving average.</p>
+      <ol class="small"><li>Uptrend in place; stop on a close below the slow MA or a market-structure break (MSB)</li><li>Low-risk entry on a retest of the fast or slow MA</li></ol></article>
+  
+    <article class="playcard"><div class="kicker">System 5 · short</div><h3>Trend following: short</h3><p class="small">Ride a downtrend; enter short on a rally to a moving average.</p>
+      <ol class="small"><li>Downtrend in place; stop on a close above the slow MA or a market-structure break (MSB)</li><li>Low-risk entry on a retest of the fast or slow MA</li></ol></article>
+  
+  </div>
+</section>
+
+<script>
+(function () {
+  var M = {"budget": 14.28375, "by_sys": {"1": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Box system: early entry", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Box", "total_r": 0.0, "trades": 0, "win_rate": null}, "2": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Breakout trading", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Breakout", "total_r": 0.0, "trades": 0, "win_rate": null}, "3": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Mean reversion", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Mean rev.", "total_r": 0.0, "trades": 0, "win_rate": null}, "4": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Trend following: long", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Trend long", "total_r": 0.0, "trades": 0, "win_rate": null}, "5": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Trend following: short", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Trend short", "total_r": 0.0, "trades": 0, "win_rate": null}}, "fx": 1.342534, "max_open": 5, "max_sys": 3, "open": 0, "sides": ["long", "long", "long", "long", "short"]};
+  var keys = ["1", "2", "3", "4", "5"];
+  function $(id) { return document.getElementById(id); }
+  function num(id) { var v = parseFloat(($(id).value || '').replace(/[,£$]/g, '')); return isFinite(v) ? v : null; }
+  function toGbp(x, ccy) { return ccy === 'USD' ? x / M.fx : (ccy === 'GBX' ? x / 100 : x); }
+  function fmt(x) { return '£' + x.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function calc() {
+    var e = num('mt-entry'), s = num('mt-stop'), t = num('mt-tgt'), u = num('mt-units'), ccy = $('mt-ccy').value, side = $('mt-side').value;
+    var warn = [];
+    var sys = $('mt-sys').value;
+    if (M.open >= M.max_open) warn.push('You already have ' + M.open + ' open trades (max ' + M.max_open + ').');
+    if (sys && M.by_sys[sys] && M.by_sys[sys].open_now >= M.max_sys) warn.push('System ' + sys + ' already has ' + M.by_sys[sys].open_now + ' open trades (max ' + M.max_sys + ').');
+    if (e && s) {
+      var ru = Math.abs(e - s);
+      if ((side === 'long' && s >= e) || (side === 'short' && s <= e)) warn.push('The stop is on the wrong side of the entry for a ' + side + '.');
+      $('c-ru').textContent = ru ? (ccy === 'USD' ? '$' : (ccy === 'GBX' ? '' : '£')) + ru.toFixed(2) + (ccy === 'GBX' ? 'p' : '') : '—';
+      $('c-rr').textContent = (t && ru) ? (Math.abs(t - e) / ru).toFixed(2) + ' : 1' : '—';
+      var sz = ru ? M.budget / toGbp(ru, ccy) : null;
+      $('c-sz').textContent = sz ? (sz >= 10 ? Math.floor(sz) : sz.toFixed(3)) + ' units' : '—';
+      $('c-use').dataset.v = sz ? (sz >= 10 ? Math.floor(sz) : sz.toFixed(3)) : '';
+      if (u) {
+        var r = toGbp(ru * u, ccy); $('c-risk').textContent = fmt(r); $('c-val').textContent = fmt(toGbp(e * u, ccy));
+        if (r > M.budget * 1.1) warn.push('This size risks ' + fmt(r) + ', above the ' + fmt(M.budget) + ' budget.');
+      } else { $('c-risk').textContent = '—'; $('c-val').textContent = '—'; }
+      if (t && ru && Math.abs(t - e) / ru < 1.5) warn.push('Reward : risk is below 1.5 : 1.');
+    }
+    var w = $('mt-warn'); w.style.display = warn.length ? 'block' : 'none'; w.innerHTML = warn.join('<br>');
+  }
+  $('mt-sys').addEventListener('change', function () {
+    var v = this.value;
+    document.querySelectorAll('.syschk').forEach(function (f) { f.hidden = f.dataset.sys !== v; });
+    var i = keys.indexOf(v); if (i >= 0) { $('mt-side').value = M.sides[i]; }
+    calc();
+  });
+  ['mt-entry', 'mt-stop', 'mt-tgt', 'mt-units', 'mt-ccy', 'mt-side'].forEach(function (id) { $(id).addEventListener('input', calc); $(id).addEventListener('change', calc); });
+  $('c-use').addEventListener('click', function () { if (this.dataset.v) { $('mt-units').value = this.dataset.v; calc(); } });
+  var f = $('mt-filter');
+  if (f) f.addEventListener('change', function () { var v = f.value; document.querySelectorAll('#mt-closed tbody tr').forEach(function (r) { r.style.display = (!v || r.dataset.sys === v) ? '' : 'none'; }); });
+  calc();
+})();
+</script>
+
+</main>
+<footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 22:53", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="static/app.js"></script>
+</body>
+</html>

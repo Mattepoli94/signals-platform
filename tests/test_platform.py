@@ -307,3 +307,33 @@ def test_value_status_not_overwritten_by_live_compute(stored):
 def test_site_builder_imports():
     from signals.web import build   # a syntax error here would break every scheduled run
     assert build.PAPERS and all(p['slug'] for p in build.PAPERS)
+
+
+def test_manual_trading_rules_and_maths(monkeypatch):
+    from signals import manual as MT
+    monkeypatch.setattr(MT, '_risk_budget_now', lambda cfg: 15.0)
+    cfg = {'manual': {'capital': 857.0, 'trades': []}}
+    d = lambda x: str(x)[:10]
+    MT.apply(cfg, {'op': 'manual_open', 'system': '2', 'ticker': 'abc', 'ccy': 'GBP', 'opened': '2026-10-01',
+                   'entry': '10', 'stop': '9', 'target': '13', 'units': '15', 'chk_2_0': True, 'chk_2_3': 'on'}, d)
+    t = cfg['manual']['trades'][0]
+    assert t['ticker'] == 'ABC' and t['side'] == 'long' and t['checks'] == [0, 3]
+    with pytest.raises(ValueError, match='budget'):            # 100 units risks £100 > £15
+        MT.apply(cfg, {'op': 'manual_open', 'system': '1', 'ticker': 'X', 'ccy': 'GBP', 'entry': '10', 'stop': '9', 'units': '100'}, d)
+    with pytest.raises(ValueError, match='stop'):
+        MT.apply(cfg, {'op': 'manual_open', 'system': '5', 'ticker': 'X', 'ccy': 'GBP', 'entry': '10', 'stop': '9', 'units': '1'}, d)
+    for k in range(2):
+        MT.apply(cfg, {'op': 'manual_open', 'system': '2', 'ticker': f'B{k}', 'ccy': 'GBP', 'entry': '10', 'stop': '9', 'units': '1'}, d)
+    with pytest.raises(ValueError, match='per system'):
+        MT.apply(cfg, {'op': 'manual_open', 'system': '2', 'ticker': 'C', 'ccy': 'GBP', 'entry': '10', 'stop': '9', 'units': '1'}, d)
+    MT.apply(cfg, {'op': 'manual_close', 'id': t['id'], 'exit': '12', 'closed': '2026-10-11', 'exit_fees_gbp': '1'}, d)
+    v = MT.trade_view(cfg['manual']['trades'][0], None, '2026-11-03')
+    assert v['risk_gbp'] == pytest.approx(15) and v['rr_planned'] == pytest.approx(3)
+    assert v['pnl_gbp'] == pytest.approx(29) and v['r_multiple'] == pytest.approx(29 / 15) and v['days'] == 10
+    snap = MT.compute(cfg, 2000.0, None, '2026-11-03')
+    assert snap['by_system']['2']['trades'] == 1 and snap['open_count'] == 2
+    assert snap['risk_budget_gbp'] == pytest.approx((2000 + 857 + 29) * 0.005)
+    # a short: P&L positive when price falls; USD converted with the rate
+    s = MT.trade_view({'id': 's', 'system': '5', 'ticker': 'S', 'side': 'short', 'ccy': 'USD', 'opened': '2026-10-01', 'entry': 100,
+                       'stop': 110, 'units': 2, 'status': 'closed', 'closed': '2026-10-05', 'exit': 90}, pd.Series([1.25], index=[pd.Timestamp('2026-09-01')]), '2026-11-03')
+    assert s['pnl_gbp'] == pytest.approx(16) and s['r_multiple'] == pytest.approx(1.0)

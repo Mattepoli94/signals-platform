@@ -17,11 +17,11 @@
       Poli's Hedge Fund
     </a>
     <nav class="main" aria-label="Main">
-      {% for p, label in [('index','Today'),('investing','Investing'),('trading','Trading'),('risk','Risk radar'),('journal','Journal'),('portfolio','Portfolio'),('research','Research'),('settings','Settings')] %}
+      {% for p, label in [('index','Today'),('investing','Investing'),('trading','Trading'),('manual','Manual'),('risk','Risk radar'),('journal','Journal'),('portfolio','Portfolio'),('research','Research'),('settings','Settings')] %}
       <a href="{{ root }}{{ p }}.html" class="{{ 'on' if page == p }}"{% if page == p %} aria-current="page"{% endif %}>{{ label }}</a>
       {% endfor %}
     </nav>
-    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">{{ '%.4f'|format(snap.fx.gbpusd) }}</b></div>
+    <div class="cur">GBP/USD <b class="mono">{{ '%.4f'|format(snap.fx.gbpusd) }}</b></div>
   </div>
 </header>
 <div class="statusbar">
