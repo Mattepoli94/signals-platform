@@ -1,61 +1,104 @@
-"""BTC trend blend (spot, long or flat). Daily close = 00:00 UTC.
-  Score   average of five 0/1 signals: close > close 10 / 20 / 50 days ago, close > 50-day EMA,
-          10-day EMA > 30-day EMA.
-  Sizing  x min(1, 80% / 30-day realised volatility)   (log returns, x sqrt(365)).
-  Window  flat from day 545 to day 910 after each halving.
-  Target  BTC weight = score x vol factor (0 inside the window). The rest stays in cash.
+"""BTC cycle trend system v2 (spot, long or flat). Daily close = 00:00 UTC.
+
+Rules (crystallised 3 Nov 2026; research/btc-trend.md):
+  1. Trend    in the market while the 30-day EMA of daily closes is above the 50-day EMA;
+              out while it is below (buy / sell at the daily close on the cross).
+  2. Bear     flat from day 541 to day 900 after each halving (no position, no entries).
+  3. Size     100% of the BTC pot, except 50% when
+                - ADX(14) on daily highs/lows/closes is below 25 (no trend strength), or
+                - it is day 1,081 to 1,260 after the halving (mid-cycle chop phase).
+  Target BTC weight = trend (0/1) x size (1 or 0.5), 0 inside the bear window. The rest stays in cash.
+  No stop loss, no profit target: the cross, the bear window and the size rules are the only exits.
 """
 from __future__ import annotations
 
 import numpy as np
 import pandas as pd
 
-from ..indicators import ema, realised_vol
+from ..indicators import ema
 from .base import Strategy, check, fmt_pct, fmt_usd
 
 HALVINGS = [pd.Timestamp(d) for d in ('2012-11-28', '2016-07-09', '2020-05-11', '2024-04-20')]
 NEXT_HALVING_EST = pd.Timestamp('2028-04-15')
 
 
+def adx(high: pd.Series, low: pd.Series, close: pd.Series, n: int = 14) -> pd.Series:
+    """Wilder's ADX (smoothing alpha = 1/n)."""
+    up, dn = high.diff(), -low.diff()
+    pdm = up.where((up > dn) & (up > 0), 0.0)
+    ndm = dn.where((dn > up) & (dn > 0), 0.0)
+    tr = pd.concat([high - low, (high - close.shift()).abs(), (low - close.shift()).abs()], axis=1).max(axis=1)
+    atr = tr.ewm(alpha=1 / n, adjust=False).mean()
+    pdi = 100 * pdm.ewm(alpha=1 / n, adjust=False).mean() / atr
+    ndi = 100 * ndm.ewm(alpha=1 / n, adjust=False).mean() / atr
+    dx = 100 * (pdi - ndi).abs() / (pdi + ndi)
+    return dx.ewm(alpha=1 / n, adjust=False).mean()
+
+
+def _days_since_halving(idx: pd.DatetimeIndex) -> np.ndarray:
+    out = np.full(len(idx), np.nan)
+    for h in HALVINGS:
+        m = idx >= h
+        out[m] = (idx[m] - h).days
+    return out
+
+
 class BTCTrend(Strategy):
     def __init__(self):
         super().__init__(
-            key='btc_trend', name='BTC trend blend', kind='weights', page='trading',
-            assets=('BTC',), inputs=('BTC', 'DXY', 'NETLIQ'), calendar_asset='BTC', band=0.10,
-            params=dict(vol_target=0.80, win_start=545, win_end=910),
+            key='btc_trend', name='BTC cycle trend system', kind='weights', page='trading',
+            assets=('BTC',), inputs=('BTC', 'DXY', 'NETLIQ'), calendar_asset='BTC', band=1.0,
+            params=dict(fast=30, slow=50, bear=(540, 900), chop=(1080, 1260), adx_n=14, adx_min=25, reduced=0.5),
             paper='research/btc-trend.html',
-            timing='Checks at the daily close, 00:00 UTC. Trade soon after (the research assumes the close price).',
-            tested={'cagr': 1.05, 'maxdd': -0.30, 'period': '2015-2024 (training; ~180 variants tried: optimistic)'})
+            timing='Checks at the daily close, 00:00 UTC. Trade soon after with a limit order (Kraken Pro) or at the next session (ETF).',
+            tested={'cagr': 0.83, 'maxdd': -0.34, 'period': '2016-Oct 2026 (selected after extensive testing: expect less)'})
 
     def compute(self, data: dict) -> pd.DataFrame:
-        P = data['BTC']['close'].dropna()
+        df = data['BTC']
+        P = df['close'].dropna()
         p = self.params
         t = pd.DataFrame(index=P.index)
         t['close'] = P
-        for n in (10, 20, 50):
-            t[f'c{n}'] = P.shift(n)
-            t[f'sig_m{n}'] = (P > P.shift(n)).astype(float)
-        t['ema10'], t['ema30'], t['ema50'] = ema(P, 10), ema(P, 30), ema(P, 50)
-        t['sig_ema50'] = (P > t['ema50']).astype(float)
-        t['sig_cross'] = (t['ema10'] > t['ema30']).astype(float)
-        sigs = ['sig_m10', 'sig_m20', 'sig_m50', 'sig_ema50', 'sig_cross']
-        t['score'] = t[sigs].mean(axis=1)
-        t['vol30'] = realised_vol(P, 30, 365)
-        t['vol_factor'] = (p['vol_target'] / t['vol30']).clip(upper=1).fillna(1.0)
-        t['days_since_halving'] = _days_since_halving(P.index)
-        t['halving_window'] = (t['days_since_halving'] > p['win_start']) & (t['days_since_halving'] <= p['win_end'])
-        t['w_BTC'] = np.where(t['halving_window'], 0.0, t['score'] * t['vol_factor'])
-        t['state'] = t['score'].round(2).astype(str) + '|' + t['halving_window'].astype(str)
-        prev_score, prev_win = t['score'].shift(1), t['halving_window'].shift(1, fill_value=False)
-        t['event'] = np.where(t['halving_window'] & ~prev_win, 'Halving window opened: go flat',
-                     np.where(~t['halving_window'] & prev_win, 'Halving window closed',
-                     np.where(t['score'] != prev_score, 'Score ' + prev_score.round(1).astype(str) + ' → ' + t['score'].round(1).astype(str), '')))
+        t['ema_fast'], t['ema_slow'] = ema(P, p['fast']), ema(P, p['slow'])
+        t['trend'] = (t['ema_fast'] > t['ema_slow'])
+        h = df['high'].reindex(P.index).fillna(P)
+        lo = df['low'].reindex(P.index).fillna(P)
+        t['adx'] = adx(h, lo, P, p['adx_n'])
+        d = pd.Series(_days_since_halving(P.index), index=P.index)
+        t['days_since_halving'] = d
+        t['bear_window'] = (d > p['bear'][0]) & (d <= p['bear'][1])
+        t['chop_window'] = (d > p['chop'][0]) & (d <= p['chop'][1])
+        t['weak_trend'] = (t['adx'] < p['adx_min']).fillna(False)
+        t['size'] = np.where(t['weak_trend'] | t['chop_window'], p['reduced'], 1.0)
+        t['w_BTC'] = np.where(t['bear_window'], 0.0, t['trend'].astype(float) * t['size'])
+        t['state'] = t['w_BTC'].round(3).astype(str)
+        prev = t.shift(1)
+        ev = []
+        for i, (dt, r) in enumerate(t.iterrows()):
+            if i == 0 or r['w_BTC'] == prev['w_BTC'].iloc[i]:
+                ev.append('')
+                continue
+            pr = prev.iloc[i]
+            if r['bear_window'] and not pr['bear_window']:
+                ev.append('Bear window opened (day 541 after the halving): go flat')
+            elif pr['bear_window'] and not r['bear_window']:
+                ev.append('Bear window closed' + (': 30-day EMA above 50-day, buy' if r['trend'] else ''))
+            elif r['trend'] != pr['trend']:
+                ev.append('30-day EMA crossed ' + ('above' if r['trend'] else 'below') + ' the 50-day EMA')
+            else:
+                why = []
+                if r['weak_trend'] != pr['weak_trend']:
+                    why.append(f"ADX {'fell below' if r['weak_trend'] else 'rose above'} 25")
+                if r['chop_window'] != pr['chop_window']:
+                    why.append('mid-cycle chop phase ' + ('started' if r['chop_window'] else 'ended'))
+                ev.append('Size ' + ('halved' if r['size'] < pr['size'] else 'back to full') + (': ' + ', '.join(why) if why else ''))
+        t['event'] = ev
         # context, display only
         for k, n, col in (('DXY', 182, 'dxy_6m'), ('NETLIQ', 91, 'netliq_3m')):
-            df = data.get(k)
-            if df is not None and len(df):
-                s = df['adj_close'].dropna()
-                s.index = s.index + pd.Timedelta(days=1)          # known the day after
+            dd = data.get(k)
+            if dd is not None and len(dd):
+                s = dd['adj_close'].dropna()
+                s.index = s.index + pd.Timedelta(days=1)
                 s = s.reindex(s.index.union(P.index)).ffill().reindex(P.index)
                 t[col] = (s / s.shift(n) - 1) * 100
             else:
@@ -65,57 +108,72 @@ class BTCTrend(Strategy):
     def status(self, t: pd.DataFrame, pot: dict | None = None, provisional: bool = False) -> dict:
         x, prev = t.iloc[-1], t.iloc[-2]
         d = t.index[-1]
+        p = self.params
         w, w_prev = float(x['w_BTC']), float(prev['w_BTC'])
-        n_on = int(round(x['score'] * 5))
-        held = (pot or {}).get('weights', {}).get('BTC')
-        if x['state'] != prev['state'] and w > w_prev:
-            action, sub = 'BUY', f'BTC to {w:.0%}'
-        elif x['state'] != prev['state'] and w < w_prev:
+        if w > w_prev:
+            action, sub = 'BUY', f'BTC to {w:.0%} of the pot'
+        elif w < w_prev:
             action, sub = ('SELL', 'BTC to 0%') if w == 0 else ('REDUCE', f'BTC to {w:.0%}')
         elif w > 0:
-            action, sub = 'HOLD', f'target {w:.0%} of the pot'
+            action, sub = 'HOLD', f'BTC {w:.0%} of the pot'
         else:
             action, sub = 'FLAT', 'in cash'
-        if held is not None and action in ('HOLD', 'FLAT') and abs(held - w) > self.band:
-            action, sub = ('BUY' if w > held else 'REDUCE'), f'rebalance {held:.0%} → {w:.0%}'
 
         hs = int(x['days_since_halving'])
         last_h = max(h for h in HALVINGS if h <= d)
-        win_start = last_h + pd.Timedelta(days=self.params['win_start'] + 1)
-        win_end = last_h + pd.Timedelta(days=self.params['win_end'])
-        nxt_start = NEXT_HALVING_EST + pd.Timedelta(days=self.params['win_start'] + 1)
-        if x['halving_window']:
-            win_txt = f'inside (day {hs}) until {win_end:%d %b %Y}'
-        elif d < win_start:
-            win_txt = f'opens {win_start:%d %b %Y} (day {hs} now)'
+        bear_s, bear_e = last_h + pd.Timedelta(days=p['bear'][0] + 1), last_h + pd.Timedelta(days=p['bear'][1])
+        chop_s, chop_e = last_h + pd.Timedelta(days=p['chop'][0] + 1), last_h + pd.Timedelta(days=p['chop'][1])
+        nxt_bear = NEXT_HALVING_EST + pd.Timedelta(days=p['bear'][0] + 1)
+        if x['bear_window']:
+            phase = f'Bear window (day {hs}): flat until {bear_e:%d %b %Y}'
+            tone = 'red'
+        elif x['chop_window']:
+            phase = f'Mid-cycle chop (day {hs}): half size until {chop_e:%d %b %Y}'
+            tone = 'amber'
+        elif d < bear_s:
+            phase = f'Bull phase (day {hs}): bear window opens {bear_s:%d %b %Y}'
+            tone = 'green'
+        elif d < chop_s:
+            phase = f'Recovery (day {hs}): chop phase {chop_s:%b %Y} – {chop_e:%b %Y}'
+            tone = 'green'
         else:
-            win_txt = f'clear (day {hs}); next ~{nxt_start:%b %Y}'
+            phase = f'Pre-halving (day {hs}): next bear window ~{nxt_bear:%b %Y}'
+            tone = 'green'
 
-        if x['halving_window']:
-            plain = f'Post-halving bear window (day {hs} of 545–910): the system is flat until {win_end:%d %b %Y}, whatever the trend says.'
+        gap = (x['ema_fast'] / x['ema_slow'] - 1) * 100
+        if x['bear_window']:
+            plain = f'Post-halving bear window: the system is out of BTC until {bear_e:%d %b %Y}, whatever the trend says.'
+        elif not x['trend']:
+            plain = (f"The 30-day EMA ({fmt_usd(x['ema_fast'], 0)}) is below the 50-day EMA ({fmt_usd(x['ema_slow'], 0)}): no trend, stay in cash. "
+                     'Buy at the close when the 30-day crosses back above.')
         else:
-            plain = (f"{n_on} of 5 trend signals are positive, so the score is {x['score']:.1f}. "
-                     f"Volatility is {x['vol30']:.1%}" + (', so no size cut' if x['vol_factor'] >= 1 else f", so size × {x['vol_factor']:.2f}") +
-                     f". Target {w:.0%} of the pot." + (' A score of 0 means fully in cash.' if w > 0 else ''))
-        rows = [
-            check('Close above close 10 days ago', fmt_usd(x['close'], 0), f"above {fmt_usd(x['c10'], 0)}", x['sig_m10'] > 0),
-            check('Close above close 20 days ago', fmt_usd(x['close'], 0), f"above {fmt_usd(x['c20'], 0)}", x['sig_m20'] > 0),
-            check('Close above close 50 days ago', fmt_usd(x['close'], 0), f"above {fmt_usd(x['c50'], 0)}", x['sig_m50'] > 0),
-            check('Close above 50-day EMA', fmt_usd(x['close'], 0), f"above {fmt_usd(x['ema50'], 0)}", x['sig_ema50'] > 0),
-            check('10-day EMA above 30-day EMA', fmt_usd(x['ema10'], 0), f"above {fmt_usd(x['ema30'], 0)}", x['sig_cross'] > 0),
-        ]
+            why = []
+            if x['weak_trend']:
+                why.append(f"ADX is {x['adx']:.0f}, below 25 (weak trend)")
+            if x['chop_window']:
+                why.append('it is the mid-cycle chop phase')
+            plain = (f"Uptrend: the 30-day EMA is {gap:+.1f}% above the 50-day. Hold {w:.0%} of the pot" +
+                     (f": half size because {' and '.join(why)}." if why else ' (full size).') +
+                     f" Sell at the close if the 30-day EMA crosses below the 50-day ({fmt_usd(x['ema_slow'], 0)} now).")
         groups = [
-            {'title': '1 · Trend signals', 'note': 'each adds 20%', 'rows': rows},
-            {'title': '2 · Sizing and calendar', 'note': 'applied to the score', 'rows': [
-                check('30-day volatility at or below 80%', f"{x['vol30']:.1%}", f"size × {x['vol_factor']:.2f}", x['vol_factor'] >= 1),
-                check('Outside post-halving window (day 545–910)', f'day {hs}', 'outside window', not x['halving_window']),
+            {'title': '1 · Trend', 'note': 'in when the 30-day EMA is above the 50-day', 'rows': [
+                check('30-day EMA above 50-day EMA', fmt_usd(x['ema_fast'], 0), f"above {fmt_usd(x['ema_slow'], 0)}", x['trend']),
+                check('Gap between the averages', f'{gap:+.1f}%', 'positive = in', None),
+            ]},
+            {'title': '2 · Halving cycle', 'note': f'day {hs} since the {last_h:%b %Y} halving', 'rows': [
+                check('Outside the bear window (day 541–900)', f'day {hs}', 'outside', not x['bear_window']),
+                check('Outside the mid-cycle chop phase (day 1,081–1,260)', f'day {hs}', 'outside = full size', not x['chop_window']),
+            ]},
+            {'title': '3 · Size', 'note': '100%, or 50% when the trend is weak', 'rows': [
+                check('ADX(14) at or above 25 (trend has strength)', f"{x['adx']:.1f}", 'at/above 25 = full size', not x['weak_trend']),
+                check('Position size', f"{x['size']:.0%}", '100% or 50%', None),
             ]},
         ]
         orders = [
-            {'kind': 'TARGET', 'tone': 'blue', 'text': f'Hold BTC at {w:.0%} of the pot. Trade when the score or window changes, or when the holding drifts more than 10 pts from target.'},
-            {'kind': 'ADD', 'tone': 'green', 'text': 'Each extra positive signal adds 20% (× the volatility factor), up to 100%.'},
-            {'kind': 'EXIT', 'tone': 'red', 'text': f'Go to cash when the score reaches 0, or when the next halving window opens (~{nxt_start:%b %Y}).'},
-            {'kind': 'NO FIXED STOP', 'tone': 'grey', 'text': 'Risk is controlled by the signals and volatility sizing, as tested.'},
+            {'kind': 'ENTRY', 'tone': 'green', 'text': 'Buy at the daily close when the 30-day EMA crosses above the 50-day EMA (outside the bear window).'},
+            {'kind': 'EXIT', 'tone': 'red', 'text': f"Sell everything at the close when the 30-day EMA crosses below the 50-day, or when the bear window opens (next ~{nxt_bear:%b %Y})."},
+            {'kind': 'SIZE', 'tone': 'blue', 'text': 'Hold 100% of the pot, or 50% while ADX(14) is below 25 or during the mid-cycle chop phase. Rebalance at the close when the size changes.'},
+            {'kind': 'NO FIXED STOP', 'tone': 'grey', 'text': 'No stop loss or profit target: the cross, the bear window and the size rules are the only exits.'},
         ]
         extra = [
             {'label': 'Dollar index, 6-month change', 'value': fmt_pct(x['dxy_6m']), 'tone': ''},
@@ -126,23 +184,14 @@ class BTCTrend(Strategy):
             'key': self.key, 'name': self.name, 'asof': d.strftime('%Y-%m-%d'), 'provisional': provisional,
             'kicker': 'System #2 · BTC spot daily · checks at 00:00 UTC',
             'action': action, 'action_sub': sub, 'plain': plain,
-            'pills': [{'text': f"Score {x['score']:.1f} ({n_on} of 5)", 'tone': 'blue'},
-                      {'text': f'Halving window: {win_txt}', 'tone': 'red' if x['halving_window'] else 'green'}],
+            'pills': [{'text': 'Trend: ' + ('up' if x['trend'] else 'down'), 'tone': 'green' if x['trend'] else 'grey'},
+                      {'text': phase, 'tone': tone},
+                      {'text': f"ADX {x['adx']:.0f} · size {x['size']:.0%}", 'tone': 'blue' if not x['weak_trend'] else 'amber'}],
             'groups': groups, 'orders': orders,
             'extra_title': 'Context · display only', 'extra': extra,
-            'extra_note': 'Tested as position filters and dropped: they did not improve results.',
+            'extra_note': 'Dollar and liquidity were tested as filters in v1 and dropped.',
             'targets': {'BTC': w}, 'prev_targets': {'BTC': w_prev},
-            'levels': {'close': float(x['close']), 'score': float(x['score']), 'vol30': float(x['vol30'])},
+            'levels': {'close': float(x['close']), 'ema_fast': float(x['ema_fast']), 'ema_slow': float(x['ema_slow']),
+                       'adx': float(x['adx']), 'size': float(x['size'])},
             'paper': self.paper, 'timing': self.timing,
-            'review': ('Paper only: this system failed its out-of-sample re-test on 3 Nov 2026 (walk-forward 2016–2026: '
-                       '37% a year, worst fall −64%, vs holding BTC 61% / −84%). Its backtest figures are in-sample and '
-                       'optimistic. Tracked here for information; not recommended for real money until re-validated.'),
         }
-
-
-def _days_since_halving(idx: pd.DatetimeIndex) -> np.ndarray:
-    out = np.full(len(idx), np.nan)
-    for h in HALVINGS:
-        m = idx >= h
-        out[m] = (idx[m] - h).days
-    return out

@@ -50,7 +50,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 01:48</span>
+    <span>Updated Tue 03 Nov 2026, 10:56</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -105,13 +105,13 @@
       <input name="cash_rate_pct" type="number" step="0.01" min="0" value="0.0" class="w100" aria-label="Cash interest for Nasdaq trading system (EQQQ ISA + USD Invest)">
       <input name="fx_fee_pct" type="number" step="0.01" min="0" value="0.15" class="w100" aria-label="GBP to USD conversion fee for Nasdaq trading system (EQQQ ISA + USD Invest)">
       <button class="btn small primary" type="submit">Save</button></form></td></tr>
-    <tr><td><b>BTC trend system</b><div class="small muted">btc_trend</div></td>
+    <tr><td><b>BTC cycle trend system</b><div class="small muted">btc_trend</div></td>
     <td colspan="6"><form data-op="set_pot" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
       <input type="hidden" name="pot" value="btc_trend">
-      <input name="initial_capital" type="number" step="0.01" min="0" value="500" class="amt" aria-label="Initial capital for BTC trend system">
-      <input name="monthly_topup" type="number" step="0.01" min="0" value="0" class="amt" aria-label="Monthly top-up for BTC trend system">
-      <input name="fee_pct" type="number" step="0.01" min="0" value="0.1" class="w100" aria-label="Fee for BTC trend system">
-      <input name="cash_rate_pct" type="number" step="0.01" min="0" value="0.0" class="w100" aria-label="Cash interest for BTC trend system">
+      <input name="initial_capital" type="number" step="0.01" min="0" value="500" class="amt" aria-label="Initial capital for BTC cycle trend system">
+      <input name="monthly_topup" type="number" step="0.01" min="0" value="0" class="amt" aria-label="Monthly top-up for BTC cycle trend system">
+      <input name="fee_pct" type="number" step="0.01" min="0" value="0.4" class="w100" aria-label="Fee for BTC cycle trend system">
+      <input name="cash_rate_pct" type="number" step="0.01" min="0" value="0.0" class="w100" aria-label="Cash interest for BTC cycle trend system">
       
       <button class="btn small primary" type="submit">Save</button></form></td></tr></tbody>
   </table></div>
@@ -138,7 +138,7 @@
   <td><span class="pill t-green">ok</span></td></tr><tr><td><b>GBPUSD</b> <span class="small muted">GBP/USD</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
   <td><span class="pill t-green">ok</span></td></tr><tr><td><b>NETLIQ</b> <span class="small muted">Fed net liquidity (WALCL - TGA - RRP), $bn</span></td><td>fred</td><td class="n">2026-10-30</td><td class="n">2026-10-24</td>
   <td><span class="pill t-green">ok</span></td></tr></tbody></table></div>
-  <p class="banner warn small">Last download failed for: NETLIQ (FRED download failed for WALCL: HTTPSConnectionPool(host=&#39;fred.stlouisfed.org&#39;, ). Upload a CSV below if it keeps failing.</p>
+  
   <h3 style="margin:18px 0 8px">Upload a CSV</h3>
   <p class="small muted" style="margin:0 0 10px">Accepts Yahoo, Investing.com, Nasdaq.com and FRED exports (needs a date and a close/price column). Uploaded rows replace stored rows on the same dates.</p>
   <form id="upload" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
@@ -151,7 +151,7 @@
 </main>
 <footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 01:48", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 10:56", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>

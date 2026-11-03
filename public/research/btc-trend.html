@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BTC trend blend (under review) · Signals</title>
+<title>BTC cycle trend system · Signals</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../static/app.css">
@@ -50,7 +50,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 01:48</span>
+    <span>Updated Tue 03 Nov 2026, 10:56</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
@@ -59,123 +59,232 @@
 <main>
 
 <p class="small"><a href="../research.html">← Research library</a></p>
-<article class="card paper"><h1 id="btc-trend-blend-v10">BTC trend blend (v1.0)</h1>
-<p>Trading system #2. Spot Bitcoin, long or flat. Built from scratch for BTC rather than adapted from the QQQ system.</p>
+<article class="card paper"><h1 id="btc-cycle-trend-system-v2-live-from-3-november-2026">BTC cycle trend system (v2, live from 3 November 2026)</h1>
+<p>Trading system #2. Spot Bitcoin, long or flat, checked once a day at the 00:00 UTC close. It replaces the v1 "trend blend", which failed its out-of-sample re-test (see the history at the end).</p>
 <h2 id="idea">Idea</h2>
-<p>Bitcoin trends strongly in both directions, and its four-year halving cycle has produced deep bear markets roughly 1.5–2.5 years after each halving. The system holds BTC in proportion to how many trend signals agree. It cuts size when volatility is extreme, and stays out during the post-halving bear window.</p>
-<h2 id="rules-daily-close-at-0000-utc-btcusd">Rules (daily close at 00:00 UTC, BTC/USD)</h2>
+<p>Bitcoin moves in long trends, and so far its four-year halving cycle has produced a deep bear market roughly 18 to 30 months after each halving. The system:</p>
+<ul>
+<li>follows the trend with a fast pair of daily moving averages;</li>
+<li>stays out of the market during the post-halving bear window;</li>
+<li>halves its size when the trend is weak, or during the mid-cycle chop phase.</li>
+</ul>
+<h2 id="rules">Rules</h2>
+<p>Every day at the 00:00 UTC daily close:</p>
 <ol>
-<li><strong>Score</strong> = average of five 0/1 signals:</li>
-<li>close above the close 10 days ago;</li>
-<li>close above the close 20 days ago;</li>
-<li>close above the close 50 days ago;</li>
-<li>close above the 50-day EMA;</li>
-<li>10-day EMA above the 30-day EMA.</li>
+<li><strong>Trend.</strong> Be in the market while the <strong>30-day EMA</strong> of daily closes is above the <strong>50-day EMA</strong>. Buy at the close when it crosses above; sell everything at the close when it crosses below.</li>
+<li><strong>Bear window.</strong> From <strong>day 541 to day 900 after each halving</strong>, hold no BTC: sell if invested, and make no new entries. When the window ends, buy at the first close if the 30-day EMA is above the 50-day.</li>
+<li><strong>Size.</strong> Hold <strong>100% of the BTC pot</strong>, except <strong>50%</strong> when either:</li>
+<li><strong>ADX(14)</strong> is below 25 (Wilder's ADX on daily highs, lows and closes: the trend has no strength), or</li>
+<li>it is <strong>day 1,081 to 1,260 after the halving</strong> (mid-cycle chop phase).</li>
 </ol>
-<p>The score can be 0, 0.2, 0.4, 0.6, 0.8 or 1.
-2. <strong>Volatility sizing.</strong> Multiply by min(1, 80% ÷ 30-day realised volatility). Volatility is the standard deviation of daily log returns over 30 days × √365.
-3. <strong>Halving window.</strong> Hold nothing from day 545 to day 910 after each halving: 28 Nov 2012, 9 Jul 2016, 11 May 2020 and 20 Apr 2024. The next halving is expected around April 2028, so the next window runs about October 2029 to October 2030.
-4. <strong>Target weight</strong> = score × volatility factor (0 inside the window). The rest of the pot stays in cash.</p>
-<p>On the platform, the pot trades to the target when the score or the window changes, or when the holding drifts more than 10 points from target. EMAs use the standard recursive formula (span n).</p>
-<h2 id="results-10-bp-costs-cash-at-the-t-bill-rate">Results (10 bp costs, cash at the T-bill rate)</h2>
+<p>Rebalance at the close when the size changes.
+4. <strong>No other exits.</strong> No stop loss and no profit target. The cross, the bear window and the size rules are the only exits.</p>
+<p>The EMAs are standard exponential moving averages (span 30 and 50) of daily closes. Days are counted from the halvings of 28 Nov 2012, 9 Jul 2016, 11 May 2020 and 20 Apr 2024. The next halving is expected around April 2028.</p>
+<table>
+<thead>
+<tr>
+<th>Halving</th>
+<th>Bear window: flat</th>
+<th>Chop phase: half size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20 Apr 2024</td>
+<td>13 Oct 2025 – 7 Oct 2026</td>
+<td>6 Apr 2027 – 2 Oct 2027</td>
+</tr>
+<tr>
+<td>~Apr 2028 (est.)</td>
+<td>~Oct 2029 – ~Oct 2030</td>
+<td>~Apr 2031 – ~Oct 2031</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-it-was-tested">How it was tested</h2>
+<ul>
+<li><strong>Data:</strong> Coin Metrics daily BTC/USD, 2012 to October 2026. Daily highs and lows for ADX come from Yahoo and start in late 2014.</li>
+<li><strong>Positions:</strong> decided at the close and held to the next close. Idle cash earns the 3-month T-bill.</li>
+<li><strong>Costs:</strong> 0.40% per trade (Kraken Pro limit-order fee), on every change in position, size changes included.</li>
+<li><strong>Held-out years:</strong> a stratified random draw, one each from the bear, middle and bull thirds of years: <strong>2012, 2016 and 2018</strong>. They were never used to choose rules. With the ADX size rule, 2012 can't be tested (no highs and lows that early), so the held-out figure covers 2016 and 2018.</li>
+<li><strong>Search:</strong> about 560 trend variants tested on the other years:</li>
+<li>daily and weekly charts;</li>
+<li>simple and exponential averages;</li>
+<li>crossover and close-above entries;</li>
+<li>crossover, close-below-slow and close-below-fast exits;</li>
+<li>fast 10–50 days with slow 50–200 days.</li>
+</ul>
+<p>The cycle overlays, chop indicators (ADX, the Choppiness Index, Kaufman's efficiency ratio) and dip-buying legs were tested after that.</p>
+<h2 id="results-040-per-trade-buy-and-hold-with-no-costs">Results (0.40% per trade; buy and hold with no costs)</h2>
 <table>
 <thead>
 <tr>
 <th>Period</th>
-<th>CAGR</th>
-<th>Max drawdown</th>
-<th>Calmar</th>
-<th>BTC buy &amp; hold</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Training 2015–2024</td>
-<td>105%</td>
-<td>−30%</td>
-<td>3.46</td>
-<td>77% / −84% / 0.92</td>
-</tr>
-<tr>
-<td>Early check 2011–2014</td>
-<td>301%</td>
-<td>−42%</td>
-<td>—</td>
-<td>drawdown −93%</td>
-</tr>
-<tr>
-<td>2025–Oct 2026 (seen during research, not independent)</td>
-<td>−1% total</td>
-<td>−17%</td>
-<td>—</td>
-<td>−17% total, −53% drawdown</td>
-</tr>
-</tbody>
-</table>
-<p>Calmar by era: 2015–17 6.3, 2018–20 3.4, 2021–24 2.1. About 49% invested on average.</p>
-<h2 id="filters-tested">Filters tested</h2>
-<ul>
-<li><strong>Halving window:</strong> kept. It lifted Calmar from 1.55 to 3.43 and cut the worst drawdown from −54% to −33%.</li>
-<li><strong>Volatility sizing:</strong> kept as crash insurance. Little change in 2015–24, but it cut the 2011–14 drawdown from −70% to −42%.</li>
-<li><strong>Dropped:</strong> dollar-strength, Fed-liquidity, credit and overheating filters. Each made results worse or added nothing. Dollar and liquidity are shown on the dashboard as context only.</li>
-<li><strong>Which moving average</strong> mattered much less than the halving window and volatility sizing. Almost any sensible trend rule inside that wrapper scored Calmar 2.2–3.5.</li>
-</ul>
-<h2 id="what-to-expect">What to expect</h2>
-<ul>
-<li>About 180 variants were tested in total, so the training figures are optimistic. Expect less in live trading.</li>
-<li>Many small adjustments: each change in score moves the target by 20 points. With a 0.10% fee that is a real but small cost.</li>
-<li>Long flat periods inside the halving window, even if the price rises.</li>
-<li>The research used Coin Metrics closes. Live signals use Yahoo's BTC-USD close at 00:00 UTC; the two sources occasionally differ by a day's signal.</li>
-</ul>
-<h2 id="re-test-3-november-2026-failed-out-of-sample">Re-test, 3 November 2026: failed out of sample</h2>
-<p>After the live-vs-expected chart showed the pot far below its expected range, the system was re-fitted from scratch with the QQQ discipline. The design was written down before any test ran (<code>research/btc-recalibration/PREREG.md</code> in this repo).</p>
-<p><strong>Holdout.</strong> The years 2012–2026 were ranked by BTC's return and split into thirds (bear, middle, bull). One year was drawn at random from each third (seed 20261103): <strong>2018, 2016 and 2012</strong>. The other 12 years were used for fitting.</p>
-<p><strong>Search on the training years only.</strong> The search ran in stages, with the selection rules fixed in advance:</p>
-<ol>
-<li>Trend rule. From 26 candidates, the simplest family within 10% of the best was kept, and the centre of its best range of lengths was chosen: close above the 100-day EMA.</li>
-<li>Volatility sizing at a 100% target. It was kept because it improved both Calmar and drawdown.</li>
-<li>Halving window. It was <strong>dropped</strong>: its best setting improved training Calmar by only 9%, below the 20% bar set in advance.</li>
-</ol>
-<p><strong>Result.</strong> Training: 128% a year, worst fall −52%. Holdout years: <strong>8% a year, worst fall −57%</strong>. In 2018 it lost 49%: BTC crossed its 100-day EMA 25 times that year. That fails the adoption rule, which required holdout Calmar of at least half the training figure (0.14 against a required 1.25).</p>
-<p><strong>Walk-forward check of the whole procedure.</strong> For each year from 2016 to 2026, the same selection stages were re-run on the years before it, and that year was traded out of sample:</p>
-<table>
-<thead>
-<tr>
-<th>2016–Oct 2026, out of sample</th>
 <th>Yearly return</th>
 <th>Worst fall</th>
-<th>Calmar</th>
+<th>Return ÷ worst fall</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Walk-forward trend system</td>
-<td>37%</td>
-<td>−64%</td>
-<td>0.57</td>
+<td>2016–Oct 2026</td>
+<td><strong>83%</strong></td>
+<td><strong>−34%</strong></td>
+<td>2.44</td>
 </tr>
 <tr>
-<td>Holding BTC</td>
+<td>Held-out years 2016 + 2018</td>
+<td>38%</td>
+<td>−24%</td>
+<td>1.6</td>
+</tr>
+<tr>
+<td>Same rules on Yahoo prices (as live), 2016–Oct 2026</td>
+<td>84%</td>
+<td>−34%</td>
+<td>2.51</td>
+</tr>
+<tr>
+<td>Buy &amp; hold, 2016–Oct 2026</td>
 <td>61%</td>
 <td>−84%</td>
 <td>0.73</td>
 </tr>
+</tbody>
+</table>
+<p>The worst fall is the largest drop of the pot's value (BTC plus cash) from a previous high, on daily closes.</p>
+<p><strong>Year by year</strong> (final rules). Each cell is the year's return / worst fall within that year:</p>
+<table>
+<thead>
 <tr>
-<td>v1 system (the rules on this page; in-sample, for reference)</td>
-<td>83%</td>
-<td>−30%</td>
-<td>2.75</td>
+<th>Year</th>
+<th>System</th>
+<th>Buy &amp; hold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2016 (held out)</td>
+<td>+88% / −24%</td>
+<td>+129% / −31%</td>
+</tr>
+<tr>
+<td>2017</td>
+<td>+796% / −34%</td>
+<td>+1,250% / −36%</td>
+</tr>
+<tr>
+<td>2018 (held out)</td>
+<td>+2% / 0%</td>
+<td>−72% / −81%</td>
+</tr>
+<tr>
+<td>2019</td>
+<td>+151% / −15%</td>
+<td>+88% / −49%</td>
+</tr>
+<tr>
+<td>2020</td>
+<td>+171% / −18%</td>
+<td>+310% / −52%</td>
+</tr>
+<tr>
+<td>2021</td>
+<td>+136% / −26%</td>
+<td>+62% / −53%</td>
+</tr>
+<tr>
+<td>2022</td>
+<td>−4% / −6%</td>
+<td>−65% / −67%</td>
+</tr>
+<tr>
+<td>2023</td>
+<td>+62% / −16%</td>
+<td>+165% / −20%</td>
+</tr>
+<tr>
+<td>2024</td>
+<td>+62% / −23%</td>
+<td>+114% / −26%</td>
+</tr>
+<tr>
+<td>2025</td>
+<td>+3% / −16%</td>
+<td>−6% / −32%</td>
+</tr>
+<tr>
+<td>2026 (to Oct)</td>
+<td>−1% / −5%</td>
+<td>−13% / −40%</td>
 </tr>
 </tbody>
 </table>
-<p>The trend rule chosen changed from year to year, which is a sign of no stable edge. The v1 system's halving window would have saved 2018 (+12% against −72%), but the evidence for the window rests on only four halving cycles. When it was fitted only on the years before each test year, it did not hold up as a reliable improvement.</p>
-<p><strong>Conclusion.</strong> No version of the BTC trend system has a validated edge over simply holding BTC. Out of sample, trend timing cut the worst fall by about 20 points but gave up about 40% of the return. The gap between the v1 backtest (Calmar 2.75) and the walk-forward result (0.57) is the in-sample optimism the live chart exposed.</p>
-<p><strong>On the platform.</strong> The BTC pot keeps following the v1 rules as a <strong>paper-only</strong> track and is labelled as such. The rules were not swapped for a variant picked after seeing the holdout, because that would bring the bias straight back. The choice of what to do with BTC money is open; see the options in the project notes.</p></article>
+<p>It beats buy and hold in every bear or sideways year and in some bull years (2019, 2021). It lags in strong, steady bull years (2016, 2017, 2020, 2023, 2024), because it enters late and runs at half size while the trend is still weak.</p>
+<h2 id="what-each-part-contributes-2016oct-2026">What each part contributes (2016–Oct 2026)</h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Yearly return</th>
+<th>Worst fall</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>30/50 crossover only</td>
+<td>67%</td>
+<td>−64%</td>
+</tr>
+<tr>
+<td>+ bear window (day 541–900)</td>
+<td>86%</td>
+<td>−40%</td>
+</tr>
+<tr>
+<td>+ half size in the chop phase</td>
+<td>91%</td>
+<td>−40%</td>
+</tr>
+<tr>
+<td>+ half size when ADX &lt; 25 (final)</td>
+<td>83%</td>
+<td>−34%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="decisions-and-rejected-ideas">Decisions and rejected ideas</h2>
+<ul>
+<li><strong>Weekly charts:</strong> too slow. A 13/40-week crossover with the bear window had a −67% worst fall from 2019 to 2020.</li>
+<li><strong>Close-below-slow-average exits:</strong> for 30/50 they gave more whipsaws and were worse (65% / −45%). They do help pairs that are far apart.</li>
+<li><strong>Trailing stops (15–30%) and volatility sizing:</strong> both made results worse.</li>
+<li><strong>Narrower "trade only in bull phases" windows:</strong> results jumped around with small changes in the dates. Not adopted.</li>
+<li><strong>Chop detection inside the chop phase (ADX, Choppiness Index, efficiency ratio):</strong> no better than the calendar alone. ADX below 25 works as a general filter at any time.</li>
+<li><strong>Dip-buying leg:</strong> only RSI(14) below 30 in a bull market helped, by about 3 points a year from 14 trades in 15 years, and it was fragile to the threshold. Left out.</li>
+</ul>
+<h2 id="what-to-expect">What to expect</h2>
+<ul>
+<li><strong>Optimism from heavy testing.</strong> Many variants were tried, so live results will likely be below the backtest. The site's <em>Live vs expected</em> chart flags any drift.</li>
+<li><strong>The cycle window is the biggest dependency.</strong> It rests on four halving cycles. If the next cycle tops later than about 18 months after the halving, the window would sell too late. Starting it at day 580 instead of 540 badly hurt 2018.</li>
+<li><strong>Trading activity.</strong> About 2 entries a year, plus size changes: roughly 10 order tickets a year in total. At 0.40% a trade that is about 1.5–2% a year in fees, already included above.</li>
+<li><strong>Lag in strong bull runs.</strong> It catches part of them, not all. Its strength is sitting out bear markets.</li>
+</ul>
+<h2 id="execution">Execution</h2>
+<ul>
+<li><strong>Kraken Pro:</strong> limit orders at 0.40% (market orders cost 0.80%). This matches the 00:00 UTC close exactly.</li>
+<li><strong>IB1T:</strong> the iShares bitcoin ETP on the London Stock Exchange, 0.25% a year, can be held in an ISA. Its line is priced in dollars, so Trading 212 adds 0.15% per trade. It trades the next session, about a day late, which made no material difference in testing.</li>
+<li>Set the BTC pot's fee in Settings to match the route you use.</li>
+</ul>
+<h2 id="history">History</h2>
+<ul>
+<li><strong>v1 (2 Nov 2026):</strong> daily five-signal blend, volatility sizing, flat from day 545 to 910. In-sample 105% / −30% over 2015–24. Failed its re-test on 3 Nov 2026: refitted on training years only, it made 8% a year in the held-out years, and 37% / −64% in a year-by-year re-fit over 2016–26, against buy and hold at 61% / −84%.</li>
+<li><strong>v2 (3 Nov 2026):</strong> this system, rebuilt from scratch. Scripts and outputs are in <code>research/btc-v2/</code>; the v1 re-test is in <code>research/btc-recalibration/</code>.</li>
+</ul></article>
 
 </main>
 <footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 01:48", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 10:56", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="../static/app.js"></script>
 </body>
 </html>

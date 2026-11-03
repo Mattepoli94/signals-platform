@@ -51,13 +51,14 @@ def test_value_zone_30_oct_2026(stored):
     assert not x['zone']                        # z in the zone but close below the 20-day average
 
 
-def test_btc_1_nov_2026(stored):
-    t = STRATEGIES['btc_trend'].compute(stored).loc[:'2026-11-01']
-    x = t.iloc[-1]
-    assert x['score'] == pytest.approx(0.2)
-    assert int(x['days_since_halving']) == 925 and not x['halving_window']
-    assert x['w_BTC'] == pytest.approx(0.2)
-    assert t.loc['2026-01-01', 'halving_window'] and t.loc['2026-01-01', 'w_BTC'] == 0
+def test_btc_v2_rules(stored):
+    t = STRATEGIES['btc_trend'].compute(stored)
+    x = t.loc['2026-11-02']
+    assert x['trend'] and int(x['days_since_halving']) == 926 and not x['bear_window']
+    assert x['adx'] < 25 and x['size'] == 0.5 and x['w_BTC'] == 0.5
+    assert t.loc['2026-01-01', 'bear_window'] and t.loc['2026-01-01', 'w_BTC'] == 0
+    # weights only take the values 0, 0.5, 1
+    assert set(t['w_BTC'].round(3).unique()) <= {0.0, 0.5, 1.0}
 
 
 def test_rsi_and_trend_helpers():

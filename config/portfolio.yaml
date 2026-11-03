@@ -26,12 +26,12 @@ pots:
     fx_fee_pct: 0.15
     cash_rate_pct: 0.0
   btc_trend:
-    name: BTC trend system
+    name: BTC cycle trend system
     strategy: btc_trend
     page: trading
     initial_capital: 500
     monthly_topup: 0
-    fee_pct: 0.1
+    fee_pct: 0.4
     cash_rate_pct: 0.0
 topups: []
 fills: []

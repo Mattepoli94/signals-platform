@@ -1,0 +1,45 @@
+Pre-registered selection on training years: ('above', 10, None) window: None
+                                                 Train CAGR  Train DD  Train Calmar  Calmar ex-2013  Holdout CAGR  Holdout DD  Holdout Calmar  Trades/yr
+A. Selected: weekly close > 10w EMA (no window)       1.233    -0.704         1.751           1.413        -0.014      -0.568          -0.024      3.211
+B. A + knowledge window (sell day 540-900)            1.327    -0.704         1.884           1.686         0.205      -0.500           0.410      2.619
+C. Weekly EMA 13/40 cross                             1.035    -0.712         1.453           0.743         0.312      -0.646           0.483      0.591
+D. C + knowledge window                               1.199    -0.712         1.683           0.940         0.707      -0.418           1.693      0.591
+E. Old daily v1 (blend + halving window)              1.223    -0.382         3.198           2.102         0.503      -0.418           1.205      9.378
+Buy & hold                                            1.157    -0.845         1.369           0.738         0.177      -0.814           0.218      0.084
+
+Holdout years:
+  A. Selected: weekly close > 10w EMA (no windo {2018: '-44%', 2016: '+46%', 2012: '+18%'}
+  B. A + knowledge window (sell day 540-900)    {2018: '+2%', 2016: '+46%', 2012: '+18%'}
+  C. Weekly EMA 13/40 cross                     {2018: '-54%', 2016: '+129%', 2012: '+114%'}
+  D. C + knowledge window                       {2018: '+2%', 2016: '+129%', 2012: '+114%'}
+  E. Old daily v1 (blend + halving window)      {2018: '+12%', 2016: '+84%', 2012: '+66%'}
+  Buy & hold                                    {2018: '-72%', 2016: '+129%', 2012: '+152%'}
+
+Walk-forward selections:
+2016: above 10 no window -> +46%
+2017: above 10 no window -> +751%
+2018: cross 20/30 no window -> -54%
+2019: cross 20/26 ('C1', 550, 950) -> -10%
+2020: above 10 no window -> +243%
+2021: above 10 no window -> +69%
+2022: above 10 no window -> -29%
+2023: above 10 ('C1', 550, 950) -> +47%
+2024: above 10 no window -> +48%
+2025: above 10 no window -> -7%
+2026: above 10 no window -> -9%
+
+2016-Oct 2026 year by year (walk-forward = genuinely out of sample; fixed rules A-E chosen with hindsight):
+                                                  CAGR  MaxDD  Calmar  Exposure  Trades/yr
+Walk-forward procedure                           0.403 -0.745   0.541     0.628      3.414
+A. Selected: weekly close > 10w EMA (no window)  0.558 -0.624   0.895     0.595      3.967
+B. A + knowledge window (sell day 540-900)       0.706 -0.432   1.634     0.537      3.137
+C. Weekly EMA 13/40 cross                        0.552 -0.836   0.660     0.712      0.554
+D. C + knowledge window                          0.772 -0.670   1.153     0.630      0.554
+E. Old daily v1 (blend + halving window)         0.734 -0.332   2.213     0.457      9.042
+Buy & hold                                       0.613 -0.838   0.732     1.000      0.092
+  A. Selected: weekly close > 10w EMA (no windo {2016: '+46%', 2017: '+751%', 2018: '-44%', 2019: '+133%', 2020: '+243%', 2021: '+69%', 2022: '-29%', 2023: '+47%', 2024: '+48%', 2025: '-7%', 2026: '-9%'}
+  B. A + knowledge window (sell day 540-900)    {2016: '+46%', 2017: '+751%', 2018: '+2%', 2019: '+133%', 2020: '+243%', 2021: '+86%', 2022: '-20%', 2023: '+47%', 2024: '+48%', 2025: '+3%', 2026: '-3%'}
+  C. Weekly EMA 13/40 cross                     {2016: '+129%', 2017: '+1250%', 2018: '-54%', 2019: '-10%', 2020: '+104%', 2021: '+62%', 2022: '-10%', 2023: '+58%', 2024: '+114%', 2025: '-5%', 2026: '-5%'}
+  D. C + knowledge window                       {2016: '+129%', 2017: '+1250%', 2018: '+2%', 2019: '-10%', 2020: '+104%', 2021: '+113%', 2022: '+2%', 2023: '+58%', 2024: '+114%', 2025: '+23%', 2026: '-5%'}
+  E. Old daily v1 (blend + halving window)      {2016: '+84%', 2017: '+499%', 2018: '+12%', 2019: '+99%', 2020: '+226%', 2021: '+95%', 2022: '-6%', 2023: '+99%', 2024: '+50%', 2025: '-9%', 2026: '-1%'}
+  Buy & hold                                    {2016: '+129%', 2017: '+1250%', 2018: '-72%', 2019: '+88%', 2020: '+310%', 2021: '+62%', 2022: '-65%', 2023: '+165%', 2024: '+114%', 2025: '-6%', 2026: '-13%'}

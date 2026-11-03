@@ -26,12 +26,13 @@ PAPERS = [
      'desc': 'Contributions wait in cash and buy only in the trend zone or the 200-week zone. Never sells.',
      'stats': [('Account DD vs DCA', '−34% / −49%'), ('Wealth vs DCA', '−5.4%'), ('Horizon', '10 years')],
      'period': 'Median of rolling 10-year plans started 2000 onwards'},
-    {'slug': 'btc-trend', 'kind': 'TRADING · BTC', 'version': 'v1 · paper only', 'title': 'BTC trend blend (under review)',
-     'desc': 'Failed its out-of-sample re-test on 3 Nov 2026. Kept as a paper track; the paper has the full re-test and walk-forward results.',
-     'stats': [('Walk-forward CAGR', '37%'), ('Worst fall', '−64%'), ('Holding BTC', '61% / −84%')],
-     'period': 'Out of sample 2016–Oct 2026 (walk-forward). The old 105% / −30% figures were in-sample.'},
+    {'slug': 'btc-trend', 'kind': 'TRADING · BTC', 'version': 'v2', 'title': 'BTC cycle trend system',
+     'desc': '30/50-day EMA crossover, flat in the post-halving bear window, half size when ADX(14) < 25 or in the mid-cycle chop phase.',
+     'stats': [('CAGR 2016–26', '83%'), ('Worst fall', '−34%'), ('Held out 16+18', '38% / −24%')],
+     'period': '0.40% per trade (Kraken Pro limit). Buy & hold 2016–26: 61% / −84%. Selected after extensive testing: expect less.'},
 ]
 CHANGELOG = [
+    ('2026-11-03', 'BTC cycle trend system', 'v2 live: 30/50 EMA cross, bear window day 541–900, half size when ADX < 25 or day 1,081–1,260. Replaces v1.'),
     ('2026-11-03', 'BTC trend blend', 'Re-tested with random holdout years (2012, 2016, 2018) and walk-forward: no validated edge over holding BTC. Marked paper only.'),
     ('2026-11-03', 'Nasdaq systems', 'v1.1: traded in EQQQ (London, pence, ISA) at the London close; dollar add-on held as USD cash in the Invest account. Removes the 0.15% FX fee on Nasdaq trades.'),
     ('2026-11-03', 'Platform', 'v1.0 live: signals, pots, top-ups, fills, email alerts.'),

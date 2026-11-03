@@ -50,7 +50,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 01:48</span>
+    <span>Updated Tue 03 Nov 2026, 10:56</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -60,7 +60,7 @@
 
 <div class="pagehead">
   <div>
-    <div class="kicker">Tue 03 Nov 2026, 01:48</div>
+    <div class="kicker">Tue 03 Nov 2026, 10:56</div>
     <h1>Today</h1>
     <p class="sub">What each system says after the latest close, and what to do next. Nasdaq (EQQQ) orders happen at the London close: place them before <b>16:25 UK</b> (Tue 03 Nov).</p>
   </div>
@@ -144,23 +144,28 @@
   </section>
 
   
-  <section class="card grow" style="flex-basis:340px;display:flex;flex-direction:column;gap:14px" aria-label="BTC trend system">
+  <section class="card grow" style="flex-basis:340px;display:flex;flex-direction:column;gap:14px" aria-label="BTC cycle trend system">
     <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
-      <div><div class="kicker">Trading</div><h2 style="margin-top:2px">BTC trend system</h2>
+      <div><div class="kicker">Trading</div><h2 style="margin-top:2px">BTC cycle trend system</h2>
       <div class="small muted">Signal as of the 02 Nov 2026 close</div></div>
       <a class="small" href="trading.html#btc_trend">Details →</a>
     </div>
-    <div class="action a-SELL">
+    <div class="action a-HOLD">
   <div class="l">ACTION</div>
-  <div class="v">SELL</div>
-  <div class="s">BTC to 0%</div>
+  <div class="v">HOLD</div>
+  <div class="s">BTC 50% of the pot</div>
 </div>
-    <div class="banner warn small" style="background:var(--red-bg);border-color:var(--red-b);color:var(--red)"><b>Paper only.</b> Failed its out-of-sample re-test (3 Nov). Not for real money until re-validated.</div>
-    <p style="margin:0;font-size:14px">0 of 5 trend signals are positive, so the score is 0.0. Volatility is 29.6%, so no size cut. Target 0% of the pot.</p>
+    
+    <p style="margin:0;font-size:14px">Uptrend: the 30-day EMA is +0.4% above the 50-day. Hold 50% of the pot: half size because ADX is 22, below 25 (weak trend). Sell at the close if the 30-day EMA crosses below the 50-day ($80,160 now).</p>
     
     
 <div class="banner info">This pot starts at the first close on or after <b>03 Nov 2026</b> with £500.00.
- No order is due at the latest close.</div>
+ At that close it will join the system's current position:
+
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>BUY BTC £250.00</b> <span class="muted">(~0.0044 units at $76,684)</span></li>
+</ul>
+</div>
 
     
     
@@ -177,7 +182,7 @@
     <p class="note">The site refreshes at ~16:05 UK (preview before the London close), ~16:55 (confirmed), ~21:20 after the US close and ~00:20 for BTC.</p>
     
     <div class="scroll" style="margin-top:12px"><table class="t"><thead><tr><th>Date</th><th>System</th><th>Signal</th><th class="n">Price</th></tr></thead><tbody>
-    <tr><td class="mono">02 Nov 2026</td><td>BTC trend</td><td><span class="pill t-red">SELL</span> Score 0.2 → 0.0 · target 0%</td><td class="n">$76,684</td></tr><tr><td class="mono">30 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-green">BUY</span> Dip entry 100% (above 200-day): RSI(2) below 10</td><td class="n">£519.46</td></tr><tr><td class="mono">30 Oct 2026</td><td>BTC trend</td><td><span class="pill t-green">BUY</span> Score 0.0 → 0.2 · target 20%</td><td class="n">$77,198</td></tr><tr><td class="mono">29 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-green">BUY</span> Trend leg off (regime no longer Trending)</td><td class="n">£537.68</td></tr><tr><td class="mono">29 Oct 2026</td><td>BTC trend</td><td><span class="pill t-red">SELL</span> Score 0.4 → 0.0 · target 0%</td><td class="n">$77,775</td></tr><tr><td class="mono">27 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-green">BUY</span> Trend leg on (regime turned Trending)</td><td class="n">£545.10</td></tr><tr><td class="mono">27 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-red">SELL</span> RSI(2) above 70; regime turned Trending</td><td class="n">£545.10</td></tr><tr><td class="mono">27 Oct 2026</td><td>BTC trend</td><td><span class="pill t-green">BUY</span> Score 0.0 → 0.4 · target 40%</td><td class="n">$80,805</td></tr><tr><td class="mono">26 Oct 2026</td><td>BTC trend</td><td><span class="pill t-red">SELL</span> Score 0.2 → 0.0 · target 0%</td><td class="n">$80,007</td></tr><tr><td class="mono">24 Oct 2026</td><td>BTC trend</td><td><span class="pill t-red">SELL</span> Score 0.4 → 0.2 · target 20%</td><td class="n">$80,791</td></tr>
+    <tr><td class="mono">30 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-green">BUY</span> Dip entry 100% (above 200-day): RSI(2) below 10</td><td class="n">£519.46</td></tr><tr><td class="mono">29 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-green">BUY</span> Trend leg off (regime no longer Trending)</td><td class="n">£537.68</td></tr><tr><td class="mono">27 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-green">BUY</span> Trend leg on (regime turned Trending)</td><td class="n">£545.10</td></tr><tr><td class="mono">27 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-red">SELL</span> RSI(2) above 70; regime turned Trending</td><td class="n">£545.10</td></tr><tr><td class="mono">20 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-green">BUY</span> Trend leg off (regime no longer Trending)</td><td class="n">£540.19</td></tr><tr><td class="mono">20 Oct 2026</td><td>Nasdaq trading</td><td><span class="pill t-green">BUY</span> Dip entry 100% (above 200-day): close below lower Bollinger band</td><td class="n">£540.19</td></tr><tr><td class="mono">17 Oct 2026</td><td>BTC trend</td><td><span class="pill t-red">SELL</span> Size halved: ADX fell below 25 · target 50%</td><td class="n">$81,382</td></tr><tr><td class="mono">08 Oct 2026</td><td>BTC trend</td><td><span class="pill t-green">BUY</span> Bear window closed: 30-day EMA above 50-day, buy · target 100%</td><td class="n">$81,676</td></tr>
     </tbody></table></div>
   </section>
 </div>
@@ -185,7 +190,7 @@
 </main>
 <footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 01:48", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 10:56", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>

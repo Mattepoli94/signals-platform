@@ -72,11 +72,10 @@ def _history(key: str, t: pd.DataFrame, n: int = 120) -> list:
     elif key == 'btc_trend':
         prev = None
         for d, r in x.iterrows():
-            if prev is not None and r['state'] != prev['state']:
+            if prev is not None and r['w_BTC'] != prev['w_BTC']:
                 up = r['w_BTC'] > prev['w_BTC']
                 ev.append({'date': d, 'kind': 'BUY' if up else 'SELL',
-                           'text': f"Score {prev['score']:.1f} → {r['score']:.1f}" + (' · halving window' if r['halving_window'] else '') +
-                                   f" · target {r['w_BTC']:.0%}", 'price': r['close'], 'price_fmt': f"${r['close']:,.0f}"})
+                           'text': f"{r['event']} · target {r['w_BTC']:.0%}", 'price': r['close'], 'price_fmt': f"${r['close']:,.0f}"})
             prev = r
     elif key == 'qqq_value':
         z = x['zone'] & ~x['zone'].shift(1, fill_value=False)
