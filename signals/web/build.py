@@ -44,7 +44,7 @@ PAPERS = [
      'period': 'Platform rules and fees, GBP. 2021–26 is in-sample for all three systems.'},
 ]
 CHANGELOG = [
-    ('2026-11-03', 'Platform', "v2.0: renamed Poli's Hedge Fund. Review and tidy-up: the retired risk flag and unused feeds (TLT, GLD, T-bill, dollar index, Fed liquidity) removed; radar inputs listed in Settings; daily routine on Today. Fixes: "Trend leg off" was labelled BUY in the signal history; the value plan card could show the live pre-close QQQ price as the confirmed close."),
+    ('2026-11-03', 'Platform', "v2.0: renamed Poli's Hedge Fund. Review and tidy-up: the retired risk flag and unused feeds (TLT, GLD, T-bill, dollar index, Fed liquidity) removed; radar inputs listed in Settings; daily routine on Today. Fixes: “Trend leg off” was labelled BUY in the signal history; the value plan card could show the live pre-close QQQ price as the confirmed close."),
     ('2026-11-03', 'Value plan', 'v1.2: adds the fast-crash buys (buy 1 = 50% of cash at −10.8% from the high, buy 2 = all cash on 3+ capitulation groups; skipped when the override is on). Trading system unchanged.'),
     ('2026-11-03', 'Bottom signals', 'v1 live (display only): QQQ fast-crash two-step plan with rate/late-cycle override, and the bear-market washout for S&P 500 and QQQ.'),
     ('2026-11-03', 'Risk radar', 'v1 live (display only): late-cycle, Nasdaq crash-risk and BTC leverage radars with their track records. Replaces the old 3-point risk flag on the Nasdaq system.'),
