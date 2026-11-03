@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research · Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+</head>
+<body data-root="">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      Signals
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="index.html" class="">Today</a>
+      
+      <a href="investing.html" class="">Investing</a>
+      
+      <a href="trading.html" class="">Trading</a>
+      
+      <a href="portfolio.html" class="">Portfolio</a>
+      
+      <a href="research.html" class="on" aria-current="page">Research</a>
+      
+      <a href="settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3405</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 00:52</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<div class="pagehead"><div><div class="kicker">Research</div><h1>Research library</h1>
+<p class="sub">One paper per strategy: the exact rules, how they were tested, and what to expect. The platform runs exactly these rules.</p></div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+
+<article class="card" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="kicker">TRADING · NASDAQ-100</span><span class="pill t-green">Live · v1.1</span></div>
+  <h2 style="font-size:19px">Nasdaq-100 regime system + dollar add-on (UK: EQQQ at the London close)</h2>
+  <p style="margin:0;font-size:14px;color:#344054">Regime detector, 50% trend leg, dip-buying leg, dollar add-on and risk flag. Traded in EQQQ (ISA, no FX fee) at the London close.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+  <div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">CAGR 2010–24*</div><div class="mono" style="font-size:16px;font-weight:600">9.0%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Max drawdown</div><div class="mono" style="font-size:16px;font-weight:600">−14.1%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">QQQ research 2000–24</div><div class="mono" style="font-size:16px;font-weight:600">10.4%</div></div>
+  </div>
+  <div class="small muted">*EQQQ at the London close with the dollar add-on, cash 0% · rules fitted on QQQ 1999–2024, not re-tuned</div>
+  <div style="margin-top:auto;display:flex;flex-wrap:wrap;gap:10px"><a class="btn primary" href="research/qqq-regime-system.html">Read the paper</a>
+  <a class="btn" href="https://claude.ai/artifact/Kjtfn4jJ1JdCrynU9ubXvc" target="_blank" rel="noopener">Full build spec ↗</a></div>
+</article>
+
+<article class="card" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="kicker">INVESTING · NASDAQ-100</span><span class="pill t-green">Live · v1.1</span></div>
+  <h2 style="font-size:19px">Nasdaq-100 value-zone accumulation plan</h2>
+  <p style="margin:0;font-size:14px;color:#344054">Contributions wait in cash and buy only in the trend zone or the 200-week zone. Never sells.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+  <div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Account DD vs DCA</div><div class="mono" style="font-size:16px;font-weight:600">−34% / −49%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Wealth vs DCA</div><div class="mono" style="font-size:16px;font-weight:600">−5.4%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Horizon</div><div class="mono" style="font-size:16px;font-weight:600">10 years</div></div>
+  </div>
+  <div class="small muted">Median of rolling 10-year plans started 2000 onwards</div>
+  <div style="margin-top:auto;display:flex;flex-wrap:wrap;gap:10px"><a class="btn primary" href="research/qqq-value-plan.html">Read the paper</a>
+  </div>
+</article>
+
+<article class="card" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="kicker">TRADING · BTC</span><span class="pill t-green">Live · v1.0</span></div>
+  <h2 style="font-size:19px">BTC trend blend</h2>
+  <p style="margin:0;font-size:14px;color:#344054">Five trend signals averaged into a score, volatility sizing, and a flat window 545–910 days after each halving.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+  <div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">CAGR 2015–24</div><div class="mono" style="font-size:16px;font-weight:600">105%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Max drawdown</div><div class="mono" style="font-size:16px;font-weight:600">−30%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Calmar</div><div class="mono" style="font-size:16px;font-weight:600">3.46</div></div>
+  </div>
+  <div class="small muted">Training 2015–2024 · ~180 variants tested, so treat returns as optimistic</div>
+  <div style="margin-top:auto;display:flex;flex-wrap:wrap;gap:10px"><a class="btn primary" href="research/btc-trend.html">Read the paper</a>
+  </div>
+</article>
+
+</div>
+<section class="card"><h2>Rule changes</h2><p class="note">Every change to a live rule is logged here. Signals always come from the version shown.</p>
+<div class="scroll" style="margin-top:12px"><table class="t"><tbody>
+<tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Nasdaq systems</b></td><td>v1.1: traded in EQQQ (London, pence, ISA) at the London close; dollar add-on held as USD cash in the Invest account. Removes the 0.15% FX fee on Nasdaq trades.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Platform</b></td><td>v1.0 live: signals, pots, top-ups, fills, email alerts.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>BTC trend blend</b></td><td>Adopted. Cycle bag removed; liquidity and dollar filters shown as context only.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ value plan</b></td><td>Adopted. Static drawdown rungs replaced by the trend and 200-week zones.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ regime system</b></td><td>v1.0 frozen. Regime turning Trending closes an open dip trade. Gold/TLT hedge dropped; dollar add-on kept.</td></tr>
+</tbody></table></div></section>
+
+</main>
+<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 00:52", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="static/app.js"></script>
+</body>
+</html>

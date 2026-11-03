@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nasdaq-100 value-zone accumulation plan · Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../static/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+</head>
+<body data-root="../">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="../index.html">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      Signals
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="../index.html" class="">Today</a>
+      
+      <a href="../investing.html" class="">Investing</a>
+      
+      <a href="../trading.html" class="">Trading</a>
+      
+      <a href="../portfolio.html" class="">Portfolio</a>
+      
+      <a href="../research.html" class="on" aria-current="page">Research</a>
+      
+      <a href="../settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3405</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 00:52</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<p class="small"><a href="../research.html">← Research library</a></p>
+<article class="card paper"><h1 id="nasdaq-100-value-zone-accumulation-plan-v11">Nasdaq-100 value-zone accumulation plan (v1.1)</h1>
+<p>A monthly savings plan (a <em>piano di accumulo</em>) that buys QQQ only at value, instead of on a fixed date. It complements trading system #1: it buys in the conditions where the trading system is usually flat.</p>
+<h2 id="idea">Idea</h2>
+<p>Plain monthly buying (DCA) is hard to beat on wealth, but it buys tops as readily as bottoms, and the account can spend years below the money put in. This plan keeps contributions in cash (earning interest) and invests them when QQQ comes back to levels that have historically been good value, after price has started to turn up. You give up some wealth in strong bull markets in exchange for much smaller drawdowns.</p>
+<h2 id="rules-daily-adjusted-closes-buys-at-the-close-never-sells">Rules (daily adjusted closes; buys at the close; never sells)</h2>
+<ol>
+<li>Every contribution goes into the pot's cash.</li>
+<li><strong>Trend zone.</strong> Fit a straight line to log(close) over the last 1,260 sessions (5 years). <em>z</em> is today's distance from the line in standard deviations of the fit's residuals. Zone = −1 &lt; z ≤ 0 <strong>and</strong> close above the 20-day SMA.</li>
+<li><strong>200-week zone.</strong> Close 0–15% above the 1,000-day SMA <strong>and</strong> close above the 50-day SMA.</li>
+<li>On a close in either zone, buy <strong>50% of the cash</strong> at the close. At most one buy every 10 trading days.</li>
+<li><strong>Safety cap.</strong> On the first trading day of a month, if cash is above 24 × the monthly contribution, invest the excess.</li>
+</ol>
+<p>Price below the trend zone (z ≤ −1) is not bought. Deep levels behaved like falling knives in secular bear markets (2000–2002).</p>
+<h2 id="results-rolling-plans-1000-a-month-cash-at-the-t-bill-rate">Results (rolling plans, $1,000 a month, cash at the T-bill rate)</h2>
+<table>
+<thead>
+<tr>
+<th>Plans</th>
+<th>Wealth vs monthly DCA (median)</th>
+<th>Account drawdown (median)</th>
+<th>Below money in (median / worst)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10 years, starts 2000+</td>
+<td>−5.4%</td>
+<td>−34% vs −49%</td>
+<td>−19% / −37% vs −29% / −56%</td>
+</tr>
+<tr>
+<td>10 years, starts 1986–99</td>
+<td>−0.2%</td>
+<td>—</td>
+<td>−3% / −24% vs −23% / −57%</td>
+</tr>
+<tr>
+<td>20 years</td>
+<td>−3% to +1%</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Level study: after a trend-zone close, QQQ returned +39% over the next year in 1990–2005 and +23% in 2006–25 (loss in 1% and 11% of cases). After a 200-week-zone close: +26% and +23%.</p>
+<h2 id="what-to-expect">What to expect</h2>
+<ul>
+<li>Long stretches with no buys in strong markets. Cash can build up for many months; that is the plan working, not a fault.</li>
+<li>Over 10–20 years, wealth roughly equal to or a little below monthly buying, with much shallower drawdowns.</li>
+<li>Fit with trading system #1: on zone-buy days the trading system was flat or half-invested 97% of the time.</li>
+<li>The rules are QQQ-specific: on SPY the zones gave no edge in 1998–2009.</li>
+</ul>
+<h2 id="uk-implementation-v11">UK implementation (v1.1)</h2>
+<p>The zones are still judged on QQQ at the US close: the rules were validated on that series, and they move slowly. A buy is placed in <strong>EQQQ</strong> (pence, ISA) at the next London close. That is one session later than in the research, which matters little for a plan that buys a few times a year, and it avoids any currency fee. The cut-off is 16:25 UK; an email the evening before says when a buy is due.</p>
+<h2 id="on-this-platform">On this platform</h2>
+<ul>
+<li>Your initial capital and every top-up go into the pot's cash on their date. The monthly top-up setting adds money automatically on the first trading day of each month and enables the safety cap.</li>
+<li>The Investing page shows each zone condition live, what a buy would invest (50% of cash), and the plan against QQQ buy-and-hold with the same deposits.</li>
+</ul></article>
+
+</main>
+<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 00:52", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="../static/app.js"></script>
+</body>
+</html>

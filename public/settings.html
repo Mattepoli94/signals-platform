@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings · Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+</head>
+<body data-root="">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      Signals
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="index.html" class="">Today</a>
+      
+      <a href="investing.html" class="">Investing</a>
+      
+      <a href="trading.html" class="">Trading</a>
+      
+      <a href="portfolio.html" class="">Portfolio</a>
+      
+      <a href="research.html" class="">Research</a>
+      
+      <a href="settings.html" class="on" aria-current="page">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3405</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 00:52</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<div class="pagehead"><div><div class="kicker">Settings</div><h1>Settings</h1>
+<p class="sub">Capital, fees, alerts and data. Changes rebuild every pot's history from the start date.</p></div></div>
+
+<section class="card" id="connection" aria-label="Connection">
+  <h2>How edits are saved</h2>
+  <div id="mode-local" class="banner ok" style="display:none;margin-top:12px">Running on your computer: edits are saved straight to <code>config/portfolio.yaml</code>.</div>
+  <div id="mode-gh" style="display:none;margin-top:12px">
+    <p class="note" style="margin-top:0">On the hosted site (Vercel), edits are sent to your GitHub repository; it rebuilds and Vercel republishes the site in about 2–3 minutes. Paste a fine-grained GitHub token once (stored only in this browser). Give it access to this repository only, with <b>Contents: read and write</b> and <b>Actions: read and write</b>.</p>
+    <form id="ghform" class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:10px">
+      <label class="f">Owner<input name="owner" id="gh-owner" required style="width:160px"></label>
+      <label class="f">Repository<input name="repo" id="gh-repo" required style="width:180px"></label>
+      <label class="f">Token<input name="token" id="gh-token" type="password" required style="width:280px" autocomplete="off"></label>
+      <button class="btn primary" type="submit">Save connection</button>
+      <button class="btn ghost" type="button" id="gh-clear">Forget token</button>
+    </form>
+    <p class="small muted" id="gh-state" style="margin:8px 0 0"></p>
+  </div>
+</section>
+
+<section class="card" id="pots" aria-label="Pots">
+  <h2>Pots</h2>
+  <p class="note">Initial capital is deposited at the start date. A monthly top-up (optional) is added automatically on the first trading day of each month. Use the Portfolio page for one-off top-ups.</p>
+  <form data-op="set_start" class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:14px">
+    <label class="f">Start date (first close the pots follow)<input name="start_date" type="date" value="2026-11-03" required class="dt"></label>
+    <button class="btn" type="submit">Save start date</button>
+  </form>
+  <div class="scroll" style="margin-top:16px"><table class="t">
+    <thead><tr><th>Pot</th><th>Initial capital (£)</th><th>Monthly top-up (£)</th><th>Fee per trade (%)</th><th>Interest on cash (% a year)</th><th>GBP↔USD fee (%)</th><th></th></tr></thead>
+    <tbody>
+    <tr><td><b>Nasdaq value plan (EQQQ, ISA)</b><div class="small muted">qqq_value</div></td>
+    <td colspan="6"><form data-op="set_pot" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+      <input type="hidden" name="pot" value="qqq_value">
+      <input name="initial_capital" type="number" step="0.01" min="0" value="1000" class="amt" aria-label="Initial capital for Nasdaq value plan (EQQQ, ISA)">
+      <input name="monthly_topup" type="number" step="0.01" min="0" value="0" class="amt" aria-label="Monthly top-up for Nasdaq value plan (EQQQ, ISA)">
+      <input name="fee_pct" type="number" step="0.01" min="0" value="0.05" class="w100" aria-label="Fee for Nasdaq value plan (EQQQ, ISA)">
+      <input name="cash_rate_pct" type="number" step="0.01" min="0" value="0.0" class="w100" aria-label="Cash interest for Nasdaq value plan (EQQQ, ISA)">
+      
+      <button class="btn small primary" type="submit">Save</button></form></td></tr>
+    <tr><td><b>Nasdaq trading system (EQQQ ISA + USD Invest)</b><div class="small muted">qqq_regime</div></td>
+    <td colspan="6"><form data-op="set_pot" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+      <input type="hidden" name="pot" value="qqq_trading">
+      <input name="initial_capital" type="number" step="0.01" min="0" value="500" class="amt" aria-label="Initial capital for Nasdaq trading system (EQQQ ISA + USD Invest)">
+      <input name="monthly_topup" type="number" step="0.01" min="0" value="0" class="amt" aria-label="Monthly top-up for Nasdaq trading system (EQQQ ISA + USD Invest)">
+      <input name="fee_pct" type="number" step="0.01" min="0" value="0.05" class="w100" aria-label="Fee for Nasdaq trading system (EQQQ ISA + USD Invest)">
+      <input name="cash_rate_pct" type="number" step="0.01" min="0" value="0.0" class="w100" aria-label="Cash interest for Nasdaq trading system (EQQQ ISA + USD Invest)">
+      <input name="fx_fee_pct" type="number" step="0.01" min="0" value="0.15" class="w100" aria-label="GBP to USD conversion fee for Nasdaq trading system (EQQQ ISA + USD Invest)">
+      <button class="btn small primary" type="submit">Save</button></form></td></tr>
+    <tr><td><b>BTC trend system</b><div class="small muted">btc_trend</div></td>
+    <td colspan="6"><form data-op="set_pot" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+      <input type="hidden" name="pot" value="btc_trend">
+      <input name="initial_capital" type="number" step="0.01" min="0" value="500" class="amt" aria-label="Initial capital for BTC trend system">
+      <input name="monthly_topup" type="number" step="0.01" min="0" value="0" class="amt" aria-label="Monthly top-up for BTC trend system">
+      <input name="fee_pct" type="number" step="0.01" min="0" value="0.1" class="w100" aria-label="Fee for BTC trend system">
+      <input name="cash_rate_pct" type="number" step="0.01" min="0" value="0.0" class="w100" aria-label="Cash interest for BTC trend system">
+      
+      <button class="btn small primary" type="submit">Save</button></form></td></tr></tbody>
+  </table></div>
+  <p class="small muted">Fees: EQQQ is priced in pence, so buying it from GBP in your ISA has no FX fee; 0.05% covers the bid/ask spread. The dollar add-on converts GBP↔USD in your Invest account at Trading 212's 0.15% each time. BTC: set your exchange's fee.</p>
+</section>
+
+<section class="card" id="alerts" aria-label="Alerts">
+  <h2>Email alerts</h2>
+  <p class="note">Coming later. The code is in place (<code>signals/alerts.py</code>): adding the SMTP secrets in GitHub and switching <code>email_enabled</code> on in <code>config/portfolio.yaml</code> turns them on. Until then, check this site around 16:05 UK on trading days.</p>
+</section>
+
+<section class="card" id="data" aria-label="Data">
+  <h2>Data</h2>
+  <p class="note">Free daily data from Yahoo Finance (prices, FX) and FRED (Fed liquidity). Downloaded automatically after each close; press Refresh to download now.</p>
+  <div class="scroll" style="margin-top:12px"><table class="t"><thead><tr><th>Feed</th><th>Source</th><th class="n">Last close</th><th class="n">Expected</th><th>Status</th></tr></thead><tbody>
+  <tr><td><b>EQQQ</b> <span class="small muted">Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence)</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>QQQ</b> <span class="small muted">Invesco QQQ (Nasdaq-100, US)</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>UUP</b> <span class="small muted">Invesco DB US Dollar Index Bullish (signal only)</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>BTC</b> <span class="small muted">Bitcoin (spot, USD)</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>TLT</b> <span class="small muted">iShares 20+ Year Treasury Bond</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>GLD</b> <span class="small muted">SPDR Gold Shares</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>IRX</b> <span class="small muted">13-week T-bill yield</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>DXY</b> <span class="small muted">US dollar index</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>GBPUSD</b> <span class="small muted">GBP/USD</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>NETLIQ</b> <span class="small muted">Fed net liquidity (WALCL - TGA - RRP), $bn</span></td><td>fred</td><td class="n">2026-10-30</td><td class="n">2026-10-24</td>
+  <td><span class="pill t-green">ok</span></td></tr></tbody></table></div>
+  
+  <h3 style="margin:18px 0 8px">Upload a CSV</h3>
+  <p class="small muted" style="margin:0 0 10px">Accepts Yahoo, Investing.com, Nasdaq.com and FRED exports (needs a date and a close/price column). Uploaded rows replace stored rows on the same dates.</p>
+  <form id="upload" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+    <label class="f">Asset<select name="asset" required><option value="EQQQ">EQQQ · Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence)</option><option value="QQQ">QQQ · Invesco QQQ (Nasdaq-100, US)</option><option value="UUP">UUP · Invesco DB US Dollar Index Bullish (signal only)</option><option value="BTC">BTC · Bitcoin (spot, USD)</option><option value="TLT">TLT · iShares 20+ Year Treasury Bond</option><option value="GLD">GLD · SPDR Gold Shares</option><option value="IRX">IRX · 13-week T-bill yield</option><option value="DXY">DXY · US dollar index</option><option value="GBPUSD">GBPUSD · GBP/USD</option><option value="NETLIQ">NETLIQ · Fed net liquidity (WALCL - TGA - RRP), $bn</option></select></label>
+    <label class="f">File<input type="file" name="file" accept=".csv,text/csv" required style="padding-top:8px"></label>
+    <button class="btn primary" type="submit">Upload</button>
+  </form>
+</section>
+
+</main>
+<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 00:52", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="static/app.js"></script>
+</body>
+</html>

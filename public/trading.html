@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trading · Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+</head>
+<body data-root="">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      Signals
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="index.html" class="">Today</a>
+      
+      <a href="investing.html" class="">Investing</a>
+      
+      <a href="trading.html" class="on" aria-current="page">Trading</a>
+      
+      <a href="portfolio.html" class="">Portfolio</a>
+      
+      <a href="research.html" class="">Research</a>
+      
+      <a href="settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3405</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 00:52</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<div class="pagehead">
+  <div>
+    <div class="kicker">Trading · signals only</div>
+    <h1>Trading systems</h1>
+    <p class="sub">Each card shows the latest signal, every rule with its live value, exactly what to do, and the pot that follows it.</p>
+  </div>
+</div>
+
+
+
+<section class="card flush" id="qqq_trading" aria-label="Nasdaq trading system (EQQQ ISA + USD Invest)">
+  <div class="cardhead">
+    <div class="t">
+      <div class="small muted" style="font-weight:600">System #1 · EQQQ (ISA) daily · orders at the London close</div>
+      <h2 style="font-size:22px;margin-top:2px">Nasdaq-100 regime system + dollar add-on</h2>
+      <div class="pills"><span class="pill t-blue">Regime: Range above 200-day</span><span class="pill t-amber">Risk flag: AMBER (1 of 3)</span>
+      <span class="pill t-grey">Signal as of 02 Nov 2026</span></div>
+    </div>
+    <div class="action a-HOLD">
+  <div class="l">ACTION</div>
+  <div class="v">HOLD</div>
+  <div class="s">EQQQ 100%</div>
+</div>
+  </div>
+  <div class="plain">Dip trade open since 30 Oct (day 1 of 10). Hold. Exit on RSI(2) above 70, a close at or below £503.88, or the 13 Nov close.
+  
+  </div>
+  <div class="split">
+    <div class="l">
+<div class="grp">
+  <div class="gh"><h3>1 · Regime (EQQQ, London closes)</h3><span>decides which leg is live</span></div>
+  <div class="checks">
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">Close above 50-day average</div><div class="val">£520.43</div><div class="need">above £544.74</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E7A43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Met"><circle cx="12" cy="12" r="10"/><polyline points="7.5 12.5 10.5 15.5 16.5 9"/></svg>
+<div class="lab">50-day average rising (vs 10 sessions ago)</div><div class="val">£544.74</div><div class="need">above £544.68</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E7A43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Met"><circle cx="12" cy="12" r="10"/><polyline points="7.5 12.5 10.5 15.5 16.5 9"/></svg>
+<div class="lab">Close above 200-day average</div><div class="val">£520.43</div><div class="need">above £509.49</div></div>
+    
+  </div>
+</div>
+
+<div class="grp">
+  <div class="gh"><h3>2 · Dip entry, above 200-day → 100%</h3><span>any one fires (only when not Trending)</span></div>
+  <div class="checks">
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">RSI(2) below 10</div><div class="val">13.17</div><div class="need">below 10</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">Close below lower Bollinger band (20, 2)</div><div class="val">£520.43</div><div class="need">below £513.73</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">3 lower closes in a row</div><div class="val">0</div><div class="need">3</div></div>
+    
+  </div>
+</div>
+
+<div class="grp">
+  <div class="gh"><h3>3 · Open dip trade: exits</h3><span>any one closes it</span></div>
+  <div class="checks">
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">RSI(2) above 70</div><div class="val">13.17</div><div class="need">above 70</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">Stop: close at or below entry − 3%</div><div class="val">£520.43</div><div class="need">at/below £503.88</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">Time exit: 10th session</div><div class="val">day 1</div><div class="need">13 Nov</div></div>
+    
+  </div>
+</div>
+
+<div class="grp">
+  <div class="gh"><h3>4 · Dollar add-on (USD cash, Invest)</h3><span>UUP at the 30 Oct US close</span></div>
+  <div class="checks">
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E7A43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Met"><circle cx="12" cy="12" r="10"/><polyline points="7.5 12.5 10.5 15.5 16.5 9"/></svg>
+<div class="lab">UUP above its 50-day average</div><div class="val">$29.00</div><div class="need">above $28.59</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E7A43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Met"><circle cx="12" cy="12" r="10"/><polyline points="7.5 12.5 10.5 15.5 16.5 9"/></svg>
+<div class="lab">UUP 50-day average rising</div><div class="val">$28.59</div><div class="need">above $28.40</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">Room for the add-on (EQQQ below 100%)</div><div class="val">100%</div><div class="need">below 100%</div></div>
+    
+  </div>
+</div>
+</div>
+    <div class="r">
+      <h3>Orders and exits</h3>
+      
+<div class="order o-green"><div class="k">ENTRY</div><div class="x">Dip entry 30 Oct at £519.46 (ISA, London close).</div></div>
+
+<div class="order o-red"><div class="k">STOP LOSS</div><div class="x">Sell at the London close if EQQQ closes at or below £503.88 (entry − 3%).</div></div>
+
+<div class="order o-blue"><div class="k">TAKE PROFIT</div><div class="x">Sell at the London close when RSI(2) closes above 70.</div></div>
+
+<div class="order o-grey"><div class="k">TIME / REGIME EXIT</div><div class="x">Sell at the 13 Nov London close (10th session), or earlier if the regime turns Trending.</div></div>
+
+<div class="order o-blue"><div class="k">DOLLAR ADD-ON</div><div class="x">USD cash target 0% of the pot in your Invest account (UUP trending). Each switch is a GBP↔USD conversion (0.15%).</div></div>
+
+      <div style="border:1px solid var(--line2);border-radius:10px;padding:12px 14px">
+        <div style="font-size:13px;font-weight:700">Risk flag · display only, does not change orders</div>
+        <div class="kv"><span>W1 · 3-month T-bill +0.5 pt over 6 months</span><b class="">+0.40 pt</b></div><div class="kv"><span>W2 · dollar index +5% over 6 months</span><b class="">+3.74%</b></div><div class="kv"><span>W3 · 2+ of QQQ/TLT/GLD below 200-day</span><b class="neg">TLT, GLD</b></div>
+        <div class="small muted" style="margin-top:6px">2+ warnings marked years like 2015 and 2022. One warning: stay alert.</div>
+      </div>
+      <p class="small muted" style="margin:0">Signals on EQQQ at the London close (16:30 UK). Place orders before 16:25 UK using the ~16:05 preview email.</p>
+      <div><a class="btn" href="research/qqq-regime-system.html">Read the paper</a></div>
+    </div>
+  </div>
+  <div style="border-top:1px solid var(--line2);padding:20px 22px;display:flex;flex-direction:column;gap:16px">
+    <div class="row" style="justify-content:space-between;align-items:flex-end"><h2>The pot</h2>
+    <span class="small muted">Follows the system from 03 Nov 2026 · fee 0.05% per trade</span></div>
+    
+<div class="banner info">This pot starts at the first close on or after <b>03 Nov 2026</b> with £500.00.
+ At that close it will join the system's current position:
+
+<ul style="margin:6px 0 0;padding-left:18px">
+<li><b>BUY EQQQ £500.00</b> <span class="muted">(~0.96 units at £520.43 · ISA)</span></li>
+</ul>
+</div>
+
+    <div class="stats">
+  <div class="stat"><div class="l">Pot value</div><div class="v">£500.00</div></div>
+  <div class="stat"><div class="l">Money in</div><div class="v">£500.00</div></div>
+  <div class="stat"><div class="l">Total P&amp;L</div><div class="v ">£0.00</div></div>
+  <div class="stat"><div class="l">Return</div><div class="v ">0.0%</div></div>
+  <div class="stat"><div class="l">Cash</div><div class="v">£500.00</div></div>
+  <div class="stat"><div class="l">Unrealised P&amp;L</div><div class="v ">£0.00</div></div>
+  <div class="stat"><div class="l">Realised P&amp;L</div><div class="v ">£0.00</div></div>
+  <div class="stat"><div class="l">EQQQ buy &amp; hold</div><div class="v ">0.0%</div></div>
+</div>
+    
+    <div class="row">
+      <div class="grow" style="flex-basis:340px"><h3 style="margin-bottom:8px">Holding</h3><p class="muted small" style="margin:0">No open positions: the pot is in cash.</p></div>
+      <div class="grow" style="flex-basis:340px"><form class="topup" data-op="add_topup">
+  <h3>Top up Nasdaq trading system (EQQQ ISA + USD Invest)</h3>
+  <input type="hidden" name="pot" value="qqq_trading">
+  <div class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+    <label class="f">Amount (£)<input class="amt" name="amount" type="number" min="1" step="0.01" required inputmode="decimal" placeholder="500"></label>
+    <label class="f">Date<input class="dt" name="date" type="date" value="2026-11-03" required></label>
+    <label class="f">Note<input name="note" type="text" maxlength="80" placeholder="optional" style="width:150px"></label>
+    <button class="btn primary" type="submit">Add top-up</button>
+  </div>
+  <p class="small muted" style="margin:8px 0 0">Added to the pot's cash at that day's close. The system then invests it by its own rules.</p>
+</form></div>
+    </div>
+    <details><summary>Trades (0)</summary><div style="margin-top:10px"><p class="muted small" style="margin:0">No trades yet.</p></div></details>
+    <details><summary>Signal history (recent)</summary>
+    
+    <div class="scroll" style="margin-top:10px"><table class="t"><thead><tr><th>Date</th><th>Signal</th><th>What happened</th><th class="n">Price</th></tr></thead><tbody>
+    <tr><td class="mono">30 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Dip entry 100% (above 200-day): RSI(2) below 10</td><td class="n">£519.46</td></tr><tr><td class="mono">29 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Trend leg off (regime no longer Trending)</td><td class="n">£537.68</td></tr><tr><td class="mono">27 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Trend leg on (regime turned Trending)</td><td class="n">£545.10</td></tr><tr><td class="mono">27 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>RSI(2) above 70; regime turned Trending</td><td class="n">£545.10</td></tr><tr><td class="mono">20 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Trend leg off (regime no longer Trending)</td><td class="n">£540.19</td></tr><tr><td class="mono">20 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Dip entry 100% (above 200-day): close below lower Bollinger band</td><td class="n">£540.19</td></tr><tr><td class="mono">19 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Trend leg on (regime turned Trending)</td><td class="n">£546.32</td></tr><tr><td class="mono">19 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>regime turned Trending</td><td class="n">£546.32</td></tr><tr><td class="mono">16 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Trend leg off (regime no longer Trending)</td><td class="n">£541.02</td></tr><tr><td class="mono">16 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Dip entry 100% (above 200-day): close below lower Bollinger band, 3 lower closes, RSI(2) below 10</td><td class="n">£541.02</td></tr><tr><td class="mono">24 Sep 2026</td><td><span class="pill t-green">BUY</span></td><td>Trend leg on (regime turned Trending)</td><td class="n">£559.56</td></tr><tr><td class="mono">17 Sep 2026</td><td><span class="pill t-red">SELL</span></td><td>RSI(2) above 70</td><td class="n">£538.69</td></tr><tr><td class="mono">10 Sep 2026</td><td><span class="pill t-green">BUY</span></td><td>Dip entry 100% (above 200-day): RSI(2) below 10</td><td class="n">£527.97</td></tr><tr><td class="mono">27 Aug 2026</td><td><span class="pill t-red">SELL</span></td><td>RSI(2) above 70</td><td class="n">£531.29</td></tr><tr><td class="mono">20 Aug 2026</td><td><span class="pill t-green">BUY</span></td><td>Dip entry 100% (above 200-day): 3 lower closes, RSI(2) below 10</td><td class="n">£523.96</td></tr><tr><td class="mono">03 Aug 2026</td><td><span class="pill t-red">SELL</span></td><td>RSI(2) above 70</td><td class="n">£521.28</td></tr><tr><td class="mono">27 Jul 2026</td><td><span class="pill t-green">BUY</span></td><td>Dip entry 100% (above 200-day): 3 lower closes, RSI(2) below 10</td><td class="n">£512.16</td></tr><tr><td class="mono">21 Jul 2026</td><td><span class="pill t-red">SELL</span></td><td>RSI(2) above 70</td><td class="n">£532.10</td></tr><tr><td class="mono">17 Jul 2026</td><td><span class="pill t-green">BUY</span></td><td>Dip entry 100% (above 200-day): close below lower Bollinger band, 3 lower closes, RSI(2) below 10</td><td class="n">£519.34</td></tr><tr><td class="mono">15 Jul 2026</td><td><span class="pill t-green">BUY</span></td><td>Trend leg off (regime no longer Trending)</td><td class="n">£533.44</td></tr><tr><td class="mono">09 Jul 2026</td><td><span class="pill t-green">BUY</span></td><td>Trend leg on (regime turned Trending)</td><td class="n">£540.99</td></tr><tr><td class="mono">07 Jul 2026</td><td><span class="pill t-green">BUY</span></td><td>Trend leg off (regime no longer Trending)</td><td class="n">£530.72</td></tr>
+    </tbody></table></div></details>
+  </div>
+</section>
+
+
+<section class="card flush" id="btc_trend" aria-label="BTC trend system">
+  <div class="cardhead">
+    <div class="t">
+      <div class="small muted" style="font-weight:600">System #2 · BTC spot daily · checks at 00:00 UTC</div>
+      <h2 style="font-size:22px;margin-top:2px">BTC trend blend</h2>
+      <div class="pills"><span class="pill t-blue">Score 0.0 (0 of 5)</span><span class="pill t-green">Halving window: clear (day 926); next ~Oct 2029</span>
+      <span class="pill t-grey">Signal as of 02 Nov 2026</span></div>
+    </div>
+    <div class="action a-SELL">
+  <div class="l">ACTION</div>
+  <div class="v">SELL</div>
+  <div class="s">BTC to 0%</div>
+</div>
+  </div>
+  <div class="plain">0 of 5 trend signals are positive, so the score is 0.0. Volatility is 29.6%, so no size cut. Target 0% of the pot.
+  <div class="banner warn small" style="margin-top:10px"><b>Live preview:</b> FLAT — in cash. 0 of 5 trend signals are positive, so the score is 0.0. Volatility is 28.5%, so no size cut. Target 0% of the pot.
+</div>
+  </div>
+  <div class="split">
+    <div class="l">
+<div class="grp">
+  <div class="gh"><h3>1 · Trend signals</h3><span>each adds 20%</span></div>
+  <div class="checks">
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">Close above close 10 days ago</div><div class="val">$76,684</div><div class="need">above $81,074</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">Close above close 20 days ago</div><div class="val">$76,684</div><div class="need">above $83,095</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">Close above close 50 days ago</div><div class="val">$76,684</div><div class="need">above $76,838</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">Close above 50-day EMA</div><div class="val">$76,684</div><div class="need">above $80,160</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><div class="lab">10-day EMA above 30-day EMA</div><div class="val">$78,808</div><div class="need">above $80,509</div></div>
+    
+  </div>
+</div>
+
+<div class="grp">
+  <div class="gh"><h3>2 · Sizing and calendar</h3><span>applied to the score</span></div>
+  <div class="checks">
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E7A43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Met"><circle cx="12" cy="12" r="10"/><polyline points="7.5 12.5 10.5 15.5 16.5 9"/></svg>
+<div class="lab">30-day volatility at or below 80%</div><div class="val">29.6%</div><div class="need">size × 1.00</div></div>
+    
+    <div class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E7A43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Met"><circle cx="12" cy="12" r="10"/><polyline points="7.5 12.5 10.5 15.5 16.5 9"/></svg>
+<div class="lab">Outside post-halving window (day 545–910)</div><div class="val">day 926</div><div class="need">outside window</div></div>
+    
+  </div>
+</div>
+</div>
+    <div class="r">
+      <h3>Orders and exits</h3>
+      
+<div class="order o-blue"><div class="k">TARGET</div><div class="x">Hold BTC at 0% of the pot. Trade when the score or window changes, or when the holding drifts more than 10 pts from target.</div></div>
+
+<div class="order o-green"><div class="k">ADD</div><div class="x">Each extra positive signal adds 20% (× the volatility factor), up to 100%.</div></div>
+
+<div class="order o-red"><div class="k">EXIT</div><div class="x">Go to cash when the score reaches 0, or when the next halving window opens (~Oct 2029).</div></div>
+
+<div class="order o-grey"><div class="k">NO FIXED STOP</div><div class="x">Risk is controlled by the signals and volatility sizing, as tested.</div></div>
+
+      <div style="border:1px solid var(--line2);border-radius:10px;padding:12px 14px">
+        <div style="font-size:13px;font-weight:700">Context · display only</div>
+        <div class="kv"><span>Dollar index, 6-month change</span><b class="">+3.5%</b></div><div class="kv"><span>Fed net liquidity, 3-month change</span><b class="">-1.4%</b></div><div class="kv"><span>Next halving (est.)</span><b class="">Apr 2028</b></div>
+        <div class="small muted" style="margin-top:6px">Tested as position filters and dropped: they did not improve results.</div>
+      </div>
+      <p class="small muted" style="margin:0">Checks at the daily close, 00:00 UTC. Trade soon after (the research assumes the close price).</p>
+      <div><a class="btn" href="research/btc-trend.html">Read the paper</a></div>
+    </div>
+  </div>
+  <div style="border-top:1px solid var(--line2);padding:20px 22px;display:flex;flex-direction:column;gap:16px">
+    <div class="row" style="justify-content:space-between;align-items:flex-end"><h2>The pot</h2>
+    <span class="small muted">Follows the system from 03 Nov 2026 · fee 0.1% per trade</span></div>
+    
+<div class="banner info">This pot starts at the first close on or after <b>03 Nov 2026</b> with £500.00.
+ No order is due at the latest close.</div>
+
+    <div class="stats">
+  <div class="stat"><div class="l">Pot value</div><div class="v">£500.00</div></div>
+  <div class="stat"><div class="l">Money in</div><div class="v">£500.00</div></div>
+  <div class="stat"><div class="l">Total P&amp;L</div><div class="v ">£0.00</div></div>
+  <div class="stat"><div class="l">Return</div><div class="v ">0.0%</div></div>
+  <div class="stat"><div class="l">Cash</div><div class="v">£500.00</div></div>
+  <div class="stat"><div class="l">Unrealised P&amp;L</div><div class="v ">£0.00</div></div>
+  <div class="stat"><div class="l">Realised P&amp;L</div><div class="v ">£0.00</div></div>
+  <div class="stat"><div class="l">BTC buy &amp; hold</div><div class="v ">0.0%</div></div>
+</div>
+    
+    <div class="row">
+      <div class="grow" style="flex-basis:340px"><h3 style="margin-bottom:8px">Holding</h3><p class="muted small" style="margin:0">No open positions: the pot is in cash.</p></div>
+      <div class="grow" style="flex-basis:340px"><form class="topup" data-op="add_topup">
+  <h3>Top up BTC trend system</h3>
+  <input type="hidden" name="pot" value="btc_trend">
+  <div class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+    <label class="f">Amount (£)<input class="amt" name="amount" type="number" min="1" step="0.01" required inputmode="decimal" placeholder="500"></label>
+    <label class="f">Date<input class="dt" name="date" type="date" value="2026-11-03" required></label>
+    <label class="f">Note<input name="note" type="text" maxlength="80" placeholder="optional" style="width:150px"></label>
+    <button class="btn primary" type="submit">Add top-up</button>
+  </div>
+  <p class="small muted" style="margin:8px 0 0">Added to the pot's cash at that day's close. The system then invests it by its own rules.</p>
+</form></div>
+    </div>
+    <details><summary>Trades (0)</summary><div style="margin-top:10px"><p class="muted small" style="margin:0">No trades yet.</p></div></details>
+    <details><summary>Signal history (recent)</summary>
+    
+    <div class="scroll" style="margin-top:10px"><table class="t"><thead><tr><th>Date</th><th>Signal</th><th>What happened</th><th class="n">Price</th></tr></thead><tbody>
+    <tr><td class="mono">02 Nov 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.2 → 0.0 · target 0%</td><td class="n">$76,684</td></tr><tr><td class="mono">30 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Score 0.0 → 0.2 · target 20%</td><td class="n">$77,198</td></tr><tr><td class="mono">29 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.4 → 0.0 · target 0%</td><td class="n">$77,775</td></tr><tr><td class="mono">27 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Score 0.0 → 0.4 · target 40%</td><td class="n">$80,805</td></tr><tr><td class="mono">26 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.2 → 0.0 · target 0%</td><td class="n">$80,007</td></tr><tr><td class="mono">24 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.4 → 0.2 · target 20%</td><td class="n">$80,791</td></tr><tr><td class="mono">23 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.6 → 0.4 · target 40%</td><td class="n">$81,074</td></tr><tr><td class="mono">22 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.8 → 0.6 · target 60%</td><td class="n">$81,312</td></tr><tr><td class="mono">20 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Score 0.6 → 0.8 · target 80%</td><td class="n">$82,941</td></tr><tr><td class="mono">19 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.8 → 0.6 · target 60%</td><td class="n">$81,854</td></tr><tr><td class="mono">18 Oct 2026</td><td><span class="pill t-green">BUY</span></td><td>Score 0.6 → 0.8 · target 80%</td><td class="n">$82,018</td></tr><tr><td class="mono">11 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.8 → 0.6 · halving window · target 0%</td><td class="n">$83,679</td></tr><tr><td class="mono">07 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 1.0 → 0.8 · halving window · target 0%</td><td class="n">$83,276</td></tr><tr><td class="mono">03 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.8 → 1.0 · halving window · target 0%</td><td class="n">$84,764</td></tr><tr><td class="mono">01 Oct 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 1.0 → 0.8 · halving window · target 0%</td><td class="n">$84,853</td></tr><tr><td class="mono">18 Sep 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.6 → 1.0 · halving window · target 0%</td><td class="n">$80,901</td></tr><tr><td class="mono">12 Sep 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.8 → 0.6 · halving window · target 0%</td><td class="n">$77,270</td></tr><tr><td class="mono">11 Sep 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.6 → 0.8 · halving window · target 0%</td><td class="n">$77,174</td></tr><tr><td class="mono">10 Sep 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 1.0 → 0.6 · halving window · target 0%</td><td class="n">$76,568</td></tr><tr><td class="mono">03 Sep 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.8 → 1.0 · halving window · target 0%</td><td class="n">$81,272</td></tr><tr><td class="mono">02 Sep 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 1.0 → 0.8 · halving window · target 0%</td><td class="n">$77,300</td></tr><tr><td class="mono">19 Aug 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.6 → 1.0 · halving window · target 0%</td><td class="n">$69,266</td></tr><tr><td class="mono">17 Aug 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.2 → 0.6 · halving window · target 0%</td><td class="n">$64,506</td></tr><tr><td class="mono">12 Aug 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.4 → 0.2 · halving window · target 0%</td><td class="n">$63,402</td></tr><tr><td class="mono">11 Aug 2026</td><td><span class="pill t-red">SELL</span></td><td>Score 0.6 → 0.4 · halving window · target 0%</td><td class="n">$63,552</td></tr>
+    </tbody></table></div></details>
+  </div>
+</section>
+
+
+<section class="card" aria-label="Health">
+  <h2>Live vs backtest health</h2>
+  <p class="note">Flags a system when live results drift outside what the research expects. Needs a few months of live data to mean much. Tested figures: EQQQ at the London close with the dollar add-on, 2010–2024 (cash 0%); BTC 2015–2024 training (optimistic).</p>
+  <div class="scroll" style="margin-top:12px"><table class="t">
+  <thead><tr><th>System</th><th class="n">Live since</th><th class="n">Trades</th><th class="n">Win rate</th><th class="n">Return live</th><th class="n">Tested return</th><th class="n">Max DD live</th><th class="n">Max DD tested</th><th>Status</th></tr></thead>
+  <tbody>
+  <tr><td><b>Nasdaq trading system (EQQQ ISA + USD Invest)</b></td><td class="n">not started</td><td class="n">0</td><td class="n">—</td><td class="n">—</td><td class="n">+9.0% a year</td><td class="n">—</td><td class="n">−14.1%</td>
+  <td><span class="pill t-grey">Collecting data</span></td></tr>
+  <tr><td><b>BTC trend system</b></td><td class="n">not started</td><td class="n">0</td><td class="n">—</td><td class="n">—</td><td class="n">+105.0% a year</td><td class="n">—</td><td class="n">−30.0%</td>
+  <td><span class="pill t-grey">Collecting data</span></td></tr></tbody></table></div>
+</section>
+
+</main>
+<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 00:52", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="static/app.js"></script>
+</body>
+</html>

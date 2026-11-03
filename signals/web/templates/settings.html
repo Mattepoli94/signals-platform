@@ -8,7 +8,7 @@
   <h2>How edits are saved</h2>
   <div id="mode-local" class="banner ok" style="display:none;margin-top:12px">Running on your computer: edits are saved straight to <code>config/portfolio.yaml</code>.</div>
   <div id="mode-gh" style="display:none;margin-top:12px">
-    <p class="note" style="margin-top:0">On the hosted site, edits are sent to your GitHub repository, which rebuilds the site in about 2 minutes. Paste a fine-grained GitHub token once (stored only in this browser). Give it access to this repository only, with <b>Contents: read and write</b> and <b>Actions: read and write</b>.</p>
+    <p class="note" style="margin-top:0">On the hosted site (Vercel), edits are sent to your GitHub repository; it rebuilds and Vercel republishes the site in about 2–3 minutes. Paste a fine-grained GitHub token once (stored only in this browser). Give it access to this repository only, with <b>Contents: read and write</b> and <b>Actions: read and write</b>.</p>
     <form id="ghform" class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:10px">
       <label class="f">Owner<input name="owner" id="gh-owner" required style="width:160px"></label>
       <label class="f">Repository<input name="repo" id="gh-repo" required style="width:180px"></label>
@@ -45,16 +45,7 @@
 
 <section class="card" id="alerts" aria-label="Alerts">
   <h2>Email alerts</h2>
-  {% if snap.email_configured %}<p class="banner ok small" style="margin:12px 0 0">Email is configured.</p>
-  {% else %}<p class="banner warn small" style="margin:12px 0 0">Email is not configured yet. Add the SMTP secrets in GitHub (see README → Email alerts). Until then, emails are saved to <code>state/outbox/</code>.</p>{% endif %}
-  {% set a = snap.config.alerts %}
-  <form data-op="set_alerts" style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
-    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="email_enabled" value="true" style="height:20px;width:20px" {{ 'checked' if a.email_enabled }}> Send emails when a signal fires</label>
-    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="preclose_warning" value="true" style="height:20px;width:20px" {{ 'checked' if a.preclose_warning }}> Warn ~16:05 UK when an EQQQ or USD order is likely at the London close</label>
-    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="daily_summary" value="true" style="height:20px;width:20px" {{ 'checked' if a.daily_summary }}> Daily summary after the US close (~21:20 UK)</label>
-    <div><button class="btn primary" type="submit">Save alert settings</button></div>
-  </form>
-  {% if snap.last_alerts %}<p class="small muted">Last run: {% for x in snap.last_alerts %}“{{ x.subject }}” ({{ x.result }}){% if not loop.last %}; {% endif %}{% endfor %}</p>{% endif %}
+  <p class="note">Coming later. The code is in place (<code>signals/alerts.py</code>): adding the SMTP secrets in GitHub and switching <code>email_enabled</code> on in <code>config/portfolio.yaml</code> turns them on. Until then, check this site around 16:05 UK on trading days.</p>
 </section>
 
 <section class="card" id="data" aria-label="Data">

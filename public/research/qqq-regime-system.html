@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nasdaq-100 regime system + dollar add-on (UK: EQQQ at the London close) · Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../static/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+</head>
+<body data-root="../">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="../index.html">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      Signals
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="../index.html" class="">Today</a>
+      
+      <a href="../investing.html" class="">Investing</a>
+      
+      <a href="../trading.html" class="">Trading</a>
+      
+      <a href="../portfolio.html" class="">Portfolio</a>
+      
+      <a href="../research.html" class="on" aria-current="page">Research</a>
+      
+      <a href="../settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3405</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 00:52</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<p class="small"><a href="../research.html">← Research library</a></p>
+<article class="card paper"><h1 id="nasdaq-100-regime-system-dollar-add-on-v11-uk-implementation">Nasdaq-100 regime system + dollar add-on (v1.1, UK implementation)</h1>
+<p>Trading system #1. Long-only on the Nasdaq-100, with the US dollar as the only add-on. Since v1.1 it is traded in <strong>EQQQ</strong> (Invesco EQQQ Nasdaq-100 UCITS ETF, London, priced in pence) inside the ISA, at the <strong>London close</strong>. The dollar add-on is held as <strong>USD cash in the Trading 212 Invest account</strong>. The rules themselves are unchanged from v1.0. The full build specification, with every test, is in the <a href="https://claude.ai/artifact/Kjtfn4jJ1JdCrynU9ubXvc">Build Spec v1.0</a>. This page is the short version the platform runs.</p>
+<h2 id="idea">Idea</h2>
+<p>QQQ behaves differently in different regimes. When it trends, holding it pays. When it is not trending, short sell-offs tend to snap back within days. The system holds half a position in trends and buys short dips when there is no trend, with a tight stop and a time limit. Money that is not in QQQ can sit in the dollar when the dollar trends, because dollar strength has often lined up with equity stress.</p>
+<h2 id="rules-daily-adjusted-closes-every-order-at-the-close-of-the-same-day">Rules (daily adjusted closes; every order at the close of the same day)</h2>
+<p><strong>Regime.</strong> <em>Trending</em> = close above its 50-day SMA <strong>and</strong> the 50-day SMA higher than 10 sessions earlier. Otherwise <em>Range above 200-day</em> (close above the 200-day SMA) or <em>Below 200-day</em>.</p>
+<p><strong>Trend leg.</strong> 50% of the pot in QQQ while Trending.</p>
+<p><strong>Dip leg.</strong> New entries only when not Trending.</p>
+<table>
+<thead>
+<tr>
+<th>Regime</th>
+<th>Entry (any one)</th>
+<th>Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Above 200-day</td>
+<td>close below lower Bollinger band (20, 2) · 3 lower closes in a row · RSI(2) below 10</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>Below 200-day</td>
+<td>close below lower Bollinger band (20, 2) · RSI(2) below 5</td>
+<td>50%</td>
+</tr>
+</tbody>
+</table>
+<p>Exit the dip trade at the close on the first of these:</p>
+<ul>
+<li>RSI(2) closes above 70 (take profit);</li>
+<li>close at or below entry × 0.97 (stop loss);</li>
+<li>the 10th session after entry (time exit);</li>
+<li>the regime turns Trending (the trend leg then holds 50%).</li>
+</ul>
+<p><strong>QQQ weight</strong> = trend + dip × (1 − trend).</p>
+<p><strong>Dollar add-on.</strong> UUP weight = 0.5 × (1 − QQQ weight) while UUP is Trending (same definition as QQQ). Otherwise 0.</p>
+<p><strong>Risk flag (display only).</strong> One point each for:</p>
+<ul>
+<li>W1: 3-month T-bill yield up more than 0.5 pt over 126 sessions;</li>
+<li>W2: dollar index up more than 5% over 126 sessions;</li>
+<li>W3: two or more of QQQ, TLT and GLD below their 200-day SMA.</li>
+</ul>
+<p>0 = green, 1 = amber, 2+ = red. The flag does not change orders: acting on it did not help in tests.</p>
+<p>Indicators: SMA = simple average of adjusted closes. RSI(2) uses Wilder smoothing. Bollinger uses the sample standard deviation.</p>
+<h2 id="original-research-results-qqq-at-the-us-close-3-bp-costs-cash-at-the-t-bill-rate">Original research results (QQQ at the US close, 3 bp costs, cash at the T-bill rate)</h2>
+<table>
+<thead>
+<tr>
+<th>Period</th>
+<th>CAGR</th>
+<th>Max drawdown</th>
+<th>QQQ buy &amp; hold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2000–2024 (training with held-out years)</td>
+<td>10.4%</td>
+<td>−15.3%</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Held-out years only</td>
+<td>4.9%</td>
+<td>−13.8%</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Final holdout 2025–Oct 2026 (run once)</td>
+<td>8.5%</td>
+<td>−13.5%</td>
+<td>20.9%</td>
+</tr>
+</tbody>
+</table>
+<p>Bear markets, peak to trough: 2000–02 +40% vs −83%; 2008 +0.2% vs −53%; 2018 Q4 −3.8% vs −23%; 2020 −8.5% vs −29%; 2022 +2.5% vs −35%; 2025 −14.0% vs −23%.</p>
+<h2 id="what-to-expect">What to expect</h2>
+<ul>
+<li>Far smaller drawdowns than holding QQQ. Much lower returns in strong bull markets: since 2009 the system behaves like roughly 40% QQQ and 60% cash.</li>
+<li>About 9 dip trades a year (2000–2024), most lasting a few days. 71% of them were winners, with an average gain of +1.0% per trade. The stop normally limits a loss to about −3%, but gaps made the worst trade −8.4%.</li>
+<li>On top of the dip trades come trend-leg switches and dollar add-on switches: in 2025–26 the pot made about 70 trades a year in total.</li>
+<li><strong>Costs matter.</strong> See v1.1 below: trading a pence-priced ETF in the ISA removes the 0.15% FX fee from the Nasdaq trades.</li>
+<li>The rules work on QQQ, not on SPY: the same rules on SPY gave about half the return.</li>
+</ul>
+<h2 id="v11-uk-implementation-3-nov-2026">v1.1: UK implementation (3 Nov 2026)</h2>
+<p><strong>Why it changed.</strong> The fee is charged on the value of every trade, and this system trades a lot. The Nasdaq legs alone trade about 15–22 times the pot each year. The dollar add-on mirrors every Nasdaq change, so the total is about 35 times the pot a year. A 0.15% currency fee therefore costs about 5% a year, while the average dip trade only earns +0.7% to +1.0%. Trading 212 charges the fee only when it converts currency. EQQQ is priced in pence, so buying it from GBP in the ISA has no FX fee; the cost is just the bid/ask spread.</p>
+<p><strong>What runs now</strong></p>
+<ul>
+<li>The same rules, applied to EQQQ's own daily closes at the London close (16:30 UK). A preview email goes out at ~16:05 with the live London price; place orders before 16:25.</li>
+<li>Dollar add-on: USD cash = 0.5 × (1 − EQQQ weight) while UUP trends. UUP is judged at the latest US close before the London close. Each switch is a GBP↔USD conversion at 0.15%.</li>
+<li>Risk flag: unchanged. It uses US data from the latest US close.</li>
+</ul>
+<p><strong>Test</strong> (EQQQ 2010–Oct 2026, in GBP, rules not re-tuned, cash earning 0%). Yahoo's EQQQ history had bad prints, including weeks quoted in US cents. They were repaired against QQQ ÷ GBP/USD, and the platform does the same live.</p>
+<table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>2010–24 CAGR / max drawdown</th>
+<th>2025–Oct 2026</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Research reference: QQQ at the US close, 3 bp</td>
+<td>9.4% / −14.1%</td>
+<td>5.7% / −16.2%</td>
+</tr>
+<tr>
+<td>Same with Trading 212's 0.15% FX fee</td>
+<td>7.4% / −16.5%</td>
+<td>3.0%</td>
+</tr>
+<tr>
+<td><strong>EQQQ, signal and trade at the London close, 5 bp</strong></td>
+<td><strong>7.7% / −13.8%</strong></td>
+<td><strong>11.0% / −9.5%</strong></td>
+</tr>
+<tr>
+<td>… plus the dollar add-on (USD cash, 0.15% per switch)</td>
+<td><strong>9.0% / −14.1%</strong></td>
+<td>10.4% / −9.8%</td>
+</tr>
+<tr>
+<td>EQQQ, signal at the London close, trade at the next London open, 5 bp</td>
+<td>8.0% / −14.2%</td>
+<td>12.8% / −6.5%</td>
+</tr>
+<tr>
+<td>Same at a 10 bp spread at the open</td>
+<td>7.1% / −14.9%</td>
+<td>11.8%</td>
+</tr>
+<tr>
+<td>QQQ US-close signal, trade EQQQ at the next London open</td>
+<td>6.9% / −18.3%</td>
+<td>2.1%</td>
+</tr>
+<tr>
+<td>EQQQ buy &amp; hold</td>
+<td>19.5% / −28.2%</td>
+<td>13.0% / −24.2%</td>
+</tr>
+</tbody>
+</table>
+<p>EQQQ dip trades: 9.2 a year, 75.5% winners, average +0.64%, worst −5.8%. Computing the signals on EQQQ converted to USD did worse (6.7%). So did timing the dollar with its own trend against the pound (7.3%) instead of UUP's.</p>
+<h2 id="execution-notes">Execution notes</h2>
+<ul>
+<li>Signals use the London close, so orders go in just before it: the preview email arrives at ~16:05 and the cut-off is 16:25 UK. Yahoo's London prices can be about 15 minutes delayed.</li>
+<li>If an order is missed, trade as early as possible next session. Record the real fill (in pence) in the trade journal so the pot reflects it.</li>
+<li>EQQQ pays small dividends (about 0.3–0.5% a year). They are not in the price series, so the pot slightly understates the return. CNX1 (iShares, accumulating) tracks the same index if you prefer.</li>
+</ul></article>
+
+</main>
+<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 00:52", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="../static/app.js"></script>
+</body>
+</html>

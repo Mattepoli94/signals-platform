@@ -14,9 +14,9 @@
   function gh() {
     var v = {};
     try { v = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { v = {}; }
-    if (!v.owner || !v.repo) {
-      var m = location.hostname.match(/^([^.]+)\.github\.io$/);
-      if (m) { v.owner = v.owner || m[1]; v.repo = v.repo || (location.pathname.split('/')[1] || ''); }
+    if ((!v.owner || !v.repo) && window.SIGNALS && window.SIGNALS.repo) {
+      var parts = window.SIGNALS.repo.split('/');
+      v.owner = v.owner || parts[0]; v.repo = v.repo || parts[1];
     }
     return v;
   }

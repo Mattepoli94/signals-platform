@@ -12,7 +12,7 @@ on:
     - cron: '20 0 * * *'      # after the BTC daily close (00:00 UTC)
   push:
     branches: [main]
-    paths: ['signals/**', 'config/**', 'research/**', 'requirements.txt', '.github/workflows/daily.yml']
+    paths: ['signals/**', 'config/**', 'research/**', 'requirements.txt', '.github/workflows/daily.yml', 'vercel.json', 'middleware.js']
   workflow_dispatch:
     inputs:
       mode:
@@ -22,8 +22,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: signals
@@ -33,8 +31,6 @@ jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    outputs:
-      built: ${{ steps.site.outputs.built }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -68,11 +64,12 @@ jobs:
         run: |
           set -o pipefail
           python -m signals run --mode ${{ steps.mode.outputs.mode }} 2>&1 | tee run.log
-      - name: Save data and state
+      - name: Save data, state and the website (public/ is what Vercel serves)
         run: |
+          if [ -f site/index.html ]; then rm -rf public && cp -r site public; fi
           git config user.name "signals-bot"
           git config user.email "signals-bot@users.noreply.github.com"
-          git add data config state
+          git add data config state public
           if git diff --cached --quiet; then echo "nothing to save"; exit 0; fi
           git commit -m "Data and signals: ${{ steps.mode.outputs.mode }} run $(date -u +'%Y-%m-%d %H:%M') UTC"
           for i in 1 2 3; do git pull --rebase origin main && git push && break; sleep 5; done
@@ -84,28 +81,3 @@ jobs:
           git config user.name "signals-bot"; git config user.email "signals-bot@users.noreply.github.com"
           git add state/last_error.log && git commit -m "Run failed: see state/last_error.log" && \
             for i in 1 2 3; do git pull --rebase origin main && git push && break; sleep 5; done
-      - name: Check site was built
-        id: site
-        run: if [ -f site/index.html ]; then echo "built=true" >> "$GITHUB_OUTPUT"; else echo "built=false" >> "$GITHUB_OUTPUT"; fi
-      - uses: actions/upload-pages-artifact@v3
-        if: steps.site.outputs.built == 'true'
-        with:
-          path: site
-      - uses: actions/upload-artifact@v4
-        if: steps.site.outputs.built == 'true'
-        with:
-          name: site
-          path: site
-          retention-days: 7
-
-  deploy:
-    needs: run
-    if: needs.run.outputs.built == 'true'
-    runs-on: ubuntu-latest
-    continue-on-error: true          # fine if GitHub Pages is not enabled
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio · Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+</head>
+<body data-root="">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      Signals
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="index.html" class="">Today</a>
+      
+      <a href="investing.html" class="">Investing</a>
+      
+      <a href="trading.html" class="">Trading</a>
+      
+      <a href="portfolio.html" class="on" aria-current="page">Portfolio</a>
+      
+      <a href="research.html" class="">Research</a>
+      
+      <a href="settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3405</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 00:52</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<div class="pagehead">
+  <div><div class="kicker">Portfolio</div><h1>Pots and money</h1>
+  <p class="sub">Each pot is updated automatically from its system's trades, dividends, interest and your top-ups.</p></div>
+</div>
+
+<section class="card" aria-label="Totals">
+  <div class="stats">
+    <div class="stat"><div class="l">Total value</div><div class="v">£2,000.00</div></div>
+    <div class="stat"><div class="l">Money in</div><div class="v">£2,000.00</div></div>
+    <div class="stat"><div class="l">Total P&amp;L</div><div class="v ">£0.00</div></div>
+    <div class="stat"><div class="l">Return</div><div class="v ">0.0%</div></div>
+    <div class="stat"><div class="l">Cash</div><div class="v">£2,000.00</div></div>
+  </div>
+  <div class="scroll" style="margin-top:16px"><table class="t">
+    <thead><tr><th>Pot</th><th class="n">Started</th><th class="n">Money in</th><th class="n">Value</th><th class="n">P&amp;L</th><th class="n">Cash</th><th>Holding</th><th class="n">Share of total</th></tr></thead>
+    <tbody>
+    <tr><td><a href="investing.html#qqq_value"><b>Nasdaq value plan (EQQQ, ISA)</b></a></td><td class="n">not yet</td>
+    <td class="n">£1,000.00</td><td class="n">£1,000.00</td><td class="n ">£0.00 (0.0%)</td><td class="n">£1,000.00</td>
+    <td>cash</td>
+    <td class="n">50.0%</td></tr>
+    <tr><td><a href="trading.html#qqq_trading"><b>Nasdaq trading system (EQQQ ISA + USD Invest)</b></a></td><td class="n">not yet</td>
+    <td class="n">£500.00</td><td class="n">£500.00</td><td class="n ">£0.00 (0.0%)</td><td class="n">£500.00</td>
+    <td>cash</td>
+    <td class="n">25.0%</td></tr>
+    <tr><td><a href="trading.html#btc_trend"><b>BTC trend system</b></a></td><td class="n">not yet</td>
+    <td class="n">£500.00</td><td class="n">£500.00</td><td class="n ">£0.00 (0.0%)</td><td class="n">£500.00</td>
+    <td>cash</td>
+    <td class="n">25.0%</td></tr></tbody>
+  </table></div>
+</section>
+
+
+
+<section class="card" id="topups" aria-label="Top-ups">
+  <h2>Top-ups</h2>
+  <p class="note">Add money to any pot. Each top-up goes into that pot's cash at the close of its date; the system invests it by its own rules.</p>
+  <div class="row" style="margin-top:14px"><div class="grow" style="flex-basis:320px"><form class="topup" data-op="add_topup">
+  <h3>Top up Nasdaq value plan (EQQQ, ISA)</h3>
+  <input type="hidden" name="pot" value="qqq_value">
+  <div class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+    <label class="f">Amount (£)<input class="amt" name="amount" type="number" min="1" step="0.01" required inputmode="decimal" placeholder="500"></label>
+    <label class="f">Date<input class="dt" name="date" type="date" value="2026-11-03" required></label>
+    <label class="f">Note<input name="note" type="text" maxlength="80" placeholder="optional" style="width:150px"></label>
+    <button class="btn primary" type="submit">Add top-up</button>
+  </div>
+  <p class="small muted" style="margin:8px 0 0">Added to the pot's cash at that day's close. The system then invests it by its own rules.</p>
+</form></div><div class="grow" style="flex-basis:320px"><form class="topup" data-op="add_topup">
+  <h3>Top up Nasdaq trading system (EQQQ ISA + USD Invest)</h3>
+  <input type="hidden" name="pot" value="qqq_trading">
+  <div class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+    <label class="f">Amount (£)<input class="amt" name="amount" type="number" min="1" step="0.01" required inputmode="decimal" placeholder="500"></label>
+    <label class="f">Date<input class="dt" name="date" type="date" value="2026-11-03" required></label>
+    <label class="f">Note<input name="note" type="text" maxlength="80" placeholder="optional" style="width:150px"></label>
+    <button class="btn primary" type="submit">Add top-up</button>
+  </div>
+  <p class="small muted" style="margin:8px 0 0">Added to the pot's cash at that day's close. The system then invests it by its own rules.</p>
+</form></div><div class="grow" style="flex-basis:320px"><form class="topup" data-op="add_topup">
+  <h3>Top up BTC trend system</h3>
+  <input type="hidden" name="pot" value="btc_trend">
+  <div class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+    <label class="f">Amount (£)<input class="amt" name="amount" type="number" min="1" step="0.01" required inputmode="decimal" placeholder="500"></label>
+    <label class="f">Date<input class="dt" name="date" type="date" value="2026-11-03" required></label>
+    <label class="f">Note<input name="note" type="text" maxlength="80" placeholder="optional" style="width:150px"></label>
+    <button class="btn primary" type="submit">Add top-up</button>
+  </div>
+  <p class="small muted" style="margin:8px 0 0">Added to the pot's cash at that day's close. The system then invests it by its own rules.</p>
+</form></div></div>
+  <h3 style="margin:20px 0 8px">Deposit history</h3>
+  <div class="scroll"><table class="t"><thead><tr><th>Date</th><th>Pot</th><th>Type</th><th class="n">Amount</th><th>Note</th><th></th></tr></thead><tbody>
+  <tr><td class="mono">03 Nov 2026</td><td>Nasdaq value plan (EQQQ, ISA)</td><td>initial</td><td class="n">£1,000.00</td><td class="small"></td>
+  <td></td></tr>
+  <tr><td class="mono">03 Nov 2026</td><td>Nasdaq trading system (EQQQ ISA + USD Invest)</td><td>initial</td><td class="n">£500.00</td><td class="small"></td>
+  <td></td></tr>
+  <tr><td class="mono">03 Nov 2026</td><td>BTC trend system</td><td>initial</td><td class="n">£500.00</td><td class="small"></td>
+  <td></td></tr>
+  
+  
+  </tbody></table></div>
+</section>
+
+<section class="card" id="journal" aria-label="Trade journal">
+  <h2>Trade journal</h2>
+  <p class="note">Every trade the systems made for your pots, at the close price. If your real fill was different, record it and the pot is re-valued with your price.</p>
+  
+  <h3 style="margin:18px 0 8px">Nasdaq value plan (EQQQ, ISA)</h3>
+  <p class="muted small" style="margin:0">No trades yet.</p>
+  
+  <h3 style="margin:18px 0 8px">Nasdaq trading system (EQQQ ISA + USD Invest)</h3>
+  <p class="muted small" style="margin:0">No trades yet.</p>
+  
+  <h3 style="margin:18px 0 8px">BTC trend system</h3>
+  <p class="muted small" style="margin:0">No trades yet.</p>
+  
+</section>
+
+</main>
+<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 00:52", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="static/app.js"></script>
+</body>
+</html>

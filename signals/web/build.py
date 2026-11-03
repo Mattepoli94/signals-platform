@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 from datetime import date
 from pathlib import Path
@@ -197,7 +198,7 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
     base = dict(snap=snap, pots=pots, charts=charts, today=date.today().isoformat(), health=_health(pots),
                 recent_events=events[:10], deposits=deposits, future_topups=future, live_preview=live_preview,
                 papers=[{**r, 'href': f"research/{r['slug']}.html"} for r in PAPERS], changelog=CHANGELOG,
-                js_ctx={'generated': snap['generated_utc']})
+                js_ctx={'generated': snap['generated_utc'], 'repo': os.environ.get('GITHUB_REPOSITORY', 'Mattepoli94/signals-platform')})
     for page in ('index', 'investing', 'trading', 'portfolio', 'research', 'settings'):
         html = env.get_template(f'{page}.html').render(page=page, root='', **base)
         (out / f'{page}.html').write_text(html)

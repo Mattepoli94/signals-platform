@@ -1,6 +1,6 @@
 # Signals platform
 
-A personal trading and investing dashboard that runs three research-tested systems, tracks a GBP pot for each, and emails you when a signal fires. It sends signals only: no orders go to any broker.
+A personal trading and investing dashboard that runs three research-tested systems, tracks a GBP pot for each, and publishes a dashboard on Vercel (email alerts are built in but switched off for now). It sends signals only: no orders go to any broker.
 
 | Page | What it shows |
 |---|---|
@@ -9,7 +9,7 @@ A personal trading and investing dashboard that runs three research-tested syste
 | **Trading** | The Nasdaq-100 regime system (EQQQ + dollar add-on) and the BTC trend blend: every rule with its live value, entry/stop/take-profit/time exits, the risk flag, each pot and its chart, trades, signal history, and live-vs-backtest health |
 | **Portfolio** | All pots, total value chart, top-ups, deposit history and the trade journal (record your real fills) |
 | **Research** | One paper per system with the exact rules and test results |
-| **Settings** | Initial capital, monthly top-up, fees and cash interest per pot, start date, email alerts, data status and CSV upload |
+| **Settings** | Initial capital, monthly top-up, fees and cash interest per pot, start date, data status and CSV upload |
 
 ## How it works
 
@@ -18,8 +18,8 @@ GitHub Actions (free, on a schedule)
   └─ download prices (Yahoo, FRED)  →  data/prices/*.csv
   └─ compute signals (signals/strategies/*)            same code as the research
   └─ replay each pot from its start date (signals/ledger.py)
-  └─ email alerts (only once per signal)
-  └─ build the website (site/)  →  GitHub Pages, or run it on your computer
+  └─ email alerts (ready, switched off for now)
+  └─ build the website (site/ → public/)  →  Vercel serves public/
 ```
 
 The pots are **rebuilt from scratch on every run** from three inputs: the prices, the system's rules and your settings in `config/portfolio.yaml` (capital, top-ups, recorded fills). So when the systems buy or sell, receive dividends or earn interest, or when you add a top-up, every pot updates by itself.
@@ -41,7 +41,7 @@ The pots are **rebuilt from scratch on every run** from three inputs: the prices
 
 ## Schedule (all automatic)
 
-| When (UK time) | Run | Email |
+| When (UK time) | Run | Email (when switched on) |
 |---|---|---|
 | ~16:05 | London pre-close preview on the live EQQQ price | "ACTION before 16:25" if an EQQQ or USD order is likely, or a value-plan buy is due |
 | ~16:55 (and a backup run an hour later) | After the London close | Confirmed EQQQ / USD trades |
@@ -49,35 +49,39 @@ The pots are **rebuilt from scratch on every run** from three inputs: the prices
 | ~00:20 | After the BTC daily close | New BTC trades |
 | On every push of code or settings | Full run | — |
 
-GitHub can start scheduled runs 5–30 minutes late at busy times. If the pre-close email has not arrived by 16:15, open the site and press **Refresh data**. Every run writes `state/last_run.json`; a failed run writes `state/last_error.log`.
+GitHub can start scheduled runs 5–30 minutes late at busy times. If the site has not updated by 16:15, press **Refresh data**. Every run writes `state/last_run.json`; a failed run writes `state/last_error.log`.
 
-## One-time setup (about 10 minutes)
+## Hosting on Vercel (free Hobby plan)
 
-1. **Let the workflows save data.** Repository → Settings → Actions → General → *Workflow permissions* → **Read and write permissions** → Save.
-2. **Email alerts** (Gmail example). Create an [app password](https://myaccount.google.com/apppasswords) (it needs 2-step verification). Then go to Repository → Settings → Secrets and variables → Actions → *New repository secret* and add:
-   - `SMTP_HOST` = `smtp.gmail.com`
-   - `SMTP_PORT` = `587`
-   - `SMTP_USER` = your Gmail address
-   - `SMTP_PASSWORD` = the app password
-   - `ALERT_TO` = where alerts should go
-   - optional: `ALERT_FROM`
-3. **First run.** It runs on its own whenever code or settings are pushed, and on the schedule. You can also start it from Actions → *Signals (scheduled)* → **Run workflow** (mode `us`).
-4. **See the website.** Pick one:
-   - **GitHub Pages (hosted, phone-friendly).** Repository → Settings → Pages → *Source*: **GitHub Actions**. On a free GitHub plan this needs the repository to be **public**. GitHub Pro allows it on a private repo. The site is then at `https://<you>.github.io/signals-platform/`. To edit from the hosted site, open Settings on the site and paste a [fine-grained token](https://github.com/settings/personal-access-tokens/new) limited to this repository, with *Contents: read and write* and *Actions: read and write*. The token is stored only in that browser.
-   - **On your computer.** Install Python 3.11+, then run:
-     ```
-     git clone https://github.com/Mattepoli94/signals-platform && cd signals-platform
-     pip install -r requirements.txt
-     python -m signals run --mode close --no-email   # download data + build
-     python -m signals serve                         # opens http://localhost:8000
-     ```
-     Edits save straight to `config/portfolio.yaml`. Commit and push them so the scheduled runs use them.
-   - **Quick look.** Every run uploads the built site as an artifact (Actions → latest run → *site*). Download it and open `index.html`.
+GitHub Actions builds the website on every run and commits it to `public/`. Vercel serves that folder as a static site; `vercel.json` disables any build step. Every push (about 8 a day) triggers a new deployment, well within the Hobby limit.
+
+One-time setup (about 3 minutes):
+
+1. [vercel.com/new](https://vercel.com/new) → **Continue with GitHub** → import **signals-platform**. If it isn't listed, use *Adjust GitHub App Permissions* to give Vercel access to the repo.
+2. Framework preset: **Other**. Leave the build and output settings as they are (`vercel.json` sets them) → **Deploy**.
+3. **Recommended: password.** Project → Settings → Environment Variables → add `SITE_PASSWORD` (and optionally `SITE_USER`, default `me`) → redeploy. `middleware.js` then asks for that login. Without it, anyone with the link can see your pots. Alternatively, turn on Vercel Authentication for all deployments under Settings → Deployment Protection.
+4. **Edit from the website** (top-ups, capital, fills). Open Settings on the site and paste a [fine-grained GitHub token](https://github.com/settings/personal-access-tokens/new) limited to this repository, with *Contents: read and write* and *Actions: read and write*. The token is stored only in that browser. Edits run the *manage* workflow, which rebuilds the site; Vercel republishes it in about 2–3 minutes.
+
+## Other ways to run it
+
+- **On your computer.** Install Python 3.11+, then run:
+  ```
+  git clone https://github.com/Mattepoli94/signals-platform && cd signals-platform
+  pip install -r requirements.txt
+  python -m signals run --mode us --no-email   # download data + build
+  python -m signals serve                      # opens http://localhost:8000
+  ```
+  Edits save straight to `config/portfolio.yaml`. Commit and push them so the scheduled runs use them.
+- **Runs.** They happen on the schedule and on every push of code or settings. You can also start one from Actions → *Signals (scheduled)* → **Run workflow**. GitHub Actions needs *Read and write permissions* (Settings → Actions → General); it is already working on this repo.
+
+## Email alerts (later)
+
+The code is ready but switched off (`alerts.email_enabled: false`). To turn it on, add these repository secrets: `SMTP_HOST` (e.g. `smtp.gmail.com`), `SMTP_PORT` (`587`), `SMTP_USER`, `SMTP_PASSWORD` (a Gmail app password) and `ALERT_TO`. Then set `email_enabled: true`.
 
 ## Command line
 
 ```
-python -m signals run --mode close|preclose|btc|build [--no-fetch] [--no-email] [--force]
+python -m signals run --mode preclose|close|us|btc|build [--no-fetch] [--no-email] [--force]
 python -m signals op '{"op":"add_topup","pot":"qqq_value","amount":500,"date":"2026-12-01","note":"Dec"}'
 python -m signals op '{"op":"set_pot","pot":"btc_trend","initial_capital":750}'
 python -m signals op '{"op":"set_fill","trade_id":"qqq_trading-2026-11-03-QQQ-BUY","price":691.20,"fx":1.305}'

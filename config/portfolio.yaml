@@ -36,6 +36,6 @@ pots:
 topups: []
 fills: []
 alerts:
-  email_enabled: true
+  email_enabled: false
   daily_summary: true
   preclose_warning: true

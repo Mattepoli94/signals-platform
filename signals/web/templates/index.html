@@ -57,10 +57,9 @@
 </div>
 
 <div class="row">
-  <section class="card grow" aria-label="Recent alerts">
-    <h2>Alerts</h2>
-    <p class="note">Emails go out when a signal fires: ~16:05 UK (preview before the London close), ~16:55 (confirmed), ~21:20 after the US close (value plan, daily summary) and ~00:20 for BTC.
-    {% if not snap.email_configured %}<b>Email is not set up yet</b>: see <a href="settings.html#alerts">Settings</a>.{% endif %}</p>
+  <section class="card grow" aria-label="Recent signals">
+    <h2>Recent signals</h2>
+    <p class="note">The site refreshes at ~16:05 UK (preview before the London close), ~16:55 (confirmed), ~21:20 after the US close and ~00:20 for BTC.</p>
     {% set evs = recent_events %}
     {% if evs %}<div class="scroll" style="margin-top:12px"><table class="t"><thead><tr><th>Date</th><th>System</th><th>Signal</th><th class="n">Price</th></tr></thead><tbody>
     {% for e in evs %}<tr><td class="mono">{{ e.date|d }}</td><td>{{ e.system }}</td><td><span class="pill {{ {'BUY':'t-green','SELL':'t-red','ZONE':'t-blue'}.get(e.kind,'t-grey') }}">{{ e.kind }}</span> {{ e.text }}</td><td class="n">{{ e.price_fmt or (e.price|usd) }}</td></tr>{% endfor %}

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BTC trend blend · Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../static/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+</head>
+<body data-root="../">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="../index.html">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      Signals
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="../index.html" class="">Today</a>
+      
+      <a href="../investing.html" class="">Investing</a>
+      
+      <a href="../trading.html" class="">Trading</a>
+      
+      <a href="../portfolio.html" class="">Portfolio</a>
+      
+      <a href="../research.html" class="on" aria-current="page">Research</a>
+      
+      <a href="../settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3405</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 00:52</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<p class="small"><a href="../research.html">← Research library</a></p>
+<article class="card paper"><h1 id="btc-trend-blend-v10">BTC trend blend (v1.0)</h1>
+<p>Trading system #2. Spot Bitcoin, long or flat. Built from scratch for BTC rather than adapted from the QQQ system.</p>
+<h2 id="idea">Idea</h2>
+<p>Bitcoin trends strongly in both directions, and its four-year halving cycle has produced deep bear markets roughly 1.5–2.5 years after each halving. The system holds BTC in proportion to how many trend signals agree. It cuts size when volatility is extreme, and stays out during the post-halving bear window.</p>
+<h2 id="rules-daily-close-at-0000-utc-btcusd">Rules (daily close at 00:00 UTC, BTC/USD)</h2>
+<ol>
+<li><strong>Score</strong> = average of five 0/1 signals:</li>
+<li>close above the close 10 days ago;</li>
+<li>close above the close 20 days ago;</li>
+<li>close above the close 50 days ago;</li>
+<li>close above the 50-day EMA;</li>
+<li>10-day EMA above the 30-day EMA.</li>
+</ol>
+<p>The score can be 0, 0.2, 0.4, 0.6, 0.8 or 1.
+2. <strong>Volatility sizing.</strong> Multiply by min(1, 80% ÷ 30-day realised volatility). Volatility is the standard deviation of daily log returns over 30 days × √365.
+3. <strong>Halving window.</strong> Hold nothing from day 545 to day 910 after each halving: 28 Nov 2012, 9 Jul 2016, 11 May 2020 and 20 Apr 2024. The next halving is expected around April 2028, so the next window runs about October 2029 to October 2030.
+4. <strong>Target weight</strong> = score × volatility factor (0 inside the window). The rest of the pot stays in cash.</p>
+<p>On the platform, the pot trades to the target when the score or the window changes, or when the holding drifts more than 10 points from target. EMAs use the standard recursive formula (span n).</p>
+<h2 id="results-10-bp-costs-cash-at-the-t-bill-rate">Results (10 bp costs, cash at the T-bill rate)</h2>
+<table>
+<thead>
+<tr>
+<th>Period</th>
+<th>CAGR</th>
+<th>Max drawdown</th>
+<th>Calmar</th>
+<th>BTC buy &amp; hold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Training 2015–2024</td>
+<td>105%</td>
+<td>−30%</td>
+<td>3.46</td>
+<td>77% / −84% / 0.92</td>
+</tr>
+<tr>
+<td>Early check 2011–2014</td>
+<td>301%</td>
+<td>−42%</td>
+<td>—</td>
+<td>drawdown −93%</td>
+</tr>
+<tr>
+<td>2025–Oct 2026 (seen during research, not independent)</td>
+<td>−1% total</td>
+<td>−17%</td>
+<td>—</td>
+<td>−17% total, −53% drawdown</td>
+</tr>
+</tbody>
+</table>
+<p>Calmar by era: 2015–17 6.3, 2018–20 3.4, 2021–24 2.1. About 49% invested on average.</p>
+<h2 id="filters-tested">Filters tested</h2>
+<ul>
+<li><strong>Halving window:</strong> kept. It lifted Calmar from 1.55 to 3.43 and cut the worst drawdown from −54% to −33%.</li>
+<li><strong>Volatility sizing:</strong> kept as crash insurance. Little change in 2015–24, but it cut the 2011–14 drawdown from −70% to −42%.</li>
+<li><strong>Dropped:</strong> dollar-strength, Fed-liquidity, credit and overheating filters. Each made results worse or added nothing. Dollar and liquidity are shown on the dashboard as context only.</li>
+<li><strong>Which moving average</strong> mattered much less than the halving window and volatility sizing. Almost any sensible trend rule inside that wrapper scored Calmar 2.2–3.5.</li>
+</ul>
+<h2 id="what-to-expect">What to expect</h2>
+<ul>
+<li>About 180 variants were tested in total, so the training figures are optimistic. Expect less in live trading.</li>
+<li>Many small adjustments: each change in score moves the target by 20 points. With a 0.10% fee that is a real but small cost.</li>
+<li>Long flat periods inside the halving window, even if the price rises.</li>
+<li>The research used Coin Metrics closes. Live signals use Yahoo's BTC-USD close at 00:00 UTC; the two sources occasionally differ by a day's signal.</li>
+</ul></article>
+
+</main>
+<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 00:52", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="../static/app.js"></script>
+</body>
+</html>
