@@ -2,4 +2,5 @@
 URL:shiller_ie_data.xls|http://www.econ.yale.edu/~shiller/data/ie_data.xls
 URL:aaii_sentiment.xls|https://www.aaii.com/files/surveys/sentiment.xls
 URL:finra_margin.xlsx|https://www.finra.org/sites/default/files/2021-03/margin-statistics.xlsx
-FRED:BAA10Y FRED:AAA10Y FRED:ICSA FRED:UNRATE FRED:FEDFUNDS FRED:INDPRO FRED:UMCSENT FRED:T10Y3M FRED:BAA FRED:PERMIT FRED:USSLIND FRED:BOGZ1FL663067003Q
+URL:icsa.csv|https://fred.stlouisfed.org/graph/fredgraph.csv?id=ICSA,UNRATE,BAA10Y,PERMIT,FEDFUNDS,CPIAUCSL
+FRED:BAA10Y

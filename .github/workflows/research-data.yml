@@ -32,10 +32,10 @@ jobs:
                   if sym.startswith('FRED:'):
                       import requests, io
                       v = None
-                      for k in range(5):
+                      for k in range(1):
                           try:
                               r = requests.get('https://fred.stlouisfed.org/graph/fredgraph.csv', params={'id': sym[5:]},
-                                               headers={'User-Agent': 'Mozilla/5.0 (research script)'}, timeout=150)
+                                               headers={'User-Agent': 'Mozilla/5.0 (research script)'}, timeout=40)
                               r.raise_for_status(); x = pd.read_csv(io.StringIO(r.text)); x.columns = ['date', 'v']
                               x['date'] = pd.to_datetime(x['date']); v = pd.to_numeric(x.set_index('date')['v'], errors='coerce').dropna(); break
                           except Exception as e:
