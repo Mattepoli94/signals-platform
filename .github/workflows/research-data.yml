@@ -75,7 +75,7 @@ jobs:
           pd.concat(out).to_csv('research-data/prices.csv', date_format='%Y-%m-%d')
           PY
       - name: Breadth
-        run: python research-data/scripts/breadth.py || true
+        run: '[ -f research-data/breadth/skip ] || python research-data/scripts/breadth.py || true'
       - name: Extra
         run: python research-data/scripts/fetch_extra.py || true
       - name: Commit
