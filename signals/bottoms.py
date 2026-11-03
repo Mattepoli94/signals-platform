@@ -207,11 +207,56 @@ def fast_panel() -> dict:
         _sign('Override: late-cycle radar red', late >= 3, f"{int(late)} of 5 signs" if late == late else '—', '3+ late-cycle signs', 'Valuation-driven tops (2000). When on, skip the plan.'),
         _sign('Buy 1: depth reached', x['dd'] <= -0.108, f"{x['dd'] * 100:.1f}% from 1-year high", '10.8% below the 1-year high', 'An entry into the crash; the typical low is ~16% below the high.'),
     ] + [_sign(f'Buy 2 group: {lab}', x[k] == 1, val, trig, 'Counts for 10 sessions after it fires.') for lab, k, trig, val in groups]
+    # ---- the plan as four steps, each with its requirements (what the page shows first)
+    def req(label, ok, now, need):
+        return {'label': label, 'ok': None if ok is None else bool(ok), 'now': now, 'need': need}
+    crash_ok, depth_ok, groups_ok = act is not None, bool(x['dd'] <= -0.108), n_on >= 3
+    b1, b2 = (act or {}).get('buy1'), (act or {}).get('buy2')
+    skipped = bool(act and act['skipped'])
+    if b1 is not None and skipped:
+        s1 = ('SKIPPED', 'red', f"level hit {b1:%d %b}, override on")
+    elif b1 is not None:
+        s1 = ('ON', 'green', f"buy today ({b1:%d %b})") if b1 == asof else ('DONE', 'green', f"{b1:%d %b} at ${act['buy1_px']:.2f}")
+    elif crash_ok and override_now:
+        s1 = ('BLOCKED', 'red', 'override on')
+    elif crash_ok:
+        s1 = ('NOT YET', 'amber', f"needs a close at −10.8% (now {x['dd'] * 100:.1f}%)")
+    else:
+        s1 = ('OFF', 'grey', 'no fast crash')
+    if b2 is not None:
+        s2 = ('ON', 'green', f"buy today ({b2:%d %b})") if b2 == asof else ('DONE', 'green', f"{b2:%d %b}")
+    elif b1 is None or skipped:
+        s2 = ('LOCKED', 'grey', 'needs buy 1 first')
+    else:
+        s2 = ('NOT YET', 'amber', f"needs a lower close with 3+ groups ({n_on} of 6 now)")
+    lower = (b1 is not None and not skipped and float(x['close']) < float(act['buy1_px']))
+    steps = [
+        {'title': 'Fast crash', 'state': 'ON' if crash_ok else 'OFF', 'tone': 'amber' if crash_ok else 'grey',
+         'note': f"since {act['start']:%d %b}" if crash_ok else 'no crash under way',
+         'reqs': [req('QQQ −8% within 15 sessions, from within 4% of its 1-year high', crash_ok,
+                      f"day {t - X.index.get_loc(act['start']) + 1} of 40" if crash_ok else '', 'plan runs 40 sessions')]},
+        {'title': 'Override (must be OFF)', 'state': 'ON' if override_now else 'OFF', 'tone': 'red' if override_now else 'green',
+         'note': 'skip the plan' if override_now else 'plan allowed',
+         'reqs': [req('Rate/inflation pressure', pressure == 1, 'on' if pressure == 1 else 'off', '10y +1.5 pt in 1y, or CPI > 4% and rising'),
+                  req('Late-cycle radar red', late >= 3, f"{int(late)} of 5 signs" if late == late else '—', '3+ of 5 signs')],
+         'invert': True},
+        {'title': 'BUY 1', 'state': s1[0], 'tone': s1[1], 'note': s1[2],
+         'reqs': [req('Fast crash under way', crash_ok, 'yes' if crash_ok else 'no', ''),
+                  req('Override off', not override_now, 'off' if not override_now else 'ON', ''),
+                  req('Close 10.8%+ below the 1-year high', depth_ok or b1 is not None, f"{x['dd'] * 100:.1f}%", '−10.8%')]},
+        {'title': 'BUY 2', 'state': s2[0], 'tone': s2[1], 'note': s2[2],
+         'reqs': [req('Buy 1 done', b1 is not None and not skipped, f"{b1:%d %b}" if b1 is not None and not skipped else 'not yet', ''),
+                  req('Close below the buy-1 price', lower or b2 is not None,
+                      f"${float(x['close']):.2f} vs ${act['buy1_px']:.2f}" if b1 is not None and not skipped else '—', ''),
+                  req('3+ of 6 capitulation groups on', groups_ok, f"{n_on} of 6", '3 of 6')]},
+    ]
+    gsigns = [_sign(lab, x[k] == 1, val, trig, '') for lab, k, trig, val in groups]
     return {'key': 'fast', 'title': 'Fast-crash bottom plan', 'market': 'QQQ', 'horizon': 'the crash low',
             'asof': asof.strftime('%Y-%m-%d'), 'level': level, 'tone': tone, 'score': float(n_on), 'of': 6,
             'rule': 'Buy 1 at −10.8% from the high · Buy 2 on a lower close with 3+ of 6 capitulation groups · skipped when the override is on',
             'summary': summary, 'context': f"Override now: {'ON' if override_now else 'off'} · capitulation groups on now: {n_on} of 6",
-            'signs': signs, 'perf': PERF['fast'], 'amber': 3, 'red': 6,
+            'signs': signs, 'steps': steps, 'group_signs': gsigns, 'groups_on': n_on,
+            'perf': PERF['fast'], 'amber': 3, 'red': 6,
             'hist': [[d.strftime('%Y-%m-%d'), float(v)] for d, v in cnt[cnt.index >= cnt.index[-1] - pd.DateOffset(years=3)].items()],
             'history': [{'start': p['start'].strftime('%Y-%m-%d'), 'buy1': p['buy1'].strftime('%Y-%m-%d') if p['buy1'] is not None else None,
                          'buy2': p['buy2'].strftime('%Y-%m-%d') if p['buy2'] is not None else None, 'skipped': p['skipped'],
@@ -220,7 +265,7 @@ def fast_panel() -> dict:
 
 
 def washout_panel() -> dict:
-    out_signs, levels, notes, last_sig = [], [], [], {}
+    out_signs, levels, notes, last_sig, steps = [], [], [], {}, []
     vix_all = _read('cboe_VIX', 'close')
     for name, series, scale in (('S&P 500', _read('yahoo_GSPC', 'close').dropna(), 1.0), ('QQQ', _price('QQQ', 'close').dropna(), 1.35)):
         c = series[series.index >= '1990-01-01']
@@ -233,6 +278,14 @@ def washout_panel() -> dict:
             levels.append('BUY')
         elif state.iloc[-1]:
             levels.append('WAIT')
+        steps.append({'title': name, 'state': 'BUY ON' if recent else ('WAIT' if state.iloc[-1] else 'OFF'),
+                      'tone': 'green' if recent else ('amber' if state.iloc[-1] else 'grey'),
+                      'note': f"washout {recent[-1]:%d %b}" if recent else ('bear market, no washout yet' if state.iloc[-1] else 'no bear market'),
+                      'reqs': [{'label': f'Bear state: {15 * scale:.2f}%+ below the 1-year high'.replace('.00%', '%'), 'ok': bool(state.iloc[-1]), 'now': f"{x_dd * 100:.1f}%", 'need': ''},
+                               {'label': f'Washout (any one): {30 * scale:.1f}% below the high'.replace('.0%', '%'), 'ok': bool(x_dd <= -0.30 * scale), 'now': f"{x_dd * 100:.1f}%", 'need': 'any one'},
+                               {'label': f'or {20 * scale:.0f}% below the 200-day', 'ok': bool(x_200 <= -0.20 * scale), 'now': f"{x_200 * 100:+.1f}%", 'need': ''},
+                               {'label': 'or VIX at 35+', 'ok': bool(x_v >= 35), 'now': f"{x_v:.1f}", 'need': ''}],
+                      'last': last_sig[name]})
         out_signs.append(_sign(f'{name}: bear state', bool(state.iloc[-1]), f"{x_dd * 100:.1f}% from 1-year high", f"{15 * scale:.1f}%+ below the high", ''))
         out_signs.append(_sign(f'{name}: washout', bool(recent), f"{x_dd * 100:.1f}% · {x_200 * 100:+.1f}% vs 200-day · VIX {x_v:.1f}",
                                f"{30 * scale:.1f}% below high, or {20 * scale:.0f}% below 200-day, or VIX ≥ 35", f"Last signal: {last_sig[name] or 'none since 1990'}"))
@@ -246,7 +299,7 @@ def washout_panel() -> dict:
             'asof': _read('yahoo_GSPC', 'close').index[-1].strftime('%Y-%m-%d'), 'level': level, 'tone': tone, 'score': None, 'of': None,
             'rule': 'In a bear state, buy on a washout: 30% below the high, 20% below the 200-day, or VIX ≥ 35 (QQQ thresholds ×1.35)',
             'summary': summary, 'context': f"Last signals: S&P {last_sig.get('S&P 500') or '—'} · QQQ {last_sig.get('QQQ') or '—'}",
-            'signs': out_signs, 'perf': PERF['washout'], 'hist': []}
+            'signs': out_signs, 'steps': steps, 'perf': PERF['washout'], 'hist': []}
 
 
 def compute() -> list:

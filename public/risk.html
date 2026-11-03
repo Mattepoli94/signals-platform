@@ -52,7 +52,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 17:02</span>
+    <span>Updated Tue 03 Nov 2026, 17:12</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -66,7 +66,7 @@
   <div>
     <div class="kicker">Early warnings · display only</div>
     <h1>Risk radar</h1>
-    <p class="sub">Three warning flags that look <b>ahead</b>, not at damage already done. Each one shows its tested track record, so you can judge how much weight to give it. None of them changes any order: the trading systems' own rules handle exits.</p>
+    <p class="sub"><b>Peak radars</b> look ahead for the end of a bull market or a sudden crash. <b>How to use them:</b> they never change an order, and you don't sell because of them (the systems' own rules handle exits). Use them to decide whether to add <i>extra</i> money and how much risk to expect. Each panel shows its tested track record.</p>
   </div>
   <a class="btn primary" href="research/risk-radar.html">Full research &amp; backtests</a>
 </div>
@@ -106,10 +106,14 @@
     <div class="lvl big t-amber">AMBER<span>2/5</span></div>
   </div>
   
+  <div class="howto"><b>How to use</b><p>A slow warning that a bull market is ageing: it looks 6–12 months ahead, so it is early by design.</p><p>GREEN/AMBER: carry on with the systems. RED (3+ signs): a bear market within a year is more likely, so don&#39;t add extra money outside the systems. RED also switches on the fast-crash override, so the plan is skipped.</p></div>
   <p class="radar-sum">Late-cycle conditions building: 2 signs on. Historically the odds of a bear market starting within a year roughly double.</p>
   <p class="small muted" style="margin:-6px 0 0">S&amp;P 500 is 3.5% below its 1-year high. The radar matters most while the market is near its high.</p>
 
+  
+
   <div class="radar-grid">
+    
     <div>
       <h3>Signs now</h3>
       <div class="checks">
@@ -146,6 +150,7 @@
       
       </div>
     </div>
+    
     <div class="perf">
       <div class="perf-h"><span class="kicker" style="color:var(--blue-d)">Track record</span><span class="small">What it predicts: A bear market (S&amp;P 500 down 19% or more) starting within the next 12 months</span></div>
       <div class="perf-big">
@@ -193,10 +198,14 @@
     <div class="lvl big t-grey">IDLE<span>1/4</span></div>
   </div>
   
+  <div class="howto"><b>How to use</b><p>A short-range warning (3 weeks – 2 months) for sudden Nasdaq falls that start near a high. It is IDLE when the Nasdaq is more than 4% below its high.</p><p>AMBER/RED: don&#39;t chase the high with extra money, and expect a sharp dip. The trading system&#39;s stops still handle exits; most warnings are not followed by a crash.</p></div>
   <p class="radar-sum">Idle: the Nasdaq-100 is 10.3% below its 1-year high. This radar warns about crashes that start near highs; it switches on again within 4% of the high.</p>
   <p class="small muted" style="margin:-6px 0 0">Nasdaq-100 (QQQ) is 10.3% below its 1-year high.</p>
 
+  
+
   <div class="radar-grid">
+    
     <div>
       <h3>Signs now</h3>
       <div class="checks">
@@ -227,6 +236,7 @@
       
       </div>
     </div>
+    
     <div class="perf">
       <div class="perf-h"><span class="kicker" style="color:var(--blue-d)">Track record</span><span class="small">What it predicts: A Nasdaq-100 fall of 8% or more within 3 weeks, starting near its high</span></div>
       <div class="perf-big">
@@ -270,10 +280,14 @@
     <div class="lvl big t-green">GREEN<span>0/3</span></div>
   </div>
   
+  <div class="howto"><b>How to use</b><p>Checks whether bitcoin is crowded with leverage, which is what turns dips into 15%+ flushes within days.</p><p>AMBER/RED: don&#39;t add extra money to BTC, and expect a violent move. The BTC system&#39;s own rules are unchanged.</p></div>
   <p class="radar-sum">No leverage froth: funding, futures positioning and the 30-day move are all normal.</p>
   
 
+  
+
   <div class="radar-grid">
+    
     <div>
       <h3>Signs now</h3>
       <div class="checks">
@@ -298,6 +312,7 @@
       
       </div>
     </div>
+    
     <div class="perf">
       <div class="perf-h"><span class="kicker" style="color:var(--blue-d)">Track record</span><span class="small">What it predicts: A BTC fall of 15% or more within 10 days, starting near its 2-month high</span></div>
       <div class="perf-big">
@@ -333,7 +348,7 @@
 
 
 <div class="pagehead" style="margin-top:28px"><div><div class="kicker">Buy-side · display only</div><h2 style="font-size:24px;margin:2px 0 0">Bottom signals</h2>
-<p class="sub">Where historically it paid to buy into a fall: a two-step plan for QQQ fast crashes, and the washout signal for bear markets. They tell you when the odds favour buying; they don't place orders.</p></div>
+<p class="sub"><b>Bottom signals</b> say when buying into a fall has historically paid. <b>How to use them:</b> in a sudden QQQ crash, follow the fast-crash plan: when <b>BUY 1</b> or <b>BUY 2</b> says ON, the value plan invests at the next London close (its card on Today shows the order). In a bear market, the washout marks capitulation; it is for your own spare money and no system acts on it.</p></div>
 <a class="btn" href="research/bottom-signals.html">Bottom-signal research</a></div>
 <div class="radar-strip"><a class="radar-tile" href="#fast"><div class="kicker">Fast-crash bottom plan</div><div class="lvl t-amber">WATCH</div><div class="small">QQQ</div></a><a class="radar-tile" href="#washout"><div class="kicker">Bear-market washout</div><div class="lvl t-grey">IDLE</div><div class="small">S&amp;P 500 and QQQ</div></a></div>
 
@@ -347,76 +362,107 @@
     <div class="lvl big t-amber">WATCH</div>
   </div>
   
+  <div class="howto"><b>How to use</b><p>For a sudden QQQ fall from near its high. Follow the four steps from left to right: buys happen only when a step says ON.</p><p>BUY 1 ON: the value plan invests 50% of its cash at the next London close. BUY 2 ON: it invests the rest. Override ON: no fast-crash buys; leave the fall to the bear-market washout. The trading system ignores this plan.</p></div>
   <p class="radar-sum">Fast crash under way since 09 Oct. Buy 1 triggers at a close 10.8% below the 1-year high (QQQ is 10.3% below). Override is off.</p>
-  <p class="small muted" style="margin:-6px 0 0">Override now: off · capitulation groups on now: 2 of 6</p>
+  
+
+  
+  <div class="steps" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+  
+    <div class="step t-amber">
+      <div class="step-h"><span class="step-t"><span class="step-n">1</span>Fast crash</span><span class="step-s">ON</span></div>
+      <div class="small step-note">since 09 Oct</div>
+      <ul class="reqs">
+      <li><span class="rq good">✓</span>
+        <span class="rl">QQQ −8% within 15 sessions, from within 4% of its 1-year high</span><span class="rn mono">day 17 of 40</span></li>
+      </ul>
+      
+    </div>
+  
+    <div class="step t-green">
+      <div class="step-h"><span class="step-t"><span class="step-n">2</span>Override (must be OFF)</span><span class="step-s">OFF</span></div>
+      <div class="small step-note">plan allowed</div>
+      <ul class="reqs">
+      <li><span class="rq good">✓</span>
+        <span class="rl">Rate/inflation pressure</span><span class="rn mono">off</span></li><li><span class="rq good">✓</span>
+        <span class="rl">Late-cycle radar red</span><span class="rn mono">2 of 5 signs</span></li>
+      </ul>
+      
+    </div>
+  
+    <div class="step t-amber">
+      <div class="step-h"><span class="step-t"><span class="step-n">3</span>BUY 1</span><span class="step-s">NOT YET</span></div>
+      <div class="small step-note">needs a close at −10.8% (now -10.3%)</div>
+      <ul class="reqs">
+      <li><span class="rq good">✓</span>
+        <span class="rl">Fast crash under way</span><span class="rn mono">yes</span></li><li><span class="rq good">✓</span>
+        <span class="rl">Override off</span><span class="rn mono">off</span></li><li><span class="rq no">✗</span>
+        <span class="rl">Close 10.8%+ below the 1-year high</span><span class="rn mono">-10.3%</span></li>
+      </ul>
+      
+    </div>
+  
+    <div class="step t-grey">
+      <div class="step-h"><span class="step-t"><span class="step-n">4</span>BUY 2</span><span class="step-s">LOCKED</span></div>
+      <div class="small step-note">needs buy 1 first</div>
+      <ul class="reqs">
+      <li><span class="rq no">✗</span>
+        <span class="rl">Buy 1 done</span><span class="rn mono">not yet</span></li><li><span class="rq no">✗</span>
+        <span class="rl">Close below the buy-1 price</span><span class="rn mono">—</span></li><li><span class="rq no">✗</span>
+        <span class="rl">3+ of 6 capitulation groups on</span><span class="rn mono">2 of 6</span></li>
+      </ul>
+      
+    </div>
+  
+  </div>
+  
 
   <div class="radar-grid">
+    
     <div>
-      <h3>Signs now</h3>
+      <h3>Capitulation groups for BUY 2 <span class="pill t-grey">2 of 6 on · needs 3</span></h3>
+      <p class="small muted" style="margin:2px 0 8px">Each group stays on for 10 sessions after it fires.</p>
       <div class="checks">
       
         <div class="chk rs">
-          <span class="rdot on" title="on"></span>
-          <div class="lab"><b>Fast crash under way</b><div class="small muted">The plan only runs inside a fast crash (40 sessions).</div></div>
-          <div class="rv"><div class="mono">since 09 Oct 2026</div><div class="small muted">trigger: QQQ −8% within 15 sessions from near its high</div></div>
+          <span class="rdot off"></span>
+          <div class="lab"><b>Stretch</b><div class="small muted">Fall of 2.5+ volatility units</div></div>
+          <div class="rv"><div class="mono">-1.9σ drawdown · -1.8σ in 15 days</div></div>
         </div>
       
         <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>Override: rate/inflation pressure</b><div class="small muted">Rate-driven falls tend to keep going (1990, 2022). When on, skip the plan.</div></div>
-          <div class="rv"><div class="mono">off</div><div class="small muted">trigger: 10y +1.5 pt in a year, or CPI &gt; 4% and rising</div></div>
+          <span class="rdot on"></span>
+          <div class="lab"><b>Capitulation volume</b><div class="small muted">Volume 1.8× normal on a −2% day</div></div>
+          <div class="rv"><div class="mono">volume 1.5× today</div></div>
         </div>
       
         <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>Override: late-cycle radar red</b><div class="small muted">Valuation-driven tops (2000). When on, skip the plan.</div></div>
-          <div class="rv"><div class="mono">2 of 5 signs</div><div class="small muted">trigger: 3+ late-cycle signs</div></div>
+          <span class="rdot off"></span>
+          <div class="lab"><b>Options fear</b><div class="small muted">Put/call in top 10% of the year</div></div>
+          <div class="rv"><div class="mono">total pct 61 · equity pct 63</div></div>
         </div>
       
         <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>Buy 1: depth reached</b><div class="small muted">An entry into the crash; the typical low is ~16% below the high.</div></div>
-          <div class="rv"><div class="mono">-10.3% from 1-year high</div><div class="small muted">trigger: 10.8% below the 1-year high</div></div>
+          <span class="rdot on"></span>
+          <div class="lab"><b>Volatility panic</b><div class="small muted">VXN top 10%, or VIX9D above VIX</div></div>
+          <div class="rv"><div class="mono">VXN 30.9 (pct 97) · VIX9D/VIX 1.06</div></div>
         </div>
       
         <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>Buy 2 group: Stretch</b><div class="small muted">Counts for 10 sessions after it fires.</div></div>
-          <div class="rv"><div class="mono">-1.9σ drawdown · -1.8σ in 15 days</div><div class="small muted">trigger: Fall of 2.5+ volatility units</div></div>
+          <span class="rdot off"></span>
+          <div class="lab"><b>Dealers short gamma</b><div class="small muted">GEX below zero</div></div>
+          <div class="rv"><div class="mono">GEX +2.8bn</div></div>
         </div>
       
         <div class="chk rs">
-          <span class="rdot on" title="on"></span>
-          <div class="lab"><b>Buy 2 group: Capitulation volume</b><div class="small muted">Counts for 10 sessions after it fires.</div></div>
-          <div class="rv"><div class="mono">volume 1.5× today</div><div class="small muted">trigger: Volume 1.8× normal on a −2% day</div></div>
-        </div>
-      
-        <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>Buy 2 group: Options fear</b><div class="small muted">Counts for 10 sessions after it fires.</div></div>
-          <div class="rv"><div class="mono">total pct 61 · equity pct 63</div><div class="small muted">trigger: Put/call in top 10% of the year</div></div>
-        </div>
-      
-        <div class="chk rs">
-          <span class="rdot on" title="on"></span>
-          <div class="lab"><b>Buy 2 group: Volatility panic</b><div class="small muted">Counts for 10 sessions after it fires.</div></div>
-          <div class="rv"><div class="mono">VXN 30.9 (pct 97) · VIX9D/VIX 1.06</div><div class="small muted">trigger: VXN top 10%, or VIX9D above VIX</div></div>
-        </div>
-      
-        <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>Buy 2 group: Dealers short gamma</b><div class="small muted">Counts for 10 sessions after it fires.</div></div>
-          <div class="rv"><div class="mono">GEX +2.8bn</div><div class="small muted">trigger: GEX below zero</div></div>
-        </div>
-      
-        <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>Buy 2 group: Oversold</b><div class="small muted">Counts for 10 sessions after it fires.</div></div>
-          <div class="rv"><div class="mono">RSI14 32 · RSI2 5</div><div class="small muted">trigger: RSI(14) ≤ 30 or RSI(2) ≤ 5</div></div>
+          <span class="rdot off"></span>
+          <div class="lab"><b>Oversold</b><div class="small muted">RSI(14) ≤ 30 or RSI(2) ≤ 5</div></div>
+          <div class="rv"><div class="mono">RSI14 32 · RSI2 5</div></div>
         </div>
       
       </div>
     </div>
+    
     <div class="perf">
       <div class="perf-h"><span class="kicker" style="color:var(--blue-d)">Track record</span><span class="small">What it predicts: Where to buy in a QQQ fast crash (down 8%+ in 3 weeks from near its high), in two steps</span></div>
       <div class="perf-big">
@@ -463,40 +509,44 @@
     <div class="lvl big t-grey">IDLE</div>
   </div>
   
+  <div class="howto"><b>How to use</b><p>For bear markets only: it marks capitulation, when buying has historically paid best.</p><p>BUY ON: a strong moment to buy with spare money (display only: the value plan does not use it). WAIT: a bear market without capitulation, so don&#39;t try to catch the low yet.</p></div>
   <p class="radar-sum">No bear market: neither the S&amp;P 500 (15%+) nor QQQ (20%+) is in a bear state.</p>
-  <p class="small muted" style="margin:-6px 0 0">Last signals: S&amp;P 2025-04-04 · QQQ 2025-04-04</p>
+  
 
-  <div class="radar-grid">
-    <div>
-      <h3>Signs now</h3>
-      <div class="checks">
-      
-        <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>S&amp;P 500: bear state</b><div class="small muted"></div></div>
-          <div class="rv"><div class="mono">-3.5% from 1-year high</div><div class="small muted">trigger: 15.0%+ below the high</div></div>
-        </div>
-      
-        <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>S&amp;P 500: washout</b><div class="small muted">Last signal: 2025-04-04</div></div>
-          <div class="rv"><div class="mono">-3.5% · +3.1% vs 200-day · VIX 21.1</div><div class="small muted">trigger: 30.0% below high, or 20% below 200-day, or VIX ≥ 35</div></div>
-        </div>
-      
-        <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>QQQ: bear state</b><div class="small muted"></div></div>
-          <div class="rv"><div class="mono">-10.3% from 1-year high</div><div class="small muted">trigger: 20.2%+ below the high</div></div>
-        </div>
-      
-        <div class="chk rs">
-          <span class="rdot off" title="off"></span>
-          <div class="lab"><b>QQQ: washout</b><div class="small muted">Last signal: 2025-04-04</div></div>
-          <div class="rv"><div class="mono">-10.3% · +0.2% vs 200-day · VIX 21.1</div><div class="small muted">trigger: 40.5% below high, or 27% below 200-day, or VIX ≥ 35</div></div>
-        </div>
-      
-      </div>
+  
+  <div class="steps" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+  
+    <div class="step t-grey">
+      <div class="step-h"><span class="step-t">S&amp;P 500</span><span class="step-s">OFF</span></div>
+      <div class="small step-note">no bear market</div>
+      <ul class="reqs">
+      <li><span class="rq no">✗</span>
+        <span class="rl">Bear state: 15%+ below the 1-year high</span><span class="rn mono">-3.5%</span></li><li><span class="rq no">✗</span>
+        <span class="rl">Washout (any one): 30% below the high</span><span class="rn mono">-3.5%</span></li><li><span class="rq no">✗</span>
+        <span class="rl">or 20% below the 200-day</span><span class="rn mono">+3.1%</span></li><li><span class="rq no">✗</span>
+        <span class="rl">or VIX at 35+</span><span class="rn mono">21.1</span></li>
+      </ul>
+      <div class="small muted">Last washout: 04 Apr 2025</div>
     </div>
+  
+    <div class="step t-grey">
+      <div class="step-h"><span class="step-t">QQQ</span><span class="step-s">OFF</span></div>
+      <div class="small step-note">no bear market</div>
+      <ul class="reqs">
+      <li><span class="rq no">✗</span>
+        <span class="rl">Bear state: 20.25%+ below the 1-year high</span><span class="rn mono">-10.3%</span></li><li><span class="rq no">✗</span>
+        <span class="rl">Washout (any one): 40.5% below the high</span><span class="rn mono">-10.3%</span></li><li><span class="rq no">✗</span>
+        <span class="rl">or 27% below the 200-day</span><span class="rn mono">+0.2%</span></li><li><span class="rq no">✗</span>
+        <span class="rl">or VIX at 35+</span><span class="rn mono">21.1</span></li>
+      </ul>
+      <div class="small muted">Last washout: 04 Apr 2025</div>
+    </div>
+  
+  </div>
+  
+
+  <div class="radar-grid" style="grid-template-columns:1fr">
+    
     <div class="perf">
       <div class="perf-h"><span class="kicker" style="color:var(--blue-d)">Track record</span><span class="small">What it predicts: A capitulation low in a bear market (S&amp;P 500 down 15%+ or QQQ 20%+)</span></div>
       <div class="perf-big">
@@ -543,7 +593,7 @@
 </main>
 <footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 17:02", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 17:12", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>

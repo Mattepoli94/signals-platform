@@ -13,10 +13,42 @@
     <div class="lvl big t-{{ p.tone or 'grey' }}">{{ p.level or 'NO DATA' }}{% if p.score is not none and p.of and p.key in ('late','ndx','btc') %}<span>{{ p.score|int }}/{{ p.of }}</span>{% endif %}</div>
   </div>
   {% if p.error %}<div class="banner warn small">Could not compute: {{ p.error }}</div>{% endif %}
+  {% if p.howto %}<div class="howto"><b>How to use</b>{% for l in p.howto %}<p>{{ l }}</p>{% endfor %}</div>{% endif %}
   {% if p.summary %}<p class="radar-sum">{{ p.summary }}</p>{% endif %}
-  {% if p.context %}<p class="small muted" style="margin:-6px 0 0">{{ p.context }}</p>{% endif %}
+  {% if p.context and not p.steps %}<p class="small muted" style="margin:-6px 0 0">{{ p.context }}</p>{% endif %}
 
-  <div class="radar-grid">
+  {% if p.steps %}
+  <div class="steps" style="grid-template-columns:repeat({{ p.steps|length }},minmax(0,1fr))">
+  {% for st in p.steps %}
+    <div class="step t-{{ st.tone }}">
+      <div class="step-h"><span class="step-t">{% if p.key == 'fast' %}<span class="step-n">{{ loop.index }}</span>{% endif %}{{ st.title }}</span><span class="step-s">{{ st.state }}</span></div>
+      <div class="small step-note">{{ st.note }}</div>
+      <ul class="reqs">
+      {% for r in st.reqs %}<li>{% if r.ok is none %}<span class="rq nd">·</span>{% elif st.invert %}<span class="rq {{ 'bad' if r.ok else 'good' }}">{{ '!' if r.ok else '✓' }}</span>{% else %}<span class="rq {{ 'good' if r.ok else 'no' }}">{{ '✓' if r.ok else '✗' }}</span>{% endif %}
+        <span class="rl">{{ r.label }}</span><span class="rn mono">{{ r.now }}</span></li>{% endfor %}
+      </ul>
+      {% if st.last %}<div class="small muted">Last washout: {{ st.last|d }}</div>{% endif %}
+    </div>
+  {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="radar-grid"{% if p.steps and not p.group_signs %} style="grid-template-columns:1fr"{% endif %}>
+    {% if p.group_signs %}
+    <div>
+      <h3>Capitulation groups for BUY 2 <span class="pill {{ 't-green' if p.groups_on >= 3 else 't-grey' }}">{{ p.groups_on }} of 6 on · needs 3</span></h3>
+      <p class="small muted" style="margin:2px 0 8px">Each group stays on for 10 sessions after it fires.</p>
+      <div class="checks">
+      {% for s in p.group_signs %}
+        <div class="chk rs">
+          {% if s.on is none %}<span class="rdot nd"></span>{% elif s.on %}<span class="rdot on"></span>{% else %}<span class="rdot off"></span>{% endif %}
+          <div class="lab"><b>{{ s.label }}</b><div class="small muted">{{ s.trigger }}</div></div>
+          <div class="rv"><div class="mono">{{ s.value }}</div></div>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+    {% elif not p.steps %}
     <div>
       <h3>Signs now</h3>
       <div class="checks">
@@ -29,6 +61,7 @@
       {% endfor %}
       </div>
     </div>
+    {% endif %}
     <div class="perf">
       <div class="perf-h"><span class="kicker" style="color:var(--blue-d)">Track record</span><span class="small">What it predicts: {{ p.perf.predicts }}</span></div>
       <div class="perf-big">
@@ -73,7 +106,7 @@
   <div>
     <div class="kicker">Early warnings · display only</div>
     <h1>Risk radar</h1>
-    <p class="sub">Three warning flags that look <b>ahead</b>, not at damage already done. Each one shows its tested track record, so you can judge how much weight to give it. None of them changes any order: the trading systems' own rules handle exits.</p>
+    <p class="sub"><b>Peak radars</b> look ahead for the end of a bull market or a sudden crash. <b>How to use them:</b> they never change an order, and you don't sell because of them (the systems' own rules handle exits). Use them to decide whether to add <i>extra</i> money and how much risk to expect. Each panel shows its tested track record.</p>
   </div>
   <a class="btn primary" href="research/risk-radar.html">Full research &amp; backtests</a>
 </div>
@@ -93,7 +126,7 @@
 {% for p in R.panels or [] %}{{ panel(p) }}{% endfor %}
 
 <div class="pagehead" style="margin-top:28px"><div><div class="kicker">Buy-side · display only</div><h2 style="font-size:24px;margin:2px 0 0">Bottom signals</h2>
-<p class="sub">Where historically it paid to buy into a fall: a two-step plan for QQQ fast crashes, and the washout signal for bear markets. They tell you when the odds favour buying; they don't place orders.</p></div>
+<p class="sub"><b>Bottom signals</b> say when buying into a fall has historically paid. <b>How to use them:</b> in a sudden QQQ crash, follow the fast-crash plan: when <b>BUY 1</b> or <b>BUY 2</b> says ON, the value plan invests at the next London close (its card on Today shows the order). In a bear market, the washout marks capitulation; it is for your own spare money and no system acts on it.</p></div>
 <a class="btn" href="research/bottom-signals.html">Bottom-signal research</a></div>
 <div class="radar-strip">{% for p in R.bottoms or [] %}<a class="radar-tile" href="#{{ p.key }}"><div class="kicker">{{ p.title }}</div><div class="lvl t-{{ p.tone or 'grey' }}">{{ p.level or 'NO DATA' }}</div><div class="small">{{ p.market }}</div></a>{% endfor %}</div>
 {% for p in R.bottoms or [] %}{{ panel(p) }}{% endfor %}

@@ -487,4 +487,21 @@ def compute() -> dict:
         out['panels'].append({'key': 'btc', 'title': 'BTC leverage radar', 'error': str(e)[:200], 'perf': PERF['btc']})
     from . import bottoms
     out['bottoms'] = bottoms.compute()
+    for p in out['panels'] + out['bottoms']:
+        p['howto'] = HOWTO.get(p.get('key'), [])
     return out
+
+
+# Two lines per panel: what it is for, and what to do at each level. Shown at the top of each panel.
+HOWTO = {
+    'late': ['A slow warning that a bull market is ageing: it looks 6–12 months ahead, so it is early by design.',
+             'GREEN/AMBER: carry on with the systems. RED (3+ signs): a bear market within a year is more likely, so don\'t add extra money outside the systems. RED also switches on the fast-crash override, so the plan is skipped.'],
+    'ndx': ['A short-range warning (3 weeks – 2 months) for sudden Nasdaq falls that start near a high. It is IDLE when the Nasdaq is more than 4% below its high.',
+            'AMBER/RED: don\'t chase the high with extra money, and expect a sharp dip. The trading system\'s stops still handle exits; most warnings are not followed by a crash.'],
+    'btc': ['Checks whether bitcoin is crowded with leverage, which is what turns dips into 15%+ flushes within days.',
+            'AMBER/RED: don\'t add extra money to BTC, and expect a violent move. The BTC system\'s own rules are unchanged.'],
+    'fast': ['For a sudden QQQ fall from near its high. Follow the four steps from left to right: buys happen only when a step says ON.',
+             'BUY 1 ON: the value plan invests 50% of its cash at the next London close. BUY 2 ON: it invests the rest. Override ON: no fast-crash buys; leave the fall to the bear-market washout. The trading system ignores this plan.'],
+    'washout': ['For bear markets only: it marks capitulation, when buying has historically paid best.',
+                'BUY ON: a strong moment to buy with spare money (display only: the value plan does not use it). WAIT: a bear market without capitulation, so don\'t try to catch the low yet.'],
+}
