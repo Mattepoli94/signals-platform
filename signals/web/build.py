@@ -34,8 +34,13 @@ PAPERS = [
      'desc': 'Three display-only early-warning flags, with the full research behind them: what was tested, what worked, what failed, and how often each flag is right.',
      'stats': [('Late cycle, 2+ signs', '2.0× odds'), ('Nasdaq, 2+ families', '1.9× odds'), ('BTC, 2+ signs', '3.4× odds')],
      'period': 'Late cycle: S&P 1955–2026 (chosen 1955–94, checked 1995–2026). Nasdaq: 2006–2026, all years tested. BTC: 2019–2026.'},
+    {'slug': 'bottom-signals', 'kind': 'BUY SIDE · BOTTOMS', 'version': 'v1', 'title': 'Bottom signals: QQQ fast-crash plan and bear-market washout',
+     'desc': 'Two display-only buy signals: a two-step QQQ fast-crash plan (depth, then capitulation and options/positioning groups, with a rate/late-cycle override) and the bear-market washout.',
+     'stats': [('Fast crash: within 5% of low', '79%'), ('Fast crash: 3m after', '+10.3%'), ('Washout S&P 6m', '+25%')],
+     'period': 'Fast crash: QQQ 2007–2026 (19 crashes). Washout: S&P 1962–2026, QQQ 1987–2026.'},
 ]
 CHANGELOG = [
+    ('2026-11-03', 'Bottom signals', 'v1 live (display only): QQQ fast-crash two-step plan with rate/late-cycle override, and the bear-market washout for S&P 500 and QQQ.'),
     ('2026-11-03', 'Risk radar', 'v1 live (display only): late-cycle, Nasdaq crash-risk and BTC leverage radars with their track records. Replaces the old 3-point risk flag on the Nasdaq system.'),
     ('2026-11-03', 'BTC cycle trend system', 'v2 live: 30/50 EMA cross, bear window day 541–900, half size when ADX < 25 or day 1,081–1,260. Replaces v1.'),
     ('2026-11-03', 'BTC trend blend', 'Re-tested with random holdout years (2012, 2016, 2018) and walk-forward: no validated edge over holding BTC. Marked paper only.'),
@@ -219,8 +224,9 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
     for p in pots:
         charts['exp_' + p['key']] = _expect_chart(p)
     charts['total'] = _total_chart(pots)
-    for rp in (snap.get('radar') or {}).get('panels') or []:
-        charts['radar_' + rp['key']] = _radar_chart(rp)
+    for rp in ((snap.get('radar') or {}).get('panels') or []) + ((snap.get('radar') or {}).get('bottoms') or []):
+        if rp.get('hist') and rp.get('amber') is not None:
+            charts['radar_' + rp['key']] = _radar_chart(rp)
     names = {p['key']: p['name'] for p in pots}
     events = []
     sys_names = {'qqq_regime': 'Nasdaq trading', 'qqq_value': 'Nasdaq value plan', 'btc_trend': 'BTC trend'}

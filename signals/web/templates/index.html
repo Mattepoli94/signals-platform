@@ -10,6 +10,7 @@
   </div>
   {% if snap.radar and snap.radar.panels %}<a href="risk.html" style="display:flex;flex-wrap:wrap;gap:8px;text-decoration:none" aria-label="Risk radar">
   {% for rp in snap.radar.panels %}<span class="pill t-{{ rp.tone or 'grey' }}" style="font-size:13px;padding:7px 12px">{{ {'late':'Late cycle','ndx':'Nasdaq crash risk','btc':'BTC leverage'}[rp.key] }}: {{ rp.level or 'NO DATA' }}</span>{% endfor %}
+  {% for rp in snap.radar.bottoms or [] %}<span class="pill t-{{ rp.tone or 'grey' }}" style="font-size:13px;padding:7px 12px">{{ {'fast':'QQQ fast-crash plan','washout':'Bear washout'}[rp.key] }}: {{ rp.level or 'NO DATA' }}</span>{% endfor %}
   </a>{% endif %}
 </div>
 

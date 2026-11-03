@@ -228,3 +228,17 @@ def test_risk_radar_panels():
     assert set(L['score'].dropna().unique()) <= {0, 1, 2, 3, 4, 5}
     B = R.btc()
     assert ((B['funding_ann'] > 30) == (B['funding'] == 1))[B['funding'].notna()].all()
+
+
+def test_bottom_signals():
+    from signals import bottoms as B
+    panels = B.compute()
+    assert [p['key'] for p in panels] == ['fast', 'washout']
+    for p in panels:
+        assert 'error' not in p, p.get('error')
+        assert p['level'] in ('IDLE', 'WATCH', 'SKIP', 'BUY 1', 'BUY 2', 'BUY', 'WAIT')
+    hist = {h['start']: h for h in panels[0]['history']}
+    # research-locked outcomes
+    assert hist['2020-02-05']['buy1'] == '2020-02-27' and hist['2020-02-05']['buy2'] == '2020-03-09'
+    assert hist['2021-12-27']['skipped'] is True
+    assert hist['2024-07-09']['buy2'] == '2024-08-07'

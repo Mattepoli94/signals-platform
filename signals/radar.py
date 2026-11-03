@@ -36,7 +36,7 @@ from . import DATA, PRICES
 RADAR = DATA / 'radar'
 UA = {'User-Agent': 'Mozilla/5.0 (signals-platform risk radar)'}
 YAHOO = {'TNX': '^TNX', 'IRX': '^IRX', 'GSPC': '^GSPC', 'QQEW': 'QQEW'}
-CBOE_IDX = ['VIX', 'VXN', 'DSPX']
+CBOE_IDX = ['VIX', 'VXN', 'DSPX', 'VIX9D']
 
 # Track record from the research (see research/risk-radar.md). Shown on the page next to each flag.
 PERF = {
@@ -154,25 +154,31 @@ def fetch(now: datetime | None = None) -> dict:
         step(f'cboe {s}', cb)
 
     def pc():
-        s = _read('putcall_total', 'total_pc')
-        start = (s.index.max() + pd.Timedelta(days=1)) if len(s) else pd.Timestamp('2019-10-07')
+        df = _read('putcall_total')
+        start = (df.index.max() + pd.Timedelta(days=1)) if len(df) else pd.Timestamp('2019-10-07')
         new = {}
         for d in pd.bdate_range(start, now.date()):
             try:
                 j = requests.get(f"https://cdn.cboe.com/data/us/options/market_statistics/daily/{d:%Y-%m-%d}_daily_options",
                                  headers=UA, timeout=30)
                 if j.ok:
-                    v = next((r['value'] for r in j.json().get('ratios', []) if r['name'] == 'TOTAL PUT/CALL RATIO'), None)
-                    if v not in (None, ''):
-                        new[d] = float(v)
+                    rat = {r['name']: r['value'] for r in j.json().get('ratios', [])}
+                    tot, eq = rat.get('TOTAL PUT/CALL RATIO'), rat.get('EQUITY PUT/CALL RATIO')
+                    if tot not in (None, ''):
+                        new[d] = {'total_pc': float(tot), 'equity_pc': float(eq) if eq not in (None, '') else np.nan}
             except Exception:  # noqa: BLE001
                 pass
             time.sleep(0.2)
         if new:
-            s = pd.concat([s, pd.Series(new)]).sort_index()
-            _write('putcall_total', s.rename('total_pc').to_frame())
+            df = pd.concat([df, pd.DataFrame.from_dict(new, orient='index')]).sort_index()
+            _write('putcall_total', df[['total_pc', 'equity_pc']])
         return f'+{len(new)} days'
     step('cboe put/call', pc)
+
+    def squeeze():
+        df = pd.read_csv(io.StringIO(_get('https://squeezemetrics.com/monitor/static/DIX.csv').text), parse_dates=['date'])
+        _write('squeeze', df.set_index('date')[['dix', 'gex']])
+    step('squeezemetrics gex/dix', squeeze)
 
     def margin():
         x = pd.read_excel(io.BytesIO(_get('https://www.finra.org/sites/default/files/2021-03/margin-statistics.xlsx').content))
@@ -438,4 +444,6 @@ def compute() -> dict:
             'hist': _hist(B, 3), 'perf': PERF['btc'], 'amber': 1, 'red': 2})
     except Exception as e:  # noqa: BLE001
         out['panels'].append({'key': 'btc', 'title': 'BTC leverage radar', 'error': str(e)[:200], 'perf': PERF['btc']})
+    from . import bottoms
+    out['bottoms'] = bottoms.compute()
     return out

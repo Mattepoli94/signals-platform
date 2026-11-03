@@ -2,36 +2,15 @@
 {% block title %}Risk radar{% endblock %}
 {% block body %}
 {% set R = snap.radar or {} %}
-<div class="pagehead">
-  <div>
-    <div class="kicker">Early warnings · display only</div>
-    <h1>Risk radar</h1>
-    <p class="sub">Three warning flags that look <b>ahead</b>, not at damage already done. Each one shows its tested track record, so you can judge how much weight to give it. None of them changes any order: the trading systems' own rules handle exits.</p>
-  </div>
-  <a class="btn primary" href="research/risk-radar.html">Full research &amp; backtests</a>
-</div>
-
-{% if R.error %}<div class="banner warn">Risk radar could not be computed: {{ R.error }}</div>{% endif %}
-
-<div class="radar-strip">
-{% for p in R.panels or [] %}
-  <a class="radar-tile" href="#{{ p.key }}">
-    <div class="kicker">{{ p.title }}</div>
-    <div class="lvl t-{{ p.tone or 'grey' }}">{{ p.level or 'NO DATA' }}</div>
-    <div class="small">{% if p.score is not none and p.of %}{{ p.score|int }} of {{ p.of }} signs on · {% endif %}horizon {{ p.horizon }}</div>
-  </a>
-{% endfor %}
-</div>
-
-{% for p in R.panels or [] %}
+{% macro panel(p) %}
 <section class="card radar" id="{{ p.key }}" aria-label="{{ p.title }}">
   <div class="radar-head">
     <div>
-      <div class="kicker">{{ p.market }} · predicts the next {{ p.horizon }}</div>
+      <div class="kicker">{{ p.market }} · {{ 'predicts the next ' ~ p.horizon if p.key in ('late','ndx','btc') else 'targets ' ~ p.horizon }}</div>
       <h2>{{ p.title }}</h2>
       <div class="small muted">{{ p.rule }}{% if p.asof %} · data to {{ p.asof|d }}{% endif %}</div>
     </div>
-    <div class="lvl big t-{{ p.tone or 'grey' }}">{{ p.level or 'NO DATA' }}{% if p.score is not none and p.of %}<span>{{ p.score|int }}/{{ p.of }}</span>{% endif %}</div>
+    <div class="lvl big t-{{ p.tone or 'grey' }}">{{ p.level or 'NO DATA' }}{% if p.score is not none and p.of and p.key in ('late','ndx','btc') %}<span>{{ p.score|int }}/{{ p.of }}</span>{% endif %}</div>
   </div>
   {% if p.error %}<div class="banner warn small">Could not compute: {{ p.error }}</div>{% endif %}
   {% if p.summary %}<p class="radar-sum">{{ p.summary }}</p>{% endif %}
@@ -61,11 +40,43 @@
       <div class="small" style="color:var(--amber)"><b>Limits:</b> {{ p.perf.caveat }}</div>
     </div>
   </div>
+  {% if p.history %}<details class="radar-chart"><summary>Past fast crashes and what the plan did</summary>
+  <div class="scroll"><table class="t"><thead><tr><th>Crash started</th><th>Buy 1</th><th>Buy 2</th><th>Note</th></tr></thead><tbody>
+  {% for h in p.history|reverse %}<tr><td class="mono">{{ h.start|d }}</td><td class="mono">{{ h.buy1|d if h.buy1 else '—' }}</td><td class="mono">{{ h.buy2|d if h.buy2 else '—' }}</td><td class="small">{{ 'In progress' if h.active and not h.buy1 else ('Skipped: override on' if h.skipped else ('Never fell 10.8%' if not h.buy1 else '')) }}</td></tr>{% endfor %}
+  </tbody></table></div></details>{% endif %}
   {% if charts['radar_' ~ p.key] %}
-  <details class="radar-chart"><summary>Score history</summary>{{ charts['radar_' ~ p.key]|safe }}</details>
+  <details class="radar-chart"><summary>{{ 'Capitulation groups on (history)' if p.key == 'fast' else 'Score history' }}</summary>{{ charts['radar_' ~ p.key]|safe }}</details>
   {% endif %}
 </section>
+{% endmacro %}
+<div class="pagehead">
+  <div>
+    <div class="kicker">Early warnings · display only</div>
+    <h1>Risk radar</h1>
+    <p class="sub">Three warning flags that look <b>ahead</b>, not at damage already done. Each one shows its tested track record, so you can judge how much weight to give it. None of them changes any order: the trading systems' own rules handle exits.</p>
+  </div>
+  <a class="btn primary" href="research/risk-radar.html">Full research &amp; backtests</a>
+</div>
+
+{% if R.error %}<div class="banner warn">Risk radar could not be computed: {{ R.error }}</div>{% endif %}
+
+<div class="radar-strip">
+{% for p in R.panels or [] %}
+  <a class="radar-tile" href="#{{ p.key }}">
+    <div class="kicker">{{ p.title }}</div>
+    <div class="lvl t-{{ p.tone or 'grey' }}">{{ p.level or 'NO DATA' }}</div>
+    <div class="small">{% if p.score is not none and p.of %}{{ p.score|int }} of {{ p.of }} signs on · {% endif %}horizon {{ p.horizon }}</div>
+  </a>
 {% endfor %}
+</div>
+
+{% for p in R.panels or [] %}{{ panel(p) }}{% endfor %}
+
+<div class="pagehead" style="margin-top:28px"><div><div class="kicker">Buy-side · display only</div><h2 style="font-size:24px;margin:2px 0 0">Bottom signals</h2>
+<p class="sub">Where historically it paid to buy into a fall: a two-step plan for QQQ fast crashes, and the washout signal for bear markets. They tell you when the odds favour buying; they don't place orders.</p></div>
+<a class="btn" href="research/bottom-signals.html">Bottom-signal research</a></div>
+<div class="radar-strip">{% for p in R.bottoms or [] %}<a class="radar-tile" href="#{{ p.key }}"><div class="kicker">{{ p.title }}</div><div class="lvl t-{{ p.tone or 'grey' }}">{{ p.level or 'NO DATA' }}</div><div class="small">{{ p.market }}</div></a>{% endfor %}</div>
+{% for p in R.bottoms or [] %}{{ panel(p) }}{% endfor %}
 
 <section class="card">
   <h2>How to read this</h2>
