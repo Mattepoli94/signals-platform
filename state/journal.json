@@ -23,26 +23,40 @@
   "units": 0.004359
  },
  "qqq_trading-2026-11-03-EQQQ-BUY": {
-  "actual": null,
+  "actual": {
+   "fee": 0.25,
+   "gbp": 500.0,
+   "pnl": null,
+   "price": 51319.0,
+   "units": 0.973811
+  },
   "asset": "EQQQ",
   "ccy": "GBX",
+  "confirmed_at": "2026-11-03 17:02 UTC",
   "date": "2026-11-03",
   "decay_gbp": null,
   "fill": null,
   "first_seen": "2026-11-03 10:56 UTC",
   "gbp": 500.0,
   "id": "qqq_trading-2026-11-03-EQQQ-BUY",
-  "model": null,
-  "needs_fill": false,
+  "model": {
+   "fee": 0.25,
+   "gbp": 500.0,
+   "pnl": null,
+   "price": 51319.0,
+   "unit_gbp": 513.19,
+   "units": 0.973811
+  },
+  "needs_fill": true,
   "pot": "qqq_trading",
   "pot_name": "Nasdaq trading system (EQQQ ISA + USD Invest)",
-  "price": 51210.0,
-  "reason": "Dip trade open since 30 Oct (day 2 of 10). Hold. Exit on RSI(2) above 70, a close at or below \u00a3503.88, or the 13 Nov close.",
+  "price": 51319.0,
+  "reason": "start: join the current position",
   "side": "BUY",
   "slip_pct": null,
-  "status": "preview",
+  "status": "confirmed",
   "stop": 50387.62,
   "system": "Nasdaq-100 regime system + dollar add-on",
-  "units": 0.976372
+  "units": 0.973811
  }
 }
