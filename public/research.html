@@ -52,7 +52,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 16:04</span>
+    <span>Updated Tue 03 Nov 2026, 16:24</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -77,13 +77,13 @@
 </article>
 
 <article class="card" style="display:flex;flex-direction:column;gap:12px">
-  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="kicker">INVESTING · NASDAQ-100</span><span class="pill t-green">Live · v1.1</span></div>
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="kicker">INVESTING · NASDAQ-100</span><span class="pill t-green">Live · v1.2</span></div>
   <h2 style="font-size:19px">Nasdaq-100 value-zone accumulation plan</h2>
-  <p style="margin:0;font-size:14px;color:#344054">Contributions wait in cash and buy only in the trend zone or the 200-week zone. Never sells.</p>
+  <p style="margin:0;font-size:14px;color:#344054">Contributions wait in cash and buy in the trend zone or the 200-week zone, plus the two-step fast-crash buys (v1.2). Never sells.</p>
   <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
-  <div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Account DD vs DCA</div><div class="mono" style="font-size:16px;font-weight:600">−34% / −49%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Wealth vs DCA</div><div class="mono" style="font-size:16px;font-weight:600">−5.4%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Horizon</div><div class="mono" style="font-size:16px;font-weight:600">10 years</div></div>
+  <div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Wealth vs DCA (v1.2)</div><div class="mono" style="font-size:16px;font-weight:600">−0.6% / −1.4%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">v1.1 zones only</div><div class="mono" style="font-size:16px;font-weight:600">−4.3% / −6.2%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Horizon</div><div class="mono" style="font-size:16px;font-weight:600">10 years</div></div>
   </div>
-  <div class="small muted">Median of rolling 10-year plans started 2000 onwards</div>
+  <div class="small muted">Median of rolling 10-year plans started 2000–08 / 2009–16, $1,000 a month</div>
   <div style="margin-top:auto;display:flex;flex-wrap:wrap;gap:10px"><a class="btn primary" href="research/qqq-value-plan.html">Read the paper</a>
   </div>
 </article>
@@ -127,13 +127,13 @@
 </div>
 <section class="card"><h2>Rule changes</h2><p class="note">Every change to a live rule is logged here. Signals always come from the version shown.</p>
 <div class="scroll" style="margin-top:12px"><table class="t"><tbody>
-<tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Bottom signals</b></td><td>v1 live (display only): QQQ fast-crash two-step plan with rate/late-cycle override, and the bear-market washout for S&amp;P 500 and QQQ.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Risk radar</b></td><td>v1 live (display only): late-cycle, Nasdaq crash-risk and BTC leverage radars with their track records. Replaces the old 3-point risk flag on the Nasdaq system.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>BTC cycle trend system</b></td><td>v2 live: 30/50 EMA cross, bear window day 541–900, half size when ADX &lt; 25 or day 1,081–1,260. Replaces v1.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>BTC trend blend</b></td><td>Re-tested with random holdout years (2012, 2016, 2018) and walk-forward: no validated edge over holding BTC. Marked paper only.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Nasdaq systems</b></td><td>v1.1: traded in EQQQ (London, pence, ISA) at the London close; dollar add-on held as USD cash in the Invest account. Removes the 0.15% FX fee on Nasdaq trades.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Platform</b></td><td>v1.0 live: signals, pots, top-ups, fills, email alerts.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>BTC trend blend</b></td><td>Adopted. Cycle bag removed; liquidity and dollar filters shown as context only.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ value plan</b></td><td>Adopted. Static drawdown rungs replaced by the trend and 200-week zones.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ regime system</b></td><td>v1.0 frozen. Regime turning Trending closes an open dip trade. Gold/TLT hedge dropped; dollar add-on kept.</td></tr>
+<tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Value plan</b></td><td>v1.2: adds the fast-crash buys (buy 1 = 50% of cash at −10.8% from the high, buy 2 = all cash on 3+ capitulation groups; skipped when the override is on). Trading system unchanged.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Bottom signals</b></td><td>v1 live (display only): QQQ fast-crash two-step plan with rate/late-cycle override, and the bear-market washout for S&amp;P 500 and QQQ.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Risk radar</b></td><td>v1 live (display only): late-cycle, Nasdaq crash-risk and BTC leverage radars with their track records. Replaces the old 3-point risk flag on the Nasdaq system.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>BTC cycle trend system</b></td><td>v2 live: 30/50 EMA cross, bear window day 541–900, half size when ADX &lt; 25 or day 1,081–1,260. Replaces v1.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>BTC trend blend</b></td><td>Re-tested with random holdout years (2012, 2016, 2018) and walk-forward: no validated edge over holding BTC. Marked paper only.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Nasdaq systems</b></td><td>v1.1: traded in EQQQ (London, pence, ISA) at the London close; dollar add-on held as USD cash in the Invest account. Removes the 0.15% FX fee on Nasdaq trades.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Platform</b></td><td>v1.0 live: signals, pots, top-ups, fills, email alerts.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>BTC trend blend</b></td><td>Adopted. Cycle bag removed; liquidity and dollar filters shown as context only.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ value plan</b></td><td>Adopted. Static drawdown rungs replaced by the trend and 200-week zones.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ regime system</b></td><td>v1.0 frozen. Regime turning Trending closes an open dip trade. Gold/TLT hedge dropped; dollar add-on kept.</td></tr>
 </tbody></table></div></section>
 
 </main>
 <footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 16:04", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 16:24", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>

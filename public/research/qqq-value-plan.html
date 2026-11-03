@@ -52,7 +52,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 16:04</span>
+    <span>Updated Tue 03 Nov 2026, 16:24</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
@@ -61,7 +61,7 @@
 <main>
 
 <p class="small"><a href="../research.html">← Research library</a></p>
-<article class="card paper"><h1 id="nasdaq-100-value-zone-accumulation-plan-v11">Nasdaq-100 value-zone accumulation plan (v1.1)</h1>
+<article class="card paper"><h1 id="nasdaq-100-value-zone-accumulation-plan-v12">Nasdaq-100 value-zone accumulation plan (v1.2)</h1>
 <p>A monthly savings plan (a <em>piano di accumulo</em>) that buys QQQ only at value, instead of on a fixed date. It complements trading system #1: it buys in the conditions where the trading system is usually flat.</p>
 <h2 id="idea">Idea</h2>
 <p>Plain monthly buying (DCA) is hard to beat on wealth, but it buys tops as readily as bottoms, and the account can spend years below the money put in. This plan keeps contributions in cash (earning interest) and invests them when QQQ comes back to levels that have historically been good value, after price has started to turn up. You give up some wealth in strong bull markets in exchange for much smaller drawdowns.</p>
@@ -71,7 +71,16 @@
 <li><strong>Trend zone.</strong> Fit a straight line to log(close) over the last 1,260 sessions (5 years). <em>z</em> is today's distance from the line in standard deviations of the fit's residuals. Zone = −1 &lt; z ≤ 0 <strong>and</strong> close above the 20-day SMA.</li>
 <li><strong>200-week zone.</strong> Close 0–15% above the 1,000-day SMA <strong>and</strong> close above the 50-day SMA.</li>
 <li>On a close in either zone, buy <strong>50% of the cash</strong> at the close. At most one buy every 10 trading days.</li>
-<li><strong>Safety cap.</strong> On the first trading day of a month, if cash is above 24 × the monthly contribution, invest the excess.</li>
+<li>
+<p><strong>Safety cap.</strong> On the first trading day of a month, if cash is above 24 × the monthly contribution, invest the excess.</p>
+</li>
+<li>
+<p><strong>Fast-crash buys (v1.2).</strong> In a QQQ fast crash (down 8%+ within 15 sessions from near its 1-year high), use the Risk radar's fast-crash plan:</p>
+</li>
+<li><strong>Buy 1:</strong> at the first close 10.8% below the 1-year high, invest <strong>50% of the cash</strong>.</li>
+<li><strong>Buy 2:</strong> at a later, lower close with 3+ of 6 capitulation groups on, invest <strong>all the cash</strong>.</li>
+<li>Both are skipped when the override is on (rate/inflation pressure, or the late-cycle radar red). They ignore the 10-day cooldown.</li>
+<li>Full rules: <a href="bottom-signals.html">Bottom signals</a>.</li>
 </ol>
 <p>Price below the trend zone (z ≤ −1) is not bought. Deep levels behaved like falling knives in secular bear markets (2000–2002).</p>
 <h2 id="results-rolling-plans-1000-a-month-cash-at-the-t-bill-rate">Results (rolling plans, $1,000 a month, cash at the T-bill rate)</h2>
@@ -106,6 +115,51 @@
 </tbody>
 </table>
 <p>Level study: after a trend-zone close, QQQ returned +39% over the next year in 1990–2005 and +23% in 2006–25 (loss in 1% and 11% of cases). After a 200-week-zone close: +26% and +23%.</p>
+<h2 id="v12-what-the-fast-crash-buys-add">v1.2: what the fast-crash buys add</h2>
+<p>10-year plans, $1,000 a month, started every month 2000–2016, cash at the T-bill rate.</p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Wealth vs DCA (starts 2000–08 / 2009–16)</th>
+<th>Account drawdown, median</th>
+<th>Worst time below money in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Monthly DCA</td>
+<td>–</td>
+<td>−44% / −30%</td>
+<td>−56% / −14%</td>
+</tr>
+<tr>
+<td>v1.1 zones only</td>
+<td>−4.3% / −6.2%</td>
+<td>−42% / −28%</td>
+<td>−37% / −10%</td>
+</tr>
+<tr>
+<td><strong>v1.2 zones + fast-crash buys</strong></td>
+<td><strong>−0.6% / −1.4%</strong></td>
+<td>−42% / −29%</td>
+<td><strong>−37% / −9%</strong></td>
+</tr>
+<tr>
+<td>v1.2 + bear washout buys (not adopted)</td>
+<td>+0.8% / −1.2%</td>
+<td>−43% / −29%</td>
+<td>−48% / −9%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The zones rarely buy during a crash: they need the price back above its 20- or 50-day average. So cash builds up exactly when the fast-crash buys fire, and no separate reserve is needed.</li>
+<li><strong>A dedicated crash reserve was tested and not adopted.</strong> Setting aside 10–30% of each contribution cost 0.7–2.5 points of wealth versus DCA, and only trimmed drawdowns because more money sat uninvested.</li>
+<li><strong>The bear washout was left out.</strong> It added little, and in the dot-com years it deepened the worst time below money put in from −37% to −48%.</li>
+<li><strong>The trading system does not use these buys.</strong> By the user's choice, it keeps its lower drawdown.</li>
+<li><strong>Caveat:</strong> the fast-crash plan was designed on the 2007–26 crashes. 1999–2006 gives only partly independent evidence.</li>
+</ul>
 <h2 id="what-to-expect">What to expect</h2>
 <ul>
 <li>Long stretches with no buys in strong markets. Cash can build up for many months; that is the plan working, not a fault.</li>
@@ -124,7 +178,7 @@
 </main>
 <footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 16:04", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 16:24", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="../static/app.js"></script>
 </body>
 </html>
