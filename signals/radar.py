@@ -142,8 +142,17 @@ def fetch(now: datetime | None = None) -> dict:
         except Exception as e:  # noqa: BLE001
             rep[name] = f'failed: {e}'[:200]
 
+    us_closed = pd.Timestamp(now.replace(tzinfo=None)).normalize() + pd.Timedelta(hours=21)   # ~16:00 New York in UTC
+
+    def confirmed(df):
+        """Drop today's forming bar until the US close has passed."""
+        today = pd.Timestamp(now.date())
+        if len(df) and df.index[-1] >= today and pd.Timestamp(now.replace(tzinfo=None)) < us_closed:
+            df = df.iloc[:-1]
+        return df
+
     for k, sym in YAHOO.items():
-        step(f'yahoo {k}', lambda k=k, sym=sym: _write(f'yahoo_{k}', fetch_yahoo(sym, '1950-01-01')[['close', 'adj_close']]))
+        step(f'yahoo {k}', lambda k=k, sym=sym: _write(f'yahoo_{k}', confirmed(fetch_yahoo(sym, '1950-01-01')[['close', 'adj_close']])))
     for s in CBOE_IDX:
         def cb(s=s):
             df = pd.read_csv(io.StringIO(_get(f'https://cdn.cboe.com/api/global/us_indices/daily_prices/{s}_History.csv').text))
