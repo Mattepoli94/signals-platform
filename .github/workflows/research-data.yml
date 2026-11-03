@@ -8,11 +8,12 @@ permissions:
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: pip install pandas requests
+      - run: pip install pandas requests lxml
       - name: Download
         run: |
           python - <<'PY'
@@ -73,6 +74,8 @@ jobs:
               time.sleep(1)
           pd.concat(out).to_csv('research-data/prices.csv', date_format='%Y-%m-%d')
           PY
+      - name: Breadth
+        run: python research-data/scripts/breadth.py || true
       - name: Extra
         run: python research-data/scripts/fetch_extra.py || true
       - name: Commit
