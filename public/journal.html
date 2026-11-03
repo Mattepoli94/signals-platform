@@ -35,7 +35,7 @@
       <a href="settings.html" class="">Settings</a>
       
     </nav>
-    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3416</b></div>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3415</b></div>
   </div>
 </header>
 <div class="statusbar">
@@ -52,7 +52,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 16:24</span>
+    <span>Updated Tue 03 Nov 2026, 16:37</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -77,6 +77,25 @@
   <p class="small muted" style="margin:12px 0 0"><b>preview</b> = shown at ~16:05, waiting for the close · <b>confirmed</b> = the system traded at the close · <b>cancelled</b> = previewed but the close did not confirm it · <b>superseded</b> = no longer in the pot after a settings change (e.g. capital or start date).</p>
 </section>
 
+
+
+<section class="card" aria-label="Ideal vs actual">
+  <h2>System vs your execution</h2>
+  <p class="note">"Ideal" = every signal filled exactly at the model price and fee. "Actual" = your pots, using the fills you recorded. The gap is execution decay.</p>
+  <div class="stats" style="margin-top:12px">
+    <div class="stat"><div class="l">Closed trades (sells)</div><div class="v">0</div></div>
+    <div class="stat"><div class="l">Winners (ideal)</div><div class="v">0</div></div>
+    <div class="stat"><div class="l">Realised P&amp;L: ideal</div><div class="v ">£0.00</div></div>
+    <div class="stat"><div class="l">Realised P&amp;L: actual</div><div class="v ">£0.00</div></div>
+    <div class="stat"><div class="l">Execution decay (recorded fills)</div><div class="v ">£0.00</div></div>
+    <div class="stat"><div class="l">Average slippage</div><div class="v">—</div></div>
+  </div>
+  <div class="scroll" style="margin-top:14px"><table class="t"><thead><tr><th>Pot</th><th class="n">Money in</th><th class="n">Ideal value</th><th class="n">Actual value</th><th class="n">Gap</th></tr></thead><tbody>
+  <tr><td>Nasdaq value plan (EQQQ, ISA)</td><td class="n">£1,000.00</td><td class="n">£1,000.00</td><td class="n">£1,000.00</td><td class="n ">£0.00</td></tr><tr><td>Nasdaq trading system (EQQQ ISA + USD Invest)</td><td class="n">£500.00</td><td class="n">£500.00</td><td class="n">£500.00</td><td class="n ">£0.00</td></tr><tr><td>BTC cycle trend system</td><td class="n">£500.00</td><td class="n">£500.00</td><td class="n">£500.00</td><td class="n ">£0.00</td></tr>
+  </tbody></table></div>
+  <p class="small muted" style="margin:10px 0 0">Slippage is positive when your fill was worse than the model price (paid more on a buy, got less on a sell). Decay = slippage × trade size + any fee above the model fee.</p>
+</section>
+
 <section class="card" aria-label="Journal">
   <div class="row" style="justify-content:space-between;align-items:flex-end;gap:12px">
     <h2>All suggestions</h2>
@@ -86,7 +105,7 @@
     </form>
   </div>
   <div class="scroll" style="margin-top:14px"><table class="t" id="jtable">
-    <thead><tr><th>Date</th><th>System</th><th>Signal</th><th class="n">Amount</th><th class="n">Price</th><th class="n">Stop</th><th>Why</th><th>Status</th><th>Your fill</th></tr></thead>
+    <thead><tr><th>Date</th><th>System</th><th>Signal</th><th class="n">Amount</th><th class="n">Price</th><th class="n">Stop</th><th>Why</th><th>Status</th><th class="n">Result</th><th>Your fill</th></tr></thead>
     <tbody>
     
     <tr data-pot="qqq_trading" data-status="preview">
@@ -98,6 +117,8 @@
       <td class="n">£503.88</td>
       <td class="small" style="max-width:320px">Dip trade open since 30 Oct (day 2 of 10). Hold. Exit on RSI(2) above 70, a close at or below £503.88, or the 13 Nov close.</td>
       <td><span class="pill t-amber">preview</span></td>
+      <td class="n">—
+        </td>
       <td>
         
         <details><summary class="small">Record</summary>
@@ -119,6 +140,8 @@
       <td class="n">—</td>
       <td class="small" style="max-width:320px">Uptrend: the 30-day EMA is +0.3% above the 50-day. Hold 50% of the pot: half size because ADX is 22, below 25 (weak trend). Sell at the close if the 30-day EMA crosses below the 50-day ($80,033 now).</td>
       <td><span class="pill t-amber">preview</span></td>
+      <td class="n">—
+        </td>
       <td>
         
         <details><summary class="small">Record</summary>
@@ -150,7 +173,7 @@
 </main>
 <footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 16:24", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 16:37", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>
