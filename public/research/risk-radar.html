@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Risk radar: late cycle, Nasdaq crash risk, BTC leverage · Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../static/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+</head>
+<body data-root="../">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="../index.html">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      Signals
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="../index.html" class="">Today</a>
+      
+      <a href="../investing.html" class="">Investing</a>
+      
+      <a href="../trading.html" class="">Trading</a>
+      
+      <a href="../risk.html" class="">Risk radar</a>
+      
+      <a href="../journal.html" class="">Journal</a>
+      
+      <a href="../portfolio.html" class="">Portfolio</a>
+      
+      <a href="../research.html" class="on" aria-current="page">Research</a>
+      
+      <a href="../settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3424</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 13:59</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<p class="small"><a href="../research.html">← Research library</a></p>
+<article class="card paper"><h1 id="risk-radar-v1-live-from-3-november-2026">Risk radar (v1, live from 3 November 2026)</h1>
+<p>Three early-warning flags, shown on the <strong>Risk radar</strong> page. They are display only: no order on the platform depends on them. The trading systems already step out of falling markets through their own trend rules, and every test of "sell when the flag is on" lowered returns (section 6).</p>
+<p>The radar answers one question: <strong>is the market set up for trouble before the trouble starts?</strong> Indicators that only light up once prices are already falling were tested and dropped.</p>
+<table>
+<thead>
+<tr>
+<th>Radar</th>
+<th>Market</th>
+<th>Predicts</th>
+<th>Main result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Late cycle</strong></td>
+<td>S&amp;P 500 / whole market</td>
+<td>A bear market (fall of 19%+) starting within ~12 months</td>
+<td>2+ signs: <strong>2.0× the odds</strong>, both in the years used to choose it and in the years after</td>
+</tr>
+<tr>
+<td><strong>Nasdaq crash risk</strong></td>
+<td>Nasdaq-100, near its high</td>
+<td>A fall of 8%+ within 3 weeks</td>
+<td>2+ families: <strong>1.9× the odds</strong>; stricter estimate ~1.4×</td>
+</tr>
+<tr>
+<td><strong>BTC leverage</strong></td>
+<td>Bitcoin</td>
+<td>A fall of 15%+ within 10 days</td>
+<td>2+ signs: <strong>3.4× the odds</strong>; 1 sign: 1.7×</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How to read "2.0× the odds".</strong> On the days the flag was on, the bad outcome followed about twice as often as on an average day in the same conditions. It is a tilt in the odds, not a forecast. Most "on" days are still followed by no crash.</p>
+<hr />
+<h2 id="1-late-cycle-radar">1. Late-cycle radar</h2>
+<h3 id="rules">Rules</h3>
+<p>Checked daily on S&amp;P 500 data. One point per sign:</p>
+<table>
+<thead>
+<tr>
+<th>Sign</th>
+<th>On when</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Yield curve flat</td>
+<td>10-year Treasury yield minus 3-month T-bill yield below +0.50 pt</td>
+<td>Yahoo ^TNX, ^IRX</td>
+</tr>
+<tr>
+<td>Valuation stretched</td>
+<td>Shiller CAPE above the 90th percentile of all monthly CAPE readings since 1953 up to that month</td>
+<td>multpl.com (Shiller data)</td>
+</tr>
+<tr>
+<td>Overextended rally</td>
+<td>S&amp;P 500 up 50% or more over 504 sessions (~2 years)</td>
+<td>Yahoo ^GSPC</td>
+</tr>
+<tr>
+<td>Rate or inflation pressure</td>
+<td>10-year yield up 1.5 pt or more in 252 sessions, <strong>or</strong> CPI inflation above 4% and higher than 6 months earlier</td>
+<td>Yahoo, multpl.com</td>
+</tr>
+<tr>
+<td>Leverage surge</td>
+<td>FINRA margin debt up 30% or more year on year</td>
+<td>FINRA</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Amber at 2 signs, red at 3.</strong> Monthly data is used only from the date it would have been published (CAPE at month end, CPI mid next month, margin debt ~3 weeks after month end).</p>
+<h3 id="how-it-was-tested">How it was tested</h3>
+<ul>
+<li><strong>Events:</strong> every S&amp;P 500 peak at a 1-year high followed by a fall of 19% or more: 1957, 1961, 1966, 1969, 1973, 1980, 1987, 1990, 1998, 2000, 2007, 2011, 2018, 2020, 2022 (15 peaks).</li>
+<li><strong>Days scored:</strong> only days when the S&amp;P was within 5% of its 1-year high, since an early warning is only useful then. A day counts as "positive" if a bear-market peak followed within 252 sessions. About 25–28% of such days were positive.</li>
+<li><strong>Split:</strong> signs chosen on <strong>1955–1994</strong>, then checked unchanged on <strong>1995–2026</strong>.</li>
+<li><strong>Data:</strong> S&amp;P 500 from 1953, yields from 1962, Shiller CAPE and CPI, FINRA margin debt from 1997, plus about 25 other candidate signs (section 5).</li>
+</ul>
+<h3 id="results">Results</h3>
+<p><strong>Single signs</strong> (odds multiplier when on: 1955–94 / 1995–2026):</p>
+<table>
+<thead>
+<tr>
+<th>Sign</th>
+<th>1955–94</th>
+<th>1995–2026</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Yield curve flat (&lt; 0.5 pt)</td>
+<td>2.1×</td>
+<td>1.3×</td>
+</tr>
+<tr>
+<td>Yield curve inverted at some point in the last 18 months</td>
+<td>1.2×</td>
+<td>1.6×</td>
+</tr>
+<tr>
+<td>CAPE in the top 10% of history</td>
+<td>1.5×</td>
+<td>1.8×</td>
+</tr>
+<tr>
+<td>S&amp;P +50% in 2 years</td>
+<td>1.4×</td>
+<td>1.9×</td>
+</tr>
+<tr>
+<td>10-year yield +1.5 pt in a year</td>
+<td>1.8×</td>
+<td>1.8×</td>
+</tr>
+<tr>
+<td>CPI &gt; 4% and rising</td>
+<td>1.5×</td>
+<td>2.1×</td>
+</tr>
+<tr>
+<td>Margin debt +30% y/y (data from 1997)</td>
+<td>–</td>
+<td>1.9× (5 of 7 peaks)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Combined (the radar):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Period</th>
+<th>Time on (near-high days)</th>
+<th>Odds multiplier</th>
+<th>Peaks flagged in the 6 months before</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4 signs (no margin debt), 2+ on</td>
+<td>1955–94</td>
+<td>17%</td>
+<td><strong>1.97×</strong></td>
+<td>4 of 7</td>
+</tr>
+<tr>
+<td>4 signs (no margin debt), 2+ on</td>
+<td>1995–2026</td>
+<td>24%</td>
+<td><strong>2.00×</strong></td>
+<td>4 of 7</td>
+</tr>
+<tr>
+<td>5 signs (with margin debt), 2+ on</td>
+<td>1995–2026</td>
+<td>25%</td>
+<td><strong>2.19×</strong></td>
+<td>6 of 7</td>
+</tr>
+<tr>
+<td>5 signs, 3+ on</td>
+<td>1995–2026</td>
+<td>11%</td>
+<td>2.06×</td>
+<td>3 of 7</td>
+</tr>
+<tr>
+<td>4 signs, 1+ on</td>
+<td>1955–2026</td>
+<td>47–61%</td>
+<td>~1.5×</td>
+<td>13 of 14</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lead time.</strong> When it fired, the first 2-sign warning came:</p>
+<table>
+<thead>
+<tr>
+<th>First warning</th>
+<th>Peak</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Feb 1965</td>
+<td>Feb 1966</td>
+</tr>
+<tr>
+<td>Apr 1968</td>
+<td>May 1969</td>
+</tr>
+<tr>
+<td>Nov 1979</td>
+<td>Nov 1980</td>
+</tr>
+<tr>
+<td>Aug 1987</td>
+<td>Aug 1987 (2 weeks)</td>
+</tr>
+<tr>
+<td>Jul 1989</td>
+<td>Jul 1990</td>
+</tr>
+<tr>
+<td>Jul 1997</td>
+<td>Jul 1998</td>
+</tr>
+<tr>
+<td>Mar 1999</td>
+<td>Mar 2000</td>
+</tr>
+<tr>
+<td>Jan 2018</td>
+<td>Sep 2018</td>
+</tr>
+<tr>
+<td>Mar 2019</td>
+<td>Feb 2020</td>
+</tr>
+<tr>
+<td>Jan 2021</td>
+<td>Jan 2022</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Missed:</strong> 1961, 1973, 2007 (a credit-driven top), 2011.</p>
+<h3 id="signs-that-failed">Signs that failed</h3>
+<p>These were tested and failed in one or both periods:
+- <strong>Fed hiking</strong> (T-bill +1.5 pt in a year): 0.75× then 0.0×.
+- <strong>Low VIX</strong> (complacency).
+- <strong>Strong dollar.</strong>
+- <strong>Earnings yield below the 10-year yield.</strong>
+- <strong>Momentum fading at highs.</strong>
+- <strong>Small caps, transports or credit lagging the index:</strong> on so often that they carried no information (~1.0×).</p>
+<hr />
+<h2 id="2-nasdaq-crash-risk-radar">2. Nasdaq crash-risk radar</h2>
+<h3 id="rules_1">Rules</h3>
+<p>Checked daily, and <strong>active only while QQQ is within 4% of its 1-year high</strong>. Otherwise it shows <em>Idle</em>. One point per family:</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>On when</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Narrow market</td>
+<td>Equal-weight Nasdaq-100 (QQEW) lagging QQQ by 3%+ over 63 sessions while near the high, <strong>or</strong> the Cboe S&amp;P 500 Dispersion Index (DSPX, 5-day mean) in the top 10% of the last 2 years</td>
+<td>Yahoo, Cboe</td>
+</tr>
+<tr>
+<td>Options complacency</td>
+<td>Cboe total put/call ratio (10-day mean) in the bottom 10% of the last 2 years</td>
+<td>Cboe</td>
+</tr>
+<tr>
+<td>Nasdaq fear premium</td>
+<td>Nasdaq VIX ÷ S&amp;P VIX (VXN/VIX, 5-day mean) in the top 10% of the last 2 years</td>
+<td>Cboe</td>
+</tr>
+<tr>
+<td>Leverage surge</td>
+<td>FINRA margin debt up 30%+ year on year</td>
+<td>FINRA</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Amber at 2 families, red at 3.</strong> "Top/bottom 10% of the last 2 years" compares today with the previous 503 sessions only, so nothing is fitted and nothing looks ahead.</p>
+<h3 id="how-it-was-tested_1">How it was tested</h3>
+<ul>
+<li><strong>Events:</strong> the Nasdaq-100 falling 8% or more within 15 sessions, starting within 4% of its 1-year high: 21 events, 2007–2026.</li>
+<li>2007 Oct; 2010 Jan, Apr; 2011 Jul, Nov; 2012 Apr; 2015 Jul, Dec; 2018 Jan, Mar, Sep; 2019 May; 2020 Feb, Aug, Oct; 2021 Feb, Dec; 2024 Jul; 2025 Feb; 2026 Jul, Oct.</li>
+<li><strong>Base rate:</strong> 5.1% of near-high days were followed by such a fall.</li>
+<li><strong>All years are test years.</strong> The market's mechanics have changed (options volume, zero-day options, passive flows), so instead of one early training period every sign was scored in five separate blocks: 2006–10, 2011–15, 2016–19, 2020–22, 2023–26. A sign was kept only if it helped in most blocks.</li>
+<li><strong>Stricter check:</strong> the selection was repeated five times, each time choosing on four blocks and testing on the fifth.</li>
+</ul>
+<h3 id="results_1">Results</h3>
+<p><strong>Single signs</strong> (odds multiplier by block; "–" = no events or too few days on):</p>
+<table>
+<thead>
+<tr>
+<th>Sign</th>
+<th>06–10</th>
+<th>11–15</th>
+<th>16–19</th>
+<th>20–22</th>
+<th>23–26</th>
+<th>All years</th>
+<th>Events with sign on in the month before</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dispersion high (DSPX, from 2014)</td>
+<td>–</td>
+<td>–</td>
+<td>14.7×</td>
+<td>4.5×</td>
+<td>2.3×</td>
+<td><strong>2.9×</strong></td>
+<td>5/15</td>
+</tr>
+<tr>
+<td>Narrow leadership (QQEW vs QQQ)</td>
+<td>11.4×</td>
+<td>1.6×</td>
+<td>3.1×</td>
+<td>2.4×</td>
+<td>0.5×</td>
+<td><strong>1.8×</strong></td>
+<td>15/21</td>
+</tr>
+<tr>
+<td>Options complacency (low put/call)</td>
+<td>2.3×</td>
+<td>0.0×</td>
+<td>1.8×</td>
+<td>1.3×</td>
+<td>3.1×</td>
+<td><strong>1.65×</strong></td>
+<td>10/20</td>
+</tr>
+<tr>
+<td>Nasdaq fear premium (VXN/VIX)</td>
+<td>–</td>
+<td>2.7×</td>
+<td>1.0×</td>
+<td>2.6×</td>
+<td>2.2×</td>
+<td><strong>1.7×</strong></td>
+<td>5/18</td>
+</tr>
+<tr>
+<td>Margin debt +30% y/y</td>
+<td>3.0×</td>
+<td>2.6×</td>
+<td>–</td>
+<td>0.4×</td>
+<td>1.5×</td>
+<td><strong>1.75×</strong></td>
+<td>8/21</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Combined (the radar):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Families on</th>
+<th>11–15</th>
+<th>16–19</th>
+<th>20–22</th>
+<th>23–26</th>
+<th>All years</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>2 or more</strong></td>
+<td>1.7×</td>
+<td>4.0×</td>
+<td>1.3×</td>
+<td>1.6×</td>
+<td><strong>1.9×</strong>, on 19% of near-high days</td>
+</tr>
+<tr>
+<td>3 or more</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>3.7×</td>
+<td>3.9×, on 3%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Also by event:</strong> 2 or more families were on in the 20 sessions before <strong>14 of the 21</strong> fast falls.</li>
+<li><strong>10% fall within 2 months:</strong> this happened after <strong>19%</strong> of days with 2+ families on, against <strong>10%</strong> normally.</li>
+<li><strong>Stricter check</strong> (signs chosen without the test block): about <strong>1.4×</strong>. Treat <strong>1.4–1.9×</strong> as the realistic range.</li>
+<li><strong>Recent example:</strong> the radar showed 2 families (options complacency plus leverage) on <strong>30 September – 2 October 2026</strong>, just before the 6 October peak. The Nasdaq then fell about 10%.</li>
+</ul>
+<h3 id="signs-that-failed_1">Signs that failed</h3>
+<p>These failed when scored across the blocks:
+- <strong>Dealer gamma (GEX)</strong> and <strong>dark-pool buying (DIX)</strong>, from SqueezeMetrics. Both worked well in 2016–22 and failed in other years.
+- <strong>SKEW.</strong>
+- <strong>CFTC futures positioning:</strong> asset managers crowded long, leveraged funds long or short, VIX-futures shorts.
+- <strong>Implied correlation.</strong>
+- <strong>VVIX/VIX ratio.</strong>
+- <strong>Index put/call.</strong>
+- <strong>CNN Fear &amp; Greed</strong> (only from 2021).</p>
+<p><strong>Low VIX lowers</strong> the odds of a fast fall: about 0.4×.</p>
+<hr />
+<h2 id="3-btc-leverage-radar">3. BTC leverage radar</h2>
+<h3 id="rules_2">Rules</h3>
+<p>Checked daily after the 00:00 UTC close. One point per sign:</p>
+<table>
+<thead>
+<tr>
+<th>Sign</th>
+<th>On when</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Funding rate high</td>
+<td>Deribit BTC perpetual funding, 7-day mean, above 30% a year</td>
+<td>Deribit</td>
+</tr>
+<tr>
+<td>Hedge funds crowded on CME</td>
+<td>Leveraged funds' net CME bitcoin futures position (as a share of open interest) in the bottom 10% of the last 2 years. This is crowded short: the leveraged cash-and-carry trade.</td>
+<td>CFTC (weekly, used 4 days after the Tuesday it describes)</td>
+</tr>
+<tr>
+<td>Fast run-up</td>
+<td>BTC up 40%+ in 30 days</td>
+<td>Yahoo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Amber at 1 sign, red at 2.</strong></p>
+<h3 id="how-it-was-tested_2">How it was tested</h3>
+<ul>
+<li><strong>Events:</strong> BTC falling 15% or more within 10 days, starting within 10% of its 60-day high. There were 16 events from 2019 to 2026.</li>
+<li><strong>Base rate:</strong> 4.0% of such days.</li>
+<li><strong>Split:</strong> all years are test years. Results are also shown for 2019–22 and 2023–26 separately.</li>
+</ul>
+<h3 id="results_2">Results</h3>
+<table>
+<thead>
+<tr>
+<th>Sign</th>
+<th>2019–22</th>
+<th>2023–26</th>
+<th>All</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Funding &gt; 30% a year</td>
+<td>1.7×</td>
+<td>1.6×</td>
+<td><strong>2.9×</strong></td>
+</tr>
+<tr>
+<td>Hedge funds crowded short on CME</td>
+<td>1.3×</td>
+<td>3.1×</td>
+<td><strong>2.1×</strong></td>
+</tr>
+<tr>
+<td>BTC +40% in 30 days</td>
+<td>1.7×</td>
+<td>1.9×</td>
+<td><strong>2.7×</strong></td>
+</tr>
+<tr>
+<td><strong>1+ sign</strong></td>
+<td>1.1×</td>
+<td>2.6×</td>
+<td><strong>1.7×</strong>, on 28%, 9 of 16 events</td>
+</tr>
+<tr>
+<td><strong>2+ signs</strong></td>
+<td>1.9×</td>
+<td>2.7×</td>
+<td><strong>3.4×</strong>, on 8%, 4 of 16 events</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Before 10 October 2025:</strong> Deribit funding rose from 5% to 20% a year in the week before the $19bn liquidation day. That stayed below the 30% trigger.</li>
+<li><strong>What changed after 2021:</strong> in 2015–2020, crashes followed parabolic runs (BTC at 2× its 200-day average: 3.4×). Since 2021 that sign has had no power, and leverage and the macro risk mood matter more.</li>
+</ul>
+<hr />
+<h2 id="4-indicators-dropped-from-the-platform">4. Indicators dropped from the platform</h2>
+<p><strong>The old 3-point risk flag on the Nasdaq system</strong> has been retired. Its parts were:
+- W1: T-bill +0.5 pt in 6 months;
+- W2: dollar +5% in 6 months;
+- W3: two of QQQ, TLT or GLD below their 200-day averages.</p>
+<p>Its useful part is coincident: it marks markets that are already under stress. It is not predictive, and acting on it never improved results.</p>
+<p><strong>Stress gauges</strong> were also dropped:
+- MOVE above 120;
+- VIX above VIX3M;
+- VVIX above 100;
+- credit spreads widening;
+- the Nasdaq below its 200-day average.</p>
+<p>These raise the odds of a further fast fall by 2–3×, but only once the market is already falling. In October 2026 they turned red when the Nasdaq was already 10% down. After a red stress reading the average return over the next 3 months was the same as any other day, because rebounds are strong too.</p>
+<h2 id="5-everything-that-was-tested">5. Everything that was tested</h2>
+<ul>
+<li><strong>Macro and rates:</strong></li>
+<li>yield curve (inverted, flat, inverted in the last 18 months);</li>
+<li>Fed hikes;</li>
+<li>10-year yield jumps;</li>
+<li>real T-bill rate;</li>
+<li>inflation;</li>
+<li>dollar.</li>
+<li><strong>Valuation:</strong> CAPE level and percentile; earnings yield vs bonds.</li>
+<li><strong>Price:</strong> 12-month and 24-month gains; distance from the 200-day average; fading momentum.</li>
+<li><strong>Internals:</strong></li>
+<li>small caps vs large;</li>
+<li>Dow transports vs industrials;</li>
+<li>high-yield vs Treasuries;</li>
+<li>equal-weight vs cap-weight;</li>
+<li>staples vs discretionary.</li>
+<li><strong>Volatility:</strong> VIX level and rises at highs; VIX9D/VIX; VIX term structure; VVIX; SKEW; MOVE; VXN/VIX.</li>
+<li><strong>Options:</strong></li>
+<li>Cboe total, equity, index and SPX put/call ratios (2006–2026);</li>
+<li>dealer gamma (GEX) and dark-pool index (DIX), 2011+;</li>
+<li>dispersion (DSPX) and implied correlation (COR1M, COR3M).</li>
+<li><strong>Positioning:</strong> CFTC asset managers and leveraged funds in S&amp;P, Nasdaq and VIX futures (2006–2026); CME bitcoin.</li>
+<li><strong>Leverage:</strong> FINRA margin debt; Deribit funding.</li>
+<li><strong>Sentiment:</strong> CNN Fear &amp; Greed.</li>
+<li><strong>Not available free:</strong> AAII sentiment, NAAIM exposure, Fed (FRED) series and BitMEX funding were blocked or unavailable.</li>
+</ul>
+<h2 id="6-acting-on-the-flags-why-the-radar-is-display-only">6. Acting on the flags: why the radar is display only</h2>
+<p>Tested on the live systems' signal tables:</p>
+<ul>
+<li><strong>Nasdaq trading system 2010–2026:</strong></li>
+<li>as it is: 8.5% a year, −14.1% worst fall;</li>
+<li>halving exposure when the macro score was 2+: 8.0% / −14.3%;</li>
+<li>going to cash: 7.5% / −16.3%.</li>
+<li><strong>Stopping the Nasdaq dip buys in stressed markets, 2007–2026:</strong></li>
+<li>as it is: 9.6% / −13.7%;</li>
+<li>half-size dips: 8.3% / −12.9%;</li>
+<li>no dips: 6.9% / −14.4%.</li>
+</ul>
+<p>Dips bought in nervous markets earned more on average (+0.96% a trade vs +0.53%).
+- <strong>BTC system 2015–2026:</strong> halving exposure on the macro score took 84.8% / −33.6% down to 83.3% / −34.7%.</p>
+<p>The trend rules already exit most of the falls the flags warn about. Selling earlier mostly misses rebounds.</p>
+<h2 id="7-limits">7. Limits</h2>
+<ul>
+<li><strong>Few events.</strong> 15 bear markets since 1955, 21 Nasdaq fast falls since 2006 and 16 BTC crashes since 2019. Any multiplier carries wide error bands.</li>
+<li><strong>Mechanisms change.</strong> Options and positioning signs worked best in 2016–22. Narrow leadership has been near-permanent since 2023 (mega-cap dominance). The radar should be re-scored once a year.</li>
+<li><strong>Some crashes need a trigger</strong> (a virus, a tariff announcement, a forced unwind) that no indicator can forecast.</li>
+<li><strong>Data breaks.</strong> Cboe's put/call archive (to 2019) and daily reports (from October 2019) are joined. CAPE comes from multpl.com; the research used Shiller's own file (98% agreement on the flag).</li>
+</ul>
+<h2 id="8-data-and-code">8. Data and code</h2>
+<ul>
+<li><strong>Platform module:</strong> <code>signals/radar.py</code>. Inputs are stored in <code>data/radar/</code> and refreshed after the US close and the BTC close.</li>
+<li><strong>Research scripts:</strong> <code>research/risk-radar/</code> (copies of the analysis scripts).</li>
+<li><strong>Check against the research:</strong> the platform reproduces the research flags on 98–100% of days.</li>
+</ul></article>
+
+</main>
+<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 13:59", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="../static/app.js"></script>
+</body>
+</html>
