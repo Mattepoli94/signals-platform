@@ -1,7 +1,18 @@
 {
- "mode": "build",
- "finished_utc": "2026-11-03 01:37",
+ "mode": "us",
+ "finished_utc": "2026-11-03 01:41",
  "skipped": null,
  "alerts": [],
- "refresh": {}
+ "refresh": {
+  "EQQQ": "2026-11-02",
+  "QQQ": "2026-11-02",
+  "UUP": "2026-11-02",
+  "BTC": "2026-11-02",
+  "TLT": "2026-11-02",
+  "GLD": "2026-11-02",
+  "IRX": "2026-11-02",
+  "DXY": "2026-11-02",
+  "GBPUSD": "2026-11-02",
+  "NETLIQ": "FAILED: FRED download failed for WALCL: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout"
+ }
 }
