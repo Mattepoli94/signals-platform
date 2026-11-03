@@ -180,3 +180,34 @@ def test_usd_cash_leg_pays_fx_fee_only():
     assert fees['EQQQ'] == pytest.approx(500 * 0.0005, abs=0.01)
     assert fees['USD'] == pytest.approx(250 * 0.0015, abs=0.01)
     assert r.positions['USD']['units'] == pytest.approx((250 - 0.375) * 1.25)
+
+
+def test_expected_cone_and_flags(stored):
+    from signals.expect import expectation
+    s = STRATEGIES['qqq_regime']
+    t = s.compute(stored)
+    idx = t.loc['2025-01-02':].index
+    curve = pd.DataFrame({'nav': np.linspace(1.0, 1.05, len(idx))}, index=idx)
+    e = expectation('qqq_trading', s, t, stored, {'fee_pct': 0.05, 'fx_fee_pct': 0.15}, curve, '2025-01-02', 'lse')
+    assert e['bt_period'].startswith('Jan 2010') and -0.25 < e['bt_maxdd'] < 0
+    assert e['exp_lo'] < e['exp_med'] < e['exp_hi']
+    assert len(e['cone']) > len(idx) and e['flags']
+
+
+def test_journal_keeps_first_record(tmp_path, monkeypatch):
+    import signals.journal as J
+    monkeypatch.setattr(J, 'PATH', tmp_path / 'journal.json')
+    monkeypatch.setattr(J, 'STATE', tmp_path)
+    from datetime import datetime, timezone
+    trade = {'id': 'p-2026-11-03-EQQQ-BUY', 'date': '2026-11-03', 'side': 'BUY', 'asset': 'EQQQ', 'ccy': 'GBX', 'gbp': 500.0,
+             'units': 0.96, 'price': 52000.0, 'reason': 'dip'}
+    snap = {'config': {'fills': [], 'start_date': '2026-11-03'},
+            'pots': {'p': {'key': 'p', 'name': 'P', 'strategy_name': 'S', 'trades': [trade], 'latest_date': '2026-11-03',
+                           'status_provisional': None}}}
+    now = datetime(2026, 11, 3, 17, tzinfo=timezone.utc)
+    J.update(snap, now)
+    snap['pots']['p']['trades'] = [{**trade, 'gbp': 750.0}]
+    out = J.update(snap, now)
+    assert out[0]['gbp'] == 500.0 and out[0]['status'] == 'confirmed'
+    snap['pots']['p']['trades'] = []
+    assert J.update(snap, now)[0]['status'] == 'superseded'

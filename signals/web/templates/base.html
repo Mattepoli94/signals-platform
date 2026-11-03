@@ -17,7 +17,7 @@
       Signals
     </a>
     <nav class="main" aria-label="Main">
-      {% for p, label in [('index','Today'),('investing','Investing'),('trading','Trading'),('portfolio','Portfolio'),('research','Research'),('settings','Settings')] %}
+      {% for p, label in [('index','Today'),('investing','Investing'),('trading','Trading'),('journal','Journal'),('portfolio','Portfolio'),('research','Research'),('settings','Settings')] %}
       <a href="{{ root }}{{ p }}.html" class="{{ 'on' if page == p }}"{% if page == p %} aria-current="page"{% endif %}>{{ label }}</a>
       {% endfor %}
     </nav>

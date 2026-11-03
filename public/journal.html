@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Journal · Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+</head>
+<body data-root="">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
+      Signals
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="index.html" class="">Today</a>
+      
+      <a href="investing.html" class="">Investing</a>
+      
+      <a href="trading.html" class="">Trading</a>
+      
+      <a href="journal.html" class="on" aria-current="page">Journal</a>
+      
+      <a href="portfolio.html" class="">Portfolio</a>
+      
+      <a href="research.html" class="">Research</a>
+      
+      <a href="settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3404</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 01:37</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<div class="pagehead">
+  <div><div class="kicker">Journal</div><h1>Signal journal</h1>
+  <p class="sub">Every order the systems suggested, recorded the first time the site showed it and never rewritten. Record your real fill next to each one.</p></div>
+</div>
+
+
+
+<section class="card" aria-label="Summary">
+  <div class="stats">
+    <div class="stat"><div class="l">Suggestions</div><div class="v">0</div></div>
+    <div class="stat"><div class="l">Confirmed at the close</div><div class="v">0</div></div>
+    <div class="stat"><div class="l">With your fill recorded</div><div class="v">0</div></div>
+    <div class="stat"><div class="l">Previews not confirmed</div><div class="v">0</div></div>
+  </div>
+  <p class="small muted" style="margin:12px 0 0"><b>preview</b> = shown at ~16:05, waiting for the close · <b>confirmed</b> = the system traded at the close · <b>cancelled</b> = previewed but the close did not confirm it · <b>superseded</b> = no longer in the pot after a settings change (e.g. capital or start date).</p>
+</section>
+
+<section class="card" aria-label="Journal">
+  <div class="row" style="justify-content:space-between;align-items:flex-end;gap:12px">
+    <h2>All suggestions</h2>
+    <form id="jfilter" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;max-width:100%;min-width:0" onsubmit="return false">
+      <label class="f" style="max-width:100%">System<select id="jf-pot" style="width:100%;max-width:300px"><option value="">All</option><option value="qqq_value">Nasdaq value plan (EQQQ, ISA)</option><option value="qqq_trading">Nasdaq trading system (EQQQ ISA + USD Invest)</option><option value="btc_trend">BTC trend system</option></select></label>
+      <label class="f">Status<select id="jf-status"><option value="">All</option><option>confirmed</option><option>preview</option><option>cancelled</option><option>superseded</option></select></label>
+    </form>
+  </div>
+  <div class="scroll" style="margin-top:14px"><table class="t" id="jtable">
+    <thead><tr><th>Date</th><th>System</th><th>Signal</th><th class="n">Amount</th><th class="n">Price</th><th class="n">Stop</th><th>Why</th><th>Status</th><th>Your fill</th></tr></thead>
+    <tbody>
+    
+    <tr><td colspan="9" class="muted">No suggestions yet. The first appear at the pots' first close.</td></tr>
+    
+    </tbody>
+  </table></div>
+</section>
+<script>
+(function () {
+  var pot = document.getElementById('jf-pot'), st = document.getElementById('jf-status');
+  function apply() {
+    document.querySelectorAll('#jtable tbody tr[data-pot]').forEach(function (tr) {
+      var ok = (!pot.value || tr.dataset.pot === pot.value) && (!st.value || tr.dataset.status === st.value);
+      tr.style.display = ok ? '' : 'none';
+    });
+  }
+  pot.addEventListener('change', apply); st.addEventListener('change', apply);
+})();
+</script>
+
+</main>
+<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 01:37", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="static/app.js"></script>
+</body>
+</html>

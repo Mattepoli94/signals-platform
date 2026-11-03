@@ -6,7 +6,8 @@ A personal trading and investing dashboard that runs three research-tested syste
 |---|---|
 | **Today** | The action for each pot (BUY / SELL / HOLD / WAIT) with stops and exit dates, the order cut-off time, total P&L and recent signals |
 | **Investing** | The Nasdaq-100 value plan (buys EQQQ): live checklist for both value zones, what a buy would invest, the pot's P&L, the plan vs QQQ buy & hold with the same deposits, and a QQQ chart with value levels |
-| **Trading** | The Nasdaq-100 regime system (EQQQ + dollar add-on) and the BTC trend blend: every rule with its live value, entry/stop/take-profit/time exits, the risk flag, each pot and its chart, trades, signal history, and live-vs-backtest health |
+| **Trading** | The Nasdaq-100 regime system (EQQQ + dollar add-on) and the BTC trend blend. Under each system, a *Live vs expected* chart: the pot's return against the 80% range its backtest produced over the same number of sessions, with EQQQ/BTC as a grey line and flags when return or drawdown leave the backtest range. Also: every rule with its live value, entry/stop/take-profit/time exits, the risk flag, each pot and its chart, trades, signal history, and live-vs-backtest health |
+| **Journal** | Every order the systems suggested, written once when first shown (preview at 16:05, then confirmed or cancelled by the close), with your real fill next to it |
 | **Portfolio** | All pots, total value chart, top-ups, deposit history and the trade journal (record your real fills) |
 | **Research** | One paper per system with the exact rules and test results |
 | **Settings** | Initial capital, monthly top-up, fees and cash interest per pot, start date, data status and CSV upload |

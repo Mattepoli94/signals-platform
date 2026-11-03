@@ -116,6 +116,23 @@ def _pot_chart(p):
     ], label=f"{p['name']} value vs benchmark and money in")
 
 
+def _expect_chart(p):
+    e = p.get('expect') or {}
+    cone = e.get('cone') or []
+    if len(cone) < 2:
+        return ''
+    live = e.get('live') or []
+    under_name = 'EQQQ' if p['strategy'] == 'qqq_regime' else 'BTC'
+    series = [
+        {'name': 'Expected (median)', 'color': '#1D4ED8', 'dash': True, 'width': 1.8, 'points': [(c[0], c[2]) for c in cone]},
+        {'name': under_name, 'color': '#98A2B3', 'width': 1.2, 'points': [(r[0], r[2]) for r in live]},
+        {'name': 'Pot', 'color': '#0B1220', 'width': 2.8, 'points': [(r[0], r[1]) for r in live]},
+    ]
+    return line_chart(series, yfmt='{:+.0f}%', bands=[{'points': [(c[0], c[1], c[3]) for c in cone]}],
+                      today=live[-1][0] if live else None,
+                      label=f"{p['name']}: return since start vs the backtest's expected range and {under_name}")
+
+
 def _total_chart(pots):
     frames = []
     for p in pots:
@@ -150,21 +167,25 @@ def _health(pots):
     for p in pots:
         if p['page'] != 'trading':
             continue
-        m, t = p.get('metrics') or {}, p.get('tested') or {}
-        days = m.get('days', 0) if p['started'] else 0
-        if not p['started'] or days < 60:
+        m, e = p.get('metrics') or {}, p.get('expect') or {}
+        flags = e.get('flags') or []
+        worst = next((f for f in flags if f['tone'] == 'red'), None) or next((f for f in flags if f['tone'] == 'amber'), None)
+        if not p['started']:
+            status, tone = 'Not started', 'grey'
+        elif e.get('sessions', 0) < 20:
             status, tone = 'Collecting data', 'grey'
-        elif m['maxdd'] < 1.5 * t.get('maxdd', -1):
-            status, tone = 'Check: drawdown beyond tested', 'red'
-        elif m['maxdd'] < t.get('maxdd', -1):
-            status, tone = 'At tested worst drawdown', 'amber'
+        elif worst:
+            status, tone = ('Check: outside backtest' if worst['tone'] == 'red' else 'Watch: weaker than expected'), worst['tone']
         else:
-            status, tone = 'Within tested range', 'green'
-        ret = (f_pct(m['cagr']) + ' a year') if m.get('cagr') is not None else (f_pct(m.get('twr_total')) + ' total' if p['started'] else '—')
+            status, tone = 'In line with backtest', 'green'
         out.append({'name': p['name'], 'since': f_d(p['start']) if p['started'] else 'not started', 'trades': m.get('trades', 0),
-                    'win': f_pct(m['win_rate'], False) if m.get('win_rate') is not None else '—', 'ret': ret,
-                    'tested_ret': f_pct(t.get('cagr')) + ' a year',
-                    'dd_live': f_pct(m.get('maxdd')) if p['started'] else '—', 'dd_tested': f_pct(t.get('maxdd')), 'status': status, 'tone': tone})
+                    'win': f_pct(m['win_rate'], False) if m.get('win_rate') is not None else '—',
+                    'ret': f_pct(e['live_ret']) if 'live_ret' in e else '—',
+                    'tested_ret': (f"{f_pct(e['exp_med'])} ({f_pct(e['exp_lo'])} to {f_pct(e['exp_hi'])})" if 'exp_med' in e
+                                   else (f_pct(e.get('bt_cagr')) + ' a year' if e.get('bt_cagr') is not None else '—')),
+                    'dd_live': f_pct(e['live_dd']) if 'live_dd' in e else '—',
+                    'dd_tested': f_pct(e['exp_dd']) if 'exp_dd' in e else f_pct(e.get('bt_maxdd')),
+                    'status': status, 'tone': tone})
     return out
 
 
@@ -178,6 +199,8 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
     pots = list(snap['pots'].values())
     charts = {p['key']: _pot_chart(p) for p in pots}
     charts['value_levels'] = _value_levels_chart(snap)
+    for p in pots:
+        charts['exp_' + p['key']] = _expect_chart(p)
     charts['total'] = _total_chart(pots)
     names = {p['key']: p['name'] for p in pots}
     events = []
@@ -199,7 +222,8 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
                 recent_events=events[:10], deposits=deposits, future_topups=future, live_preview=live_preview,
                 papers=[{**r, 'href': f"research/{r['slug']}.html"} for r in PAPERS], changelog=CHANGELOG,
                 js_ctx={'generated': snap['generated_utc'], 'repo': os.environ.get('GITHUB_REPOSITORY', 'Mattepoli94/signals-platform')})
-    for page in ('index', 'investing', 'trading', 'portfolio', 'research', 'settings'):
+    base['journal'] = snap.get('journal') or []
+    for page in ('index', 'investing', 'trading', 'journal', 'portfolio', 'research', 'settings'):
         html = env.get_template(f'{page}.html').render(page=page, root='', **base)
         (out / f'{page}.html').write_text(html)
     (out / 'research').mkdir(exist_ok=True)

@@ -20,10 +20,12 @@ def _nice(lo, hi, n=5):
     return ticks
 
 
-def line_chart(series: list, width=1100, height=320, yfmt='£{:,.0f}', label='chart', zones=None) -> str:
+def line_chart(series: list, width=1100, height=320, yfmt='£{:,.0f}', label='chart', zones=None, bands=None, today=None) -> str:
     """series: [{'name', 'color', 'dash': bool, 'width': float, 'points': [(iso_date, value), ...]}]
     zones: optional list of booleans aligned with the first series' points (shaded bands)."""
+    bands = bands or []
     pts_all = [(d, v) for s in series for d, v in s['points'] if v is not None]
+    pts_all += [(d, v) for b in bands for d, lo, hi in b['points'] for v in (lo, hi) if v is not None]
     if len(pts_all) < 2:
         return '<p class="muted small">Not enough history to draw a chart yet.</p>'
     dates = sorted({d for d, _ in pts_all})
@@ -57,6 +59,16 @@ def line_chart(series: list, width=1100, height=320, yfmt='£{:,.0f}', label='ch
                 i = j + 1
             else:
                 i += 1
+    for b in bands:
+        bp = [(d, lo, hi) for d, lo, hi in b['points'] if lo is not None and hi is not None]
+        if len(bp) > 1:
+            poly = ' '.join(f'{X(d):.1f},{Y(hi):.1f}' for d, lo, hi in bp) + ' ' + \
+                ' '.join(f'{X(d):.1f},{Y(lo):.1f}' for d, lo, hi in reversed(bp))
+            out.append(f'<polygon points="{poly}" fill="{b.get("color", "#DCE6FF")}" opacity="{b.get("opacity", 0.8)}"/>')
+    if today:
+        xt = X(today)
+        out.append(f'<line x1="{xt:.1f}" x2="{xt:.1f}" y1="{T}" y2="{B}" stroke="#98A2B3" stroke-dasharray="3 4"/>')
+        out.append(f'<text x="{xt + 6:.1f}" y="{T + 12}" font-size="12" fill="#475467" font-family="Inter, sans-serif">today</text>')
     for v in ticks:
         y = Y(v)
         out.append(f'<line x1="{L}" x2="{R}" y1="{y:.1f}" y2="{y:.1f}" stroke="#E4E8EF"/>')

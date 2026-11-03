@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Journal{% endblock %}
+{% block body %}
+<div class="pagehead">
+  <div><div class="kicker">Journal</div><h1>Signal journal</h1>
+  <p class="sub">Every order the systems suggested, recorded the first time the site showed it and never rewritten. Record your real fill next to each one.</p></div>
+</div>
+
+{% set conf = journal|selectattr('status','equalto','confirmed')|list %}
+{% set filled = conf|selectattr('fill')|list %}
+<section class="card" aria-label="Summary">
+  <div class="stats">
+    <div class="stat"><div class="l">Suggestions</div><div class="v">{{ journal|length }}</div></div>
+    <div class="stat"><div class="l">Confirmed at the close</div><div class="v">{{ conf|length }}</div></div>
+    <div class="stat"><div class="l">With your fill recorded</div><div class="v">{{ filled|length }}</div></div>
+    <div class="stat"><div class="l">Previews not confirmed</div><div class="v">{{ journal|selectattr('status','equalto','cancelled')|list|length }}</div></div>
+  </div>
+  <p class="small muted" style="margin:12px 0 0"><b>preview</b> = shown at ~16:05, waiting for the close · <b>confirmed</b> = the system traded at the close · <b>cancelled</b> = previewed but the close did not confirm it · <b>superseded</b> = no longer in the pot after a settings change (e.g. capital or start date).</p>
+</section>
+
+<section class="card" aria-label="Journal">
+  <div class="row" style="justify-content:space-between;align-items:flex-end;gap:12px">
+    <h2>All suggestions</h2>
+    <form id="jfilter" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;max-width:100%;min-width:0" onsubmit="return false">
+      <label class="f" style="max-width:100%">System<select id="jf-pot" style="width:100%;max-width:300px"><option value="">All</option>{% for p in pots %}<option value="{{ p.key }}">{{ p.name }}</option>{% endfor %}</select></label>
+      <label class="f">Status<select id="jf-status"><option value="">All</option><option>confirmed</option><option>preview</option><option>cancelled</option><option>superseded</option></select></label>
+    </form>
+  </div>
+  <div class="scroll" style="margin-top:14px"><table class="t" id="jtable">
+    <thead><tr><th>Date</th><th>System</th><th>Signal</th><th class="n">Amount</th><th class="n">Price</th><th class="n">Stop</th><th>Why</th><th>Status</th><th>Your fill</th></tr></thead>
+    <tbody>
+    {% for e in journal %}
+    <tr data-pot="{{ e.pot }}" data-status="{{ e.status }}">
+      <td class="mono">{{ e.date|d }}<div class="small muted">seen {{ e.first_seen }}</div></td>
+      <td class="small">{{ e.pot_name }}</td>
+      <td><span class="pill {{ 't-green' if e.side == 'BUY' else 't-red' }}">{{ e.side }}</span> {{ 'USD cash' if e.asset == 'USD' else e.asset }}</td>
+      <td class="n">{{ e.gbp|gbp }}{% if e.units %}<div class="small muted">{{ '%.4f'|format(e.units) if e.ccy != 'USDCASH' else '$' ~ '{:,.0f}'.format(e.units) }}</div>{% endif %}</td>
+      <td class="n">{{ e.price|px(e.ccy) }}</td>
+      <td class="n">{{ e.stop|px(e.ccy) if e.stop else '—' }}</td>
+      <td class="small" style="max-width:320px">{{ e.reason }}</td>
+      <td><span class="pill {{ {'confirmed':'t-green','preview':'t-amber','cancelled':'t-grey','superseded':'t-grey'}[e.status] }}">{{ e.status }}</span></td>
+      <td>{% if e.fill %}<span class="mono small">{{ e.fill.price|px(e.ccy) }}</span>{% endif %}
+        {% if e.status in ('confirmed', 'preview') %}
+        <details><summary class="small">{{ 'Edit' if e.fill else 'Record' }}</summary>
+        <form data-op="set_fill" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+          <input type="hidden" name="trade_id" value="{{ e.id }}">
+          <input name="price" type="number" step="0.0001" placeholder="{{ {'GBX':'pence','USDCASH':'GBP/USD'}.get(e.ccy, 'price $') }}" class="w100" required aria-label="Fill price">
+          <input name="fee_gbp" type="number" step="0.01" placeholder="fee £" class="w100" aria-label="Fee in GBP">
+          <button class="btn small primary" type="submit">Save</button>
+        </form></details>{% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="9" class="muted">No suggestions yet. The first appear at the pots' first close.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+<script>
+(function () {
+  var pot = document.getElementById('jf-pot'), st = document.getElementById('jf-status');
+  function apply() {
+    document.querySelectorAll('#jtable tbody tr[data-pot]').forEach(function (tr) {
+      var ok = (!pot.value || tr.dataset.pot === pot.value) && (!st.value || tr.dataset.status === st.value);
+      tr.style.display = ok ? '' : 'none';
+    });
+  }
+  pot.addEventListener('change', apply); st.addEventListener('change', apply);
+})();
+</script>
+{% endblock %}

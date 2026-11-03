@@ -123,6 +123,20 @@ def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
         curve = res.curve
         pnl = res.equity - res.deposits
         unreal = sum(p['unrealised'] for p in res.positions.values())
+        if s.key == 'qqq_regime':
+            tb = tables[s.key]
+            for tr in res.trades:
+                ds = pd.Timestamp(tr['date'])
+                if tr['asset'] == 'EQQQ' and tr['side'] == 'BUY' and ds in tb.index and pd.notna(tb.at[ds, 'dip_stop']) and tb.at[ds, 'w_dip'] > 0:
+                    tr['stop'] = float(tb.at[ds, 'dip_stop'])
+        expect = {}
+        if s.kind == 'weights':
+            from .expect import expectation
+            from .assets import ASSETS as _A
+            try:
+                expect = expectation(pk, s, tables[s.key], data, pc, res.curve, res.start, _A[s.calendar_asset].calendar)
+            except Exception as e:  # noqa: BLE001 - never block the run
+                expect = {'error': str(e)[:200]}
         pots_out[pk] = {
             'key': pk, 'name': pc.get('name', pk), 'strategy': s.key, 'strategy_name': s.name, 'page': pc.get('page', s.page),
             'kind': s.kind, 'cfg': pc, 'started': res.started, 'start': res.start, 'cash': res.cash, 'deposits': res.deposits,
@@ -136,7 +150,7 @@ def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
             'curve': [[d.strftime('%Y-%m-%d'), r['equity'], r['deposits'], r['bench']] for d, r in curve.iterrows()] if len(curve) else [],
             'cooldown_left': res.cooldown_left, 'last_buy': res.last_buy,
             'status': st, 'status_provisional': prov, 'preview': preview_final, 'preview_provisional': preview_prov,
-            'tested': s.tested, 'latest_date': latest_date,
+            'tested': s.tested, 'latest_date': latest_date, 'expect': expect,
         }
 
     strategies_out = {k: {'key': k, 'name': s.name, 'kind': s.kind, 'paper': s.paper, 'timing': s.timing,
@@ -296,6 +310,8 @@ def run(mode: str = 'us', fetch: bool = True, email: bool = True, build: bool = 
     cfg = C.load()
     snap, _ = compute(cfg, now, mode)
     snap['refresh'] = report.get('refresh')
+    from .journal import update as journal_update
+    snap['journal'] = journal_update(snap, now)
     STATE.mkdir(parents=True, exist_ok=True)
     report['alerts'] = send_alerts(snap, mode, now) if (email and mode != 'build') else []
     snap['last_alerts'] = report['alerts']
