@@ -11,13 +11,14 @@ from . import CONFIG
 
 HEADER = """# Signals platform: your settings.
 # Edit this file directly, or use the Settings and Portfolio pages (they write here for you).
-# All money is in GBP. Prices are in USD and converted with the GBP/USD close of the same day.
+# All money is in GBP. EQQQ is priced in pence; BTC in USD, converted with the GBP/USD close of the day.
 # Pots follow their systems from the first close on or after start_date.
-# topups: one-off deposits. fills: your real executions (USD price, optional GBP/USD fx, fee_gbp, units).
+# topups: one-off deposits. fills: your real executions (price in the asset's own unit: pence for EQQQ,
+# USD for BTC, the GBP/USD rate for USD cash; optional fx, fee_gbp, units).
 
 """
 
-POT_FIELDS = {'initial_capital': float, 'monthly_topup': float, 'fee_pct': float, 'cash_rate_pct': float, 'name': str}
+POT_FIELDS = {'initial_capital': float, 'monthly_topup': float, 'fee_pct': float, 'fx_fee_pct': float, 'cash_rate_pct': float, 'name': str}
 
 
 def load() -> dict:

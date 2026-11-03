@@ -50,7 +50,7 @@ class Handler(SimpleHTTPRequestHandler):
                     P.run('build', fetch=False, email=False)
                     return self._json(200, {'ok': True, 'message': msg})
                 if self.path == '/api/refresh':
-                    rep = P.run('close', fetch=True, email=False)
+                    rep = P.run('us', fetch=True, email=False)
                     bad = [k for k, v in rep['refresh'].items() if not v['ok']]
                     return self._json(200, {'ok': True, 'message': 'Data refreshed' + (f' (failed: {", ".join(bad)})' if bad else '')})
                 if self.path == '/api/upload':

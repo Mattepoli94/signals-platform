@@ -3,16 +3,21 @@ name: Signals (scheduled)
 # Times are UTC. The code itself checks New York time, so US daylight-saving changes are handled.
 on:
   schedule:
-    - cron: '25 19 * * 1-5'   # pre-close preview (15:25 New York in summer)
-    - cron: '25 20 * * 1-5'   # pre-close preview (15:25 New York in winter)
-    - cron: '20 21 * * 1-5'   # after the US close
-    - cron: '20 22 * * 1-5'   # after the US close (backup run; alerts are never sent twice)
+    - cron: '5 15 * * 1-5'    # London pre-close preview (16:05 UK in winter; the code checks London time)
+    - cron: '5 16 * * 1-5'    # London pre-close preview (16:05 UK in summer)
+    - cron: '55 16 * * 1-5'   # after the London close
+    - cron: '55 17 * * 1-5'   # after the London close (backup; alerts are never sent twice)
+    - cron: '20 21 * * 1-5'   # after the US close: value zones, dollar trend, daily summary
+    - cron: '20 22 * * 1-5'   # after the US close (backup)
     - cron: '20 0 * * *'      # after the BTC daily close (00:00 UTC)
+  push:
+    branches: [main]
+    paths: ['signals/**', 'config/**', 'research/**', 'requirements.txt', '.github/workflows/daily.yml']
   workflow_dispatch:
     inputs:
       mode:
-        description: 'close | preclose | btc | build'
-        default: close
+        description: 'preclose | close | us | btc | build'
+        default: us
         required: true
 
 permissions:
@@ -44,12 +49,13 @@ jobs:
           INPUT_MODE: ${{ github.event.inputs.mode }}
         run: |
           case "$SCHEDULE" in
-            "25 19 * * 1-5"|"25 20 * * 1-5") MODE=preclose ;;
+            "5 15 * * 1-5"|"5 16 * * 1-5") MODE=preclose ;;
+            "55 16 * * 1-5"|"55 17 * * 1-5") MODE=close ;;
             "20 0 * * *") MODE=btc ;;
-            "") MODE="${INPUT_MODE:-close}" ;;
-            *) MODE=close ;;
+            "") MODE="${INPUT_MODE:-us}" ;;
+            *) MODE=us ;;
           esac
-          case "$MODE" in close|preclose|btc|build) ;; *) MODE=close ;; esac
+          case "$MODE" in preclose|close|us|btc|build) ;; *) MODE=us ;; esac
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
       - name: Run
         env:
@@ -59,7 +65,9 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           ALERT_TO: ${{ secrets.ALERT_TO }}
           ALERT_FROM: ${{ secrets.ALERT_FROM }}
-        run: python -m signals run --mode ${{ steps.mode.outputs.mode }}
+        run: |
+          set -o pipefail
+          python -m signals run --mode ${{ steps.mode.outputs.mode }} 2>&1 | tee run.log
       - name: Save data and state
         run: |
           git config user.name "signals-bot"
@@ -68,6 +76,14 @@ jobs:
           if git diff --cached --quiet; then echo "nothing to save"; exit 0; fi
           git commit -m "Data and signals: ${{ steps.mode.outputs.mode }} run $(date -u +'%Y-%m-%d %H:%M') UTC"
           for i in 1 2 3; do git pull --rebase origin main && git push && break; sleep 5; done
+      - name: Save the error for diagnosis
+        if: failure()
+        run: |
+          mkdir -p state && tail -n 80 run.log > state/last_error.log 2>/dev/null || echo "no log" > state/last_error.log
+          date -u +'failed %Y-%m-%d %H:%M UTC' >> state/last_error.log
+          git config user.name "signals-bot"; git config user.email "signals-bot@users.noreply.github.com"
+          git add state/last_error.log && git commit -m "Run failed: see state/last_error.log" && \
+            for i in 1 2 3; do git pull --rebase origin main && git push && break; sleep 5; done
       - name: Check site was built
         id: site
         run: if [ -f site/index.html ]; then echo "built=true" >> "$GITHUB_OUTPUT"; else echo "built=false" >> "$GITHUB_OUTPUT"; fi

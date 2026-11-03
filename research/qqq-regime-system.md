@@ -1,6 +1,6 @@
-# QQQ regime trading system + dollar add-on (v1.0)
+# Nasdaq-100 regime system + dollar add-on (v1.1, UK implementation)
 
-Trading system #1. Long-only on QQQ, with the US dollar (UUP) as the only add-on. The full build specification, with every test, is in the [Build Spec v1.0](https://claude.ai/artifact/Kjtfn4jJ1JdCrynU9ubXvc). This page is the short version the platform runs.
+Trading system #1. Long-only on the Nasdaq-100, with the US dollar as the only add-on. Since v1.1 it is traded in **EQQQ** (Invesco EQQQ Nasdaq-100 UCITS ETF, London, priced in pence) inside the ISA, at the **London close**. The dollar add-on is held as **USD cash in the Trading 212 Invest account**. The rules themselves are unchanged from v1.0. The full build specification, with every test, is in the [Build Spec v1.0](https://claude.ai/artifact/Kjtfn4jJ1JdCrynU9ubXvc). This page is the short version the platform runs.
 
 ## Idea
 
@@ -40,7 +40,7 @@ Exit the dip trade at the close on the first of these:
 
 Indicators: SMA = simple average of adjusted closes. RSI(2) uses Wilder smoothing. Bollinger uses the sample standard deviation.
 
-## Results (3 bp costs, cash at the T-bill rate)
+## Original research results (QQQ at the US close, 3 bp costs, cash at the T-bill rate)
 
 | Period | CAGR | Max drawdown | QQQ buy & hold |
 |---|---|---|---|
@@ -55,11 +55,36 @@ Bear markets, peak to trough: 2000–02 +40% vs −83%; 2008 +0.2% vs −53%; 20
 - Far smaller drawdowns than holding QQQ. Much lower returns in strong bull markets: since 2009 the system behaves like roughly 40% QQQ and 60% cash.
 - About 9 dip trades a year (2000–2024), most lasting a few days. 71% of them were winners, with an average gain of +1.0% per trade. The stop normally limits a loss to about −3%, but gaps made the worst trade −8.4%.
 - On top of the dip trades come trend-leg switches and dollar add-on switches: in 2025–26 the pot made about 70 trades a year in total.
-- **Costs matter.** The research used 3 bp per trade. Trading 212 charges 0.15% FX on each USD trade from a GBP account. Replaying January 2025 to October 2026 with that fee cut the result from +11.7% to +2.0%. The pot on this platform includes your real fee.
+- **Costs matter.** See v1.1 below: trading a pence-priced ETF in the ISA removes the 0.15% FX fee from the Nasdaq trades.
 - The rules work on QQQ, not on SPY: the same rules on SPY gave about half the return.
+
+## v1.1: UK implementation (3 Nov 2026)
+
+**Why it changed.** The fee is charged on the value of every trade, and this system trades a lot. The Nasdaq legs alone trade about 15–22 times the pot each year. The dollar add-on mirrors every Nasdaq change, so the total is about 35 times the pot a year. A 0.15% currency fee therefore costs about 5% a year, while the average dip trade only earns +0.7% to +1.0%. Trading 212 charges the fee only when it converts currency. EQQQ is priced in pence, so buying it from GBP in the ISA has no FX fee; the cost is just the bid/ask spread.
+
+**What runs now**
+
+- The same rules, applied to EQQQ's own daily closes at the London close (16:30 UK). A preview email goes out at ~16:05 with the live London price; place orders before 16:25.
+- Dollar add-on: USD cash = 0.5 × (1 − EQQQ weight) while UUP trends. UUP is judged at the latest US close before the London close. Each switch is a GBP↔USD conversion at 0.15%.
+- Risk flag: unchanged. It uses US data from the latest US close.
+
+**Test** (EQQQ 2010–Oct 2026, in GBP, rules not re-tuned, cash earning 0%). Yahoo's EQQQ history had bad prints, including weeks quoted in US cents. They were repaired against QQQ ÷ GBP/USD, and the platform does the same live.
+
+| Variant | 2010–24 CAGR / max drawdown | 2025–Oct 2026 |
+|---|---|---|
+| Research reference: QQQ at the US close, 3 bp | 9.4% / −14.1% | 5.7% / −16.2% |
+| Same with Trading 212's 0.15% FX fee | 7.4% / −16.5% | 3.0% |
+| **EQQQ, signal and trade at the London close, 5 bp** | **7.7% / −13.8%** | **11.0% / −9.5%** |
+| … plus the dollar add-on (USD cash, 0.15% per switch) | **9.0% / −14.1%** | 10.4% / −9.8% |
+| EQQQ, signal at the London close, trade at the next London open, 5 bp | 8.0% / −14.2% | 12.8% / −6.5% |
+| Same at a 10 bp spread at the open | 7.1% / −14.9% | 11.8% |
+| QQQ US-close signal, trade EQQQ at the next London open | 6.9% / −18.3% | 2.1% |
+| EQQQ buy & hold | 19.5% / −28.2% | 13.0% / −24.2% |
+
+EQQQ dip trades: 9.2 a year, 75.5% winners, average +0.64%, worst −5.8%. Computing the signals on EQQQ converted to USD did worse (6.7%). So did timing the dollar with its own trend against the pound (7.3%) instead of UUP's.
 
 ## Execution notes
 
-- Signals use the close, so orders must be placed just before the close (by 15:55 New York). The platform emails a preview ~25 minutes before the close, using the live price.
-- If an order is missed, trade as early as possible next session. Record the real fill in the trade journal so the pot reflects it.
-- UK investors usually cannot buy US-listed ETFs (QQQ, UUP) in a normal account because of PRIIPs rules. Common routes are a CFD account on QQQ, or a UCITS Nasdaq-100 ETF (it trades in London hours, so it cannot be bought at the US close). Each route changes timing, costs and tax. The pot here is valued on QQQ prices.
+- Signals use the London close, so orders go in just before it: the preview email arrives at ~16:05 and the cut-off is 16:25 UK. Yahoo's London prices can be about 15 minutes delayed.
+- If an order is missed, trade as early as possible next session. Record the real fill (in pence) in the trade journal so the pot reflects it.
+- EQQQ pays small dividends (about 0.3–0.5% a year). They are not in the price series, so the pot slightly understates the return. CNX1 (iShares, accumulating) tracks the same index if you prefer.

@@ -1,4 +1,4 @@
-# QQQ value-zone accumulation plan (v1.0)
+# Nasdaq-100 value-zone accumulation plan (v1.1)
 
 A monthly savings plan (a *piano di accumulo*) that buys QQQ only at value, instead of on a fixed date. It complements trading system #1: it buys in the conditions where the trading system is usually flat.
 
@@ -32,6 +32,10 @@ Level study: after a trend-zone close, QQQ returned +39% over the next year in 1
 - Over 10–20 years, wealth roughly equal to or a little below monthly buying, with much shallower drawdowns.
 - Fit with trading system #1: on zone-buy days the trading system was flat or half-invested 97% of the time.
 - The rules are QQQ-specific: on SPY the zones gave no edge in 1998–2009.
+
+## UK implementation (v1.1)
+
+The zones are still judged on QQQ at the US close: the rules were validated on that series, and they move slowly. A buy is placed in **EQQQ** (pence, ISA) at the next London close. That is one session later than in the research, which matters little for a plan that buys a few times a year, and it avoids any currency fee. The cut-off is 16:25 UK; an email the evening before says when a buy is due.
 
 ## On this platform
 

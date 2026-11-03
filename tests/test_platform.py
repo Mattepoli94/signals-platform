@@ -11,28 +11,44 @@ from signals.strategies.base import Strategy
 
 @pytest.fixture(scope='module')
 def stored():
-    keys = ['QQQ', 'UUP', 'TLT', 'GLD', 'IRX', 'DXY', 'BTC', 'NETLIQ']
-    return {k: D.load(k) for k in keys}
+    keys = ['EQQQ', 'QQQ', 'UUP', 'TLT', 'GLD', 'IRX', 'DXY', 'BTC', 'NETLIQ', 'GBPUSD']
+    return D.load_all(keys)
 
 
 # ----------------------------------------------------------------------------- rules on known dates
-def test_qqq_dip_entry_30_oct_2026(stored):
-    t = STRATEGIES['qqq_regime'].compute(stored).loc[:'2026-10-30']
+def test_core_rules_on_qqq_30_oct_2026(stored):
+    from signals.strategies.qqq_regime import regime_core
+    t = regime_core(stored['QQQ']['adj_close'].loc[:'2026-10-30'], STRATEGIES['qqq_regime'].params)
     x = t.iloc[-1]
     assert x['regime'] == 'Range above 200-day'
     assert x['rsi2'] == pytest.approx(8.41, abs=0.05)
-    assert x['w_QQQ'] == 1.0 and x['w_UUP'] == 0.0
+    assert x['w_core'] == 1.0
     assert x['dip_stop'] == pytest.approx(x['dip_entry'] * 0.97)
+
+
+def test_eqqq_london_close_30_oct_2026(stored):
+    d = {k: (v.loc[:'2026-10-30'] if k == 'EQQQ' else v.loc[:'2026-10-29']) for k, v in stored.items()}
+    t = STRATEGIES['qqq_regime'].compute(d)
+    x = t.iloc[-1]
+    assert t.index[-1] == pd.Timestamp('2026-10-30')
+    assert x['w_EQQQ'] == 1.0 and x['w_USD'] == 0.0
+    assert x['raw_close'] == pytest.approx(51946, rel=0.01)       # pence
     st = STRATEGIES['qqq_regime'].status(t)
     assert st['action'] == 'BUY' and st['levels']['exit_date'] == '2026-11-13'
+    assert st['targets'] == {'EQQQ': 1.0, 'USD': 0.0}
+
+
+def test_eqqq_repair_removes_bad_prints(stored):
+    r = stored['EQQQ']['close'].pct_change().abs()
+    assert r.loc['2010':].max() < 0.15          # raw Yahoo data had +60% one-day spikes
 
 
 def test_value_zone_30_oct_2026(stored):
-    t = STRATEGIES['qqq_value'].compute(stored).loc[:'2026-10-30']
-    x = t.iloc[-1]
+    s = STRATEGIES['qqq_value']
+    us = s.compute_us({'QQQ': stored['QQQ'].loc[:'2026-10-30']})
+    x = us.iloc[-1]
     assert x['z'] == pytest.approx(-0.16, abs=0.02)
     assert not x['zone']                        # z in the zone but close below the 20-day average
-    assert STRATEGIES['qqq_value'].status(t, {'cash': 1000})['action'] == 'WAIT'
 
 
 def test_btc_1_nov_2026(stored):
@@ -140,3 +156,27 @@ def test_parse_csv_formats():
     assert a['adj_close'].iloc[-1] == 1.5 and len(a) == 2
     assert b['close'].iloc[0] == 1234.5 and b['volume'].iloc[0] == 1.2e6
     assert b.index[0] == pd.Timestamp('2026-10-30')
+
+
+def test_gbp_conversions():
+    from signals.ledger import native_to_gbp
+    assert native_to_gbp('EQQQ', 51946, 1.33) == pytest.approx(519.46)
+    assert native_to_gbp('USD', 1.25, 1.25) == pytest.approx(0.8)      # one dollar in pounds
+    assert native_to_gbp('BTC', 80000, 1.25) == pytest.approx(64000)
+
+
+def test_usd_cash_leg_pays_fx_fee_only():
+    class Two(Strategy):
+        def __init__(self):
+            super().__init__(key='two', kind='weights', assets=('EQQQ', 'USD'), calendar_asset='EQQQ', band=1.0)
+    idx = pd.date_range('2026-01-05', periods=3, freq='B')
+    eq = pd.DataFrame({'close': [10000.0] * 3, 'adj_close': [10000.0] * 3}, index=idx)
+    fx = pd.DataFrame({'close': [1.25] * 3, 'adj_close': [1.25] * 3}, index=idx)
+    t = pd.DataFrame({'w_EQQQ': [0.5, 0.5, 0.5], 'w_USD': [0.25, 0.25, 0.25]}, index=idx)
+    t['state'] = 'x'
+    r = run_pot('p', {'initial_capital': 1000, 'fee_pct': 0.05, 'fx_fee_pct': 0.15}, Two(), t,
+                {'EQQQ': eq, 'USD': fx}, fx['close'], '2026-01-01', [], [], 'EQQQ')
+    fees = {x['asset']: x['fee'] for x in r.trades}
+    assert fees['EQQQ'] == pytest.approx(500 * 0.0005, abs=0.01)
+    assert fees['USD'] == pytest.approx(250 * 0.0015, abs=0.01)
+    assert r.positions['USD']['units'] == pytest.approx((250 - 0.375) * 1.25)

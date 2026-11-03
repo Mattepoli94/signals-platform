@@ -91,6 +91,8 @@ def is_confirmed(key: str, d: pd.Timestamp, now: datetime | None = None) -> bool
         return now >= datetime(d.year, d.month, d.day, tzinfo=timezone.utc) + timedelta(days=1)
     if cal == 'fx':
         return now >= datetime(d.year, d.month, d.day, 22, 0, tzinfo=timezone.utc)
+    if cal == 'lse':
+        return now >= datetime(d.year, d.month, d.day, 16, 45, tzinfo=LDN)
     close = datetime(d.year, d.month, d.day, 16, 15, tzinfo=NY)
     return now >= close
 
@@ -269,7 +271,7 @@ def expected_last(key: str, now: datetime | None = None) -> pd.Timestamp:
         return pd.Timestamp((now - timedelta(days=1)).date())
     if cal == 'macro' and ASSETS[key].source == 'fred':
         return pd.Timestamp((now - timedelta(days=10)).date())
-    d = pd.Timestamp(now.astimezone(NY).date())
+    d = pd.Timestamp(now.astimezone(LDN if cal == 'lse' else NY).date())
     while True:
         if d.weekday() < 5 and is_confirmed(key, d, now):
             return d
@@ -288,3 +290,40 @@ def freshness(now: datetime | None = None) -> list:
         rows.append({'key': k, 'name': a.name, 'last': last.strftime('%Y-%m-%d') if last is not None else '-',
                      'expected': exp.strftime('%Y-%m-%d'), 'status': status, 'source': a.source})
     return rows
+
+
+# ----------------------------------------------------------------------------- UK-listed ETF repair
+def fair_clean(df: pd.DataFrame, ref_usd: pd.DataFrame, fx: pd.DataFrame, thr: float = 0.20) -> pd.DataFrame:
+    """Yahoo's London ETF history has bad prints (whole weeks quoted in US cents, 60% spikes).
+    Each close is compared with its US twin converted to GBP (ref / GBPUSD) times a slowly moving
+    ratio (median over ~1 year). Prints more than `thr` away are replaced by that fair value.
+    Real moves between the London close (16:30) and the US close are far smaller than 20%."""
+    if df.empty or ref_usd is None or ref_usd.empty or fx is None or fx.empty:
+        return df
+    g = df.copy()
+    fair = ref_usd['close'] / fx['close'].reindex(ref_usd.index).ffill()
+    fair = fair.reindex(fair.index.union(g.index)).ffill().reindex(g.index)
+    k = g['close'] / fair
+    med = k.rolling(251, center=True, min_periods=20).median().ffill().bfill()
+    badc = ((k / med - 1).abs() > thr).fillna(False)
+    g.loc[badc, 'close'] = (fair * med)[badc]
+    bado = (((g['open'] / (fair * med) - 1).abs() > thr) | g['open'].isna() | (g['open'] <= 0)).fillna(False)
+    g.loc[bado, 'open'] = g['close'].shift(1)[bado]
+    for col in ('high', 'low'):
+        g.loc[badc | bado, col] = np.nan
+    ratio = (df['adj_close'] / df['close']).where(~badc, np.nan).ffill().fillna(1.0)
+    g['adj_close'] = g['close'] * ratio
+    g.attrs['repaired'] = int(badc.sum())
+    return g
+
+
+def load_all(keys) -> dict:
+    """Loads assets and repairs UK-listed ETFs against their US twin."""
+    out = {k: load(k) for k in keys}
+    for k in keys:
+        a = ASSETS.get(k)
+        if a is not None and a.fair_ref:
+            ref = out.get(a.fair_ref) if a.fair_ref in out else load(a.fair_ref)
+            fx = out.get('GBPUSD') if 'GBPUSD' in out else load('GBPUSD')
+            out[k] = fair_clean(out[k], ref, fx)
+    return out

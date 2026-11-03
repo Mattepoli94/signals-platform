@@ -5,8 +5,8 @@ A personal trading and investing dashboard that runs three research-tested syste
 | Page | What it shows |
 |---|---|
 | **Today** | The action for each pot (BUY / SELL / HOLD / WAIT) with stops and exit dates, the order cut-off time, total P&L and recent signals |
-| **Investing** | The QQQ value plan: live checklist for both value zones, what a buy would invest, the pot's P&L, the plan vs QQQ buy & hold with the same deposits, and a QQQ chart with value levels |
-| **Trading** | The QQQ regime system (+ dollar add-on) and the BTC trend blend: every rule with its live value, entry/stop/take-profit/time exits, the risk flag, each pot and its chart, trades, signal history, and live-vs-backtest health |
+| **Investing** | The Nasdaq-100 value plan (buys EQQQ): live checklist for both value zones, what a buy would invest, the pot's P&L, the plan vs QQQ buy & hold with the same deposits, and a QQQ chart with value levels |
+| **Trading** | The Nasdaq-100 regime system (EQQQ + dollar add-on) and the BTC trend blend: every rule with its live value, entry/stop/take-profit/time exits, the risk flag, each pot and its chart, trades, signal history, and live-vs-backtest health |
 | **Portfolio** | All pots, total value chart, top-ups, deposit history and the trade journal (record your real fills) |
 | **Research** | One paper per system with the exact rules and test results |
 | **Settings** | Initial capital, monthly top-up, fees and cash interest per pot, start date, email alerts, data status and CSV upload |
@@ -28,25 +28,28 @@ The pots are **rebuilt from scratch on every run** from three inputs: the prices
 
 | Pot | System | Default capital |
 |---|---|---|
-| `qqq_value` | QQQ value plan | £1,000 |
-| `qqq_trading` | QQQ regime system + dollar add-on | £500 |
+| `qqq_value` | Nasdaq-100 value plan: zones on QQQ, buys EQQQ in your **ISA** | £1,000 |
+| `qqq_trading` | Nasdaq-100 regime system on EQQQ (**ISA**) + USD cash add-on (**Invest** account) | £500 |
 | `btc_trend` | BTC trend blend | £500 |
 
 - **Initial capital** is deposited at the start date (`start_date`, default 3 Nov 2026). At its first close, each pot joins its system's current position.
 - **Top-ups** go into a pot's cash at the close of their date (Portfolio page, or the box on each pot). An optional **monthly top-up** per pot is added on the first trading day of each month.
-- **Trades** happen at the close, in USD, converted at that day's GBP/USD. The **fee** per trade defaults to 0.15% for QQQ (the Trading 212 FX fee) and 0.10% for BTC. Change both in Settings.
-- **Dividends** (QQQ, UUP) are credited after 15% US withholding tax. **Interest on cash** is optional (Settings).
+- **Trades** happen at the close. EQQQ is priced in pence, so it needs no conversion. USD cash and BTC are valued with that day's GBP/USD.
+- **Fees** (editable in Settings): 0.05% on EQQQ trades (the spread; no FX fee in pence); 0.15% on each GBP↔USD conversion for the dollar add-on (Trading 212); 0.10% for BTC.
+- **Dividends:** EQQQ's small dividends are not in Yahoo's price series, so the pots slightly understate them. **Interest on cash** is optional (Settings).
 - **Your real fills.** Each model trade has an id. Record your real price (and optionally the GBP/USD rate and fee) in the trade journal, and the pot is re-valued with it.
 
 ## Schedule (all automatic)
 
 | When (UK time) | Run | Email |
 |---|---|---|
-| ~20:25 (19:25 in the few weeks when US/UK clocks differ) | Pre-close preview on the live QQQ price | "ACTION before the US close" if a QQQ order is likely |
-| ~21:20 and 22:20 (backup) | After the US close | New confirmed trades, plus the daily summary |
+| ~16:05 | London pre-close preview on the live EQQQ price | "ACTION before 16:25" if an EQQQ or USD order is likely, or a value-plan buy is due |
+| ~16:55 (and a backup run an hour later) | After the London close | Confirmed EQQQ / USD trades |
+| ~21:20 (and 22:20 backup) | After the US close | Value-plan buy for the next London close; daily summary |
 | ~00:20 | After the BTC daily close | New BTC trades |
+| On every push of code or settings | Full run | — |
 
-GitHub can start scheduled runs 5–30 minutes late at busy times. If the pre-close email has not arrived by the cut-off shown on the Today page, open the site and press **Refresh data**.
+GitHub can start scheduled runs 5–30 minutes late at busy times. If the pre-close email has not arrived by 16:15, open the site and press **Refresh data**. Every run writes `state/last_run.json`; a failed run writes `state/last_error.log`.
 
 ## One-time setup (about 10 minutes)
 
@@ -58,7 +61,7 @@ GitHub can start scheduled runs 5–30 minutes late at busy times. If the pre-cl
    - `SMTP_PASSWORD` = the app password
    - `ALERT_TO` = where alerts should go
    - optional: `ALERT_FROM`
-3. **First run.** Actions → *Signals (scheduled)* → **Run workflow** → mode `close`. This downloads all the data (including GBP/USD, which is not in the repo yet) and builds the site.
+3. **First run.** It runs on its own whenever code or settings are pushed, and on the schedule. You can also start it from Actions → *Signals (scheduled)* → **Run workflow** (mode `us`).
 4. **See the website.** Pick one:
    - **GitHub Pages (hosted, phone-friendly).** Repository → Settings → Pages → *Source*: **GitHub Actions**. On a free GitHub plan this needs the repository to be **public**. GitHub Pro allows it on a private repo. The site is then at `https://<you>.github.io/signals-platform/`. To edit from the hosted site, open Settings on the site and paste a [fine-grained token](https://github.com/settings/personal-access-tokens/new) limited to this repository, with *Contents: read and write* and *Actions: read and write*. The token is stored only in that browser.
    - **On your computer.** Install Python 3.11+, then run:
@@ -85,7 +88,7 @@ pytest -q
 
 ## Data
 
-Data is free and daily. Prices come from Yahoo Finance (QQQ, UUP, BTC-USD, TLT, GLD, ^IRX, DX-Y.NYB, GBPUSD=X). Fed net liquidity (WALCL − WTREGEN − RRPONTSYD) comes from FRED. If Yahoo fails, GBP/USD and the T-bill fall back to FRED. Any feed can be replaced by uploading a CSV (Settings → Data). Yahoo, Investing.com, Nasdaq.com and FRED exports are accepted. Only completed daily closes are stored; a bar still forming is used only for the pre-close preview. To move to a paid live feed later, add a fetcher in `signals/data.py`.
+Data is free and daily. Prices come from Yahoo Finance (EQQQ.L, QQQ, UUP, BTC-USD, TLT, GLD, ^IRX, DX-Y.NYB, GBPUSD=X). Yahoo's London ETF history has bad prints, such as whole weeks quoted in US cents. EQQQ is repaired against QQQ ÷ GBP/USD whenever it is loaded. Fed net liquidity (WALCL − WTREGEN − RRPONTSYD) comes from FRED. If Yahoo fails, GBP/USD and the T-bill fall back to FRED. Any feed can be replaced by uploading a CSV (Settings → Data). Yahoo, Investing.com, Nasdaq.com and FRED exports are accepted. Only completed daily closes are stored; a bar still forming is used only for the pre-close preview. To move to a paid live feed later, add a fetcher in `signals/data.py`.
 
 ## Extending
 
@@ -94,7 +97,7 @@ Data is free and daily. Prices come from Yahoo Finance (QQQ, UUP, BTC-USD, TLT, 
 
 ## Important
 
-- **Fees.** The QQQ system trades often (about 70 trades a year including the dollar add-on). The research assumed 3 bp per trade. At Trading 212's 0.15% FX fee, replaying Jan 2025 – Oct 2026 gives +2.0% instead of +11.7%. The pot shows this honestly. Consider a USD-denominated account or a cheaper route before going live.
-- **US ETFs for UK investors.** QQQ and UUP are US-listed and usually not available to UK retail accounts (PRIIPs). Options include a CFD account or a UCITS Nasdaq-100 ETF. A UCITS ETF trades in London hours, so it cannot be bought at the US close, which changes the system. The pots are valued on QQQ/UUP prices.
+- **Fees and the UK route (v1.1).** The Nasdaq system trades its pot about 15–22 times a year. Trading 212's 0.15% currency fee would cost several percent a year on USD-quoted funds, so v1.1 trades EQQQ (pence) in the ISA at the London close, with no FX fee. Tested 2010–2024: 9.0% a year, worst drawdown −14.1% (with the dollar add-on, cash 0%). QQQ and UUP are used only as signals.
+- **Timing.** Yahoo's London prices can be about 15 minutes delayed. The 16:05 preview uses them; the 16:55 run confirms with the official close.
 - **Data source.** The rules were validated on adjusted closes. Yahoo data is unofficial and can occasionally be wrong or late, so the freshness bar flags stale feeds.
 - Backtested results do not guarantee future results. This is not financial advice.

@@ -20,7 +20,34 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
+from .assets import currency
+
 WHT = 0.15
+
+
+def gbp_series(a: str, df: pd.DataFrame, fx: pd.Series, cal: pd.DatetimeIndex) -> tuple:
+    """(GBP price per unit, native price for display) on the pot calendar."""
+    nat = df['close'].reindex(df.index.union(cal)).ffill().reindex(cal)
+    f = _fx_on(fx, cal)
+    ccy = currency(a)
+    if ccy == 'GBX':
+        return nat / 100.0, nat
+    if ccy == 'USDCASH':                      # df is GBP/USD; one unit = one US dollar
+        return 1.0 / nat, nat
+    if ccy in ('GBP',):
+        return nat, nat
+    return nat / f, nat                       # USD-quoted
+
+
+def native_to_gbp(a: str, price: float, fxrate: float) -> float:
+    ccy = currency(a)
+    if ccy == 'GBX':
+        return price / 100.0
+    if ccy == 'USDCASH':
+        return 1.0 / price
+    if ccy == 'GBP':
+        return price
+    return price / fxrate
 
 
 @dataclass
@@ -68,7 +95,10 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
     name = cfg.get('name', key)
     init = float(cfg.get('initial_capital', 0) or 0)
     monthly = float(cfg.get('monthly_topup', 0) or 0)
-    fee = float(cfg.get('fee_pct', 0) or 0) / 100
+    fee_main = float(cfg.get('fee_pct', 0) or 0) / 100
+    fee_fx = float(cfg.get('fx_fee_pct', 0.15) if cfg.get('fx_fee_pct') is not None else 0.15) / 100
+    fee_of = lambda a: fee_fx if currency(a) == 'USDCASH' else fee_main
+    fee = fee_main
     rate = float(cfg.get('cash_rate_pct', 0) or 0) / 100
     my_topups = sorted([t for t in topups if t.get('pot') == key], key=lambda t: str(t['date']))
     fill_map = {f['trade_id']: f for f in fills if f.get('trade_id', '').startswith(key + '-')}
@@ -81,11 +111,18 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
                                       [{'date': str(t['date']), 'amount': float(t['amount']), 'kind': 'top-up', 'note': t.get('note', ''), 'id': t.get('id')} for t in my_topups])
 
     assets = list(strategy.assets)
-    px = {a: prices[a]['close'].reindex(prices[a].index.union(cal)).ffill().reindex(cal) for a in assets}
-    divs = {a: _dividends(prices[a]).reindex(cal).fillna(0.0) for a in assets}
     fxs = _fx_on(fx, cal)
-    bpx = prices[bench_asset]['close'].reindex(prices[bench_asset].index.union(cal)).ffill().reindex(cal)
-    bdiv = _dividends(prices[bench_asset]).reindex(cal).fillna(0.0)
+    px, nat = {}, {}
+    for a in assets:
+        px[a], nat[a] = gbp_series(a, prices[a], fx, cal)
+    # dividends per unit in GBP (US withholding only on US-listed funds)
+    divs = {}
+    for a in assets:
+        dv = _dividends(prices[a]).reindex(cal).fillna(0.0)
+        divs[a] = (dv / 100.0) if currency(a) == 'GBX' else ((dv / fxs) * (1 - WHT) if currency(a) == 'USD' else dv * 0)
+    bpx, _ = gbp_series(bench_asset, prices[bench_asset], fx, cal)
+    bdv = _dividends(prices[bench_asset]).reindex(cal).fillna(0.0)
+    bdiv = (bdv / 100.0) if currency(bench_asset) == 'GBX' else (bdv / fxs) * (1 - WHT)
 
     cash, units = 0.0, {a: 0.0 for a in assets}
     cost = {a: 0.0 for a in assets}                  # GBP cost basis incl. fees (average cost)
@@ -102,7 +139,7 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
         nonlocal cash, deposits, nav_units, b_cash
         if amount == 0:
             return
-        eq_before = cash + sum(units[a] * px[a][d] / fxs[d] for a in assets)
+        eq_before = cash + sum(units[a] * px[a][d] for a in assets)
         nav_units += amount / (eq_before / nav_units if nav_units > 0 and eq_before > 0 else 1.0)
         cash += amount; deposits += amount; b_cash += amount
         dep_log.append({'date': d.strftime('%Y-%m-%d'), 'amount': round(amount, 2), 'kind': kind, 'note': note, 'id': tid})
@@ -111,14 +148,16 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
         nonlocal cash, realised, fees
         tid = f"{key}-{d:%Y-%m-%d}-{a}-{side}"
         f = fill_map.get(tid, {})
-        price = float(f.get('price') or px[a][d])
+        price = float(f.get('price') or nat[a][d])          # native: pence, USD, or GBP/USD for USD cash
         rate_fx = float(f.get('fx') or fxs[d])
+        unit_gbp = native_to_gbp(a, price, rate_fx)
+        fee = fee_of(a)
         if side == 'BUY':
             gbp = min(gbp, cash)
             if gbp <= 0.01:
                 return
             fee_gbp = float(f['fee_gbp']) if f.get('fee_gbp') not in (None, '') else gbp * fee
-            q = (gbp - fee_gbp) * rate_fx / price
+            q = (gbp - fee_gbp) / unit_gbp
             if f.get('units'):
                 q = float(f['units'])
             units[a] += q; cost[a] += gbp; cash -= gbp; fees += fee_gbp
@@ -127,7 +166,7 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
             q = min(qty, units[a])
             if q <= 0:
                 return
-            gross = q * price / rate_fx
+            gross = q * unit_gbp
             fee_gbp = float(f['fee_gbp']) if f.get('fee_gbp') not in (None, '') else gross * fee
             basis = cost[a] * q / units[a] if units[a] > 0 else 0.0
             pnl = gross - fee_gbp - basis
@@ -136,7 +175,7 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
                 units[a], cost[a] = 0.0, 0.0
             gbp = gross
         trades.append({'id': tid, 'date': d.strftime('%Y-%m-%d'), 'asset': a, 'side': side, 'units': q,
-                       'price': price, 'fx': rate_fx, 'gbp': round(gbp, 2), 'fee': round(fee_gbp, 2),
+                       'price': price, 'ccy': currency(a), 'unit_gbp': unit_gbp, 'fx': rate_fx, 'gbp': round(gbp, 2), 'fee': round(fee_gbp, 2),
                        'pnl': None if pnl is None else round(pnl, 2), 'reason': reason, 'filled': bool(f)})
 
     for i, d in enumerate(cal):
@@ -147,10 +186,10 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
         # 2) dividends (ex-date)
         for a in assets:
             if units[a] > 0 and divs[a][d] > 0:
-                inc = units[a] * divs[a][d] * (1 - WHT) / fxs[d]
+                inc = units[a] * divs[a][d]
                 cash += inc; dividends += inc
         if b_units > 0 and bdiv[d] > 0:
-            b_cash += b_units * bdiv[d] * (1 - WHT) / fxs[d]
+            b_cash += b_units * bdiv[d]
         # 3) deposits
         if i == 0:
             deposit(init, d, 'initial')
@@ -161,7 +200,7 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
             deposit(float(t['amount']), d, 'top-up', t.get('note', ''), t.get('id'))
 
         row = table.loc[d]
-        eq = cash + sum(units[a] * px[a][d] / fxs[d] for a in assets)
+        eq = cash + sum(units[a] * px[a][d] for a in assets)
         # 4) strategy orders at the close
         if strategy.kind == 'weights':
             changed = i == 0 or row['state'] != table['state'].shift(1).loc[d]
@@ -170,13 +209,13 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
             plan = []
             for a in assets:
                 tgt = float(row[f'w_{a}'])
-                cur_v = units[a] * px[a][d] / fxs[d]
+                cur_v = units[a] * px[a][d]
                 cur_w = cur_v / eq if eq > 0 else 0.0
                 if (changed and abs(tgt - cur_w) > 0.005) or abs(tgt - cur_w) > strategy.band or (tgt == 0 and units[a] > 0):
                     plan.append((a, tgt, cur_v))
             for a, tgt, cur_v in plan:                      # sells first
                 if tgt * eq < cur_v:
-                    q = units[a] if tgt == 0 else (cur_v - tgt * eq) * fxs[d] / px[a][d]
+                    q = units[a] if tgt == 0 else (cur_v - tgt * eq) / px[a][d]
                     trade(d, a, 'SELL', qty=q, reason=reason if changed else 'rebalance (drift)')
             for a, tgt, cur_v in plan:
                 if tgt * eq > cur_v:
@@ -198,13 +237,13 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
 
         # 5) benchmark: everything bought at once, held
         if b_cash > 0.01:
-            b_units += (b_cash * (1 - fee)) * fxs[d] / bpx[d]; b_cash = 0.0
+            b_units += (b_cash * (1 - fee_main)) / bpx[d]; b_cash = 0.0
 
-        vals = {a: units[a] * px[a][d] / fxs[d] for a in assets}
+        vals = {a: units[a] * px[a][d] for a in assets}
         eq = cash + sum(vals.values())
         nav = eq / nav_units if nav_units > 0 else 1.0
         rows.append({'date': d, 'cash': cash, **{f'v_{a}': v for a, v in vals.items()}, 'equity': eq,
-                     'deposits': deposits, 'nav': nav, 'bench': b_units * bpx[d] / fxs[d] + b_cash, 'fx': fxs[d]})
+                     'deposits': deposits, 'nav': nav, 'bench': b_units * bpx[d] + b_cash, 'fx': fxs[d]})
         prev_d = d
 
     curve = pd.DataFrame(rows).set_index('date')
@@ -212,8 +251,9 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
     positions = {}
     for a in assets:
         if units[a] > 0:
-            v = units[a] * px[a][d] / fxs[d]
-            positions[a] = {'units': units[a], 'price': float(px[a][d]), 'value': v, 'cost': cost[a],
+            v = units[a] * px[a][d]
+            positions[a] = {'units': units[a], 'price': float(nat[a][d]), 'ccy': currency(a), 'unit_gbp': float(px[a][d]),
+                            'value': v, 'cost': cost[a],
                             'unrealised': v - cost[a], 'unrealised_pct': (v / cost[a] - 1) if cost[a] else 0.0}
     eq = float(curve['equity'].iloc[-1])
     weights = {a: (positions[a]['value'] / eq if a in positions and eq > 0 else 0.0) for a in assets}
@@ -242,22 +282,26 @@ def metrics(curve: pd.DataFrame, trades: list) -> dict:
 
 def order_preview(pot: PotResult, strategy, status: dict, fx: float, prices: dict, joining: bool = False) -> list:
     """Orders the pot would place at the close described by `status` (provisional or final).
+    prices: {asset: native price} (pence, USD, or GBP/USD for USD cash).
     `joining` = the pot has not started yet and will join the current position at its first close."""
     out = []
+
+    def row(a, side, gbp, tgt):
+        px = prices.get(a)
+        unit = native_to_gbp(a, px, fx) if px else None
+        return {'asset': a, 'side': side, 'gbp': abs(gbp), 'units': abs(gbp) / unit if unit else None,
+                'price': px, 'ccy': currency(a), 'target': tgt}
+
     if strategy.kind == 'weights':
         eq = pot.equity
         for a, tgt in (status.get('targets') or {}).items():
-            px = status['levels'].get('close') if a == strategy.calendar_asset else prices.get(a)
             cur = pot.weights.get(a, 0.0)
             prev_tgt = (status.get('prev_targets') or {}).get(a, cur)
             changed = joining or tgt != prev_tgt
             if (changed and abs(tgt - cur) > 0.005) or abs(tgt - cur) > strategy.band or (tgt == 0 and cur > 0):
                 gbp = (tgt - cur) * eq
-                out.append({'asset': a, 'side': 'BUY' if gbp > 0 else 'SELL', 'gbp': abs(gbp),
-                            'units': abs(gbp) * fx / px if px else None, 'price': px, 'target': tgt})
+                out.append(row(a, 'BUY' if gbp > 0 else 'SELL', gbp, tgt))
     else:
         if status['action'] == 'BUY' and status.get('would_buy'):
-            px = status['levels']['close']
-            out.append({'asset': strategy.assets[0], 'side': 'BUY', 'gbp': status['would_buy'],
-                        'units': status['would_buy'] * fx / px, 'price': px, 'target': None})
+            out.append(row(strategy.assets[0], 'BUY', status['would_buy'], None))
     return out

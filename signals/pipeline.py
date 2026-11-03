@@ -1,10 +1,11 @@
 """One run = refresh data -> signals -> pot ledgers -> snapshot -> alerts -> website.
 
-Modes
-  close     after the US close (and fine at any time): confirmed signals, ledgers, daily summary email.
-  preclose  ~25 min before the US close: previews today's QQQ orders on the live price and emails
-            them so you can place market-on-close orders in time.
-  btc       after 00:00 UTC: confirmed BTC signal and email if the BTC pot trades.
+Modes (UK time)
+  preclose  ~16:05: previews today's EQQQ orders on the live London price (and any value-plan buy due
+            today) and emails them so you can trade before the London close.
+  close     ~16:55: after the London close: confirmed EQQQ / USD trades for the pots.
+  us        ~21:20: after the US close: value zones, dollar trend, risk flag, daily summary email.
+  btc       ~00:20: after the BTC daily close: confirmed BTC signal and email if the BTC pot trades.
   build     no download and no email: recompute and rebuild the site (after editing settings).
 """
 from __future__ import annotations
@@ -24,7 +25,7 @@ from .assets import ASSETS
 from .ledger import order_preview, run_pot
 from .strategies import STRATEGIES
 
-BENCH = {'qqq_regime': 'QQQ', 'qqq_value': 'QQQ', 'btc_trend': 'BTC'}
+BENCH = {'qqq_regime': 'EQQQ', 'qqq_value': 'EQQQ', 'btc_trend': 'BTC'}
 
 
 def _clean(o):
@@ -67,7 +68,7 @@ def _history(key: str, t: pd.DataFrame, n: int = 120) -> list:
             for col, kind in (('event_in', 'BUY'), ('event_out', 'SELL'), ('event_trend', 'TREND')):
                 if r[col]:
                     ev.append({'date': d, 'kind': kind if kind != 'TREND' else ('BUY' if 'on' in r[col] else 'SELL'),
-                               'text': r[col], 'price': r['raw_close']})
+                               'text': r[col], 'price': r['raw_close'], 'price_fmt': f"£{r['raw_close'] / 100:,.2f}"})
     elif key == 'btc_trend':
         prev = None
         for d, r in x.iterrows():
@@ -75,18 +76,19 @@ def _history(key: str, t: pd.DataFrame, n: int = 120) -> list:
                 up = r['w_BTC'] > prev['w_BTC']
                 ev.append({'date': d, 'kind': 'BUY' if up else 'SELL',
                            'text': f"Score {prev['score']:.1f} → {r['score']:.1f}" + (' · halving window' if r['halving_window'] else '') +
-                                   f" · target {r['w_BTC']:.0%}", 'price': r['close']})
+                                   f" · target {r['w_BTC']:.0%}", 'price': r['close'], 'price_fmt': f"${r['close']:,.0f}"})
             prev = r
     elif key == 'qqq_value':
         z = x['zone'] & ~x['zone'].shift(1, fill_value=False)
         for d, r in x[z].iterrows():
-            ev.append({'date': d, 'kind': 'ZONE', 'text': 'Entered ' + ('trend zone' if r['trend_zone'] else '200-week zone'), 'price': r['close']})
+            ev.append({'date': d, 'kind': 'ZONE', 'text': 'QQQ entered the ' + ('trend zone' if r['trend_zone'] else '200-week zone'),
+                       'price': r['close'], 'price_fmt': f"${r['close']:,.2f}"})
     return list(reversed(ev))[:25]
 
 
 def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
     keys = sorted({k for s in STRATEGIES.values() for k in s.inputs} | {'GBPUSD'})
-    data = {k: D.load(k) for k in keys}
+    data = D.load_all(keys)
     if data['GBPUSD'].empty:
         raise RuntimeError('No GBP/USD data yet: run a refresh (internet needed) or upload GBPUSD.csv.')
     live = D.load_live()
@@ -105,16 +107,17 @@ def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
     pots_out, pot_objs = {}, {}
     for pk, pc in cfg['pots'].items():
         s = STRATEGIES[pc['strategy']]
-        res = run_pot(pk, pc, s, tables[s.key], {a: data[a] for a in set(s.assets) | {BENCH[s.key]}}, fx,
+        px_src = {a: (data['GBPUSD'] if a == 'USD' else data[a]) for a in set(s.assets) | {BENCH[s.key]}}
+        res = run_pot(pk, pc, s, tables[s.key], px_src, fx,
                       cfg['start_date'], cfg['topups'], cfg['fills'], BENCH[s.key])
         pot_objs[pk] = res
         pot_info = {'cash': res.cash, 'cooldown_left': res.cooldown_left, 'weights': res.weights}
         st = s.status(tables[s.key], pot_info)
         prov = s.status(prov_tables[s.key], pot_info, provisional=True) if s.key in prov_tables else None
-        last_px = {a: float(data[a]['close'].iloc[-1]) for a in s.assets}
+        last_px = {a: float(px_src[a]['close'].iloc[-1]) for a in s.assets}
         joining = not res.started
         preview_final = order_preview(res, s, st, float(fx.iloc[-1]), last_px, joining=joining)
-        live_px = {a: float(data_live[a]['close'].iloc[-1]) for a in s.assets}
+        live_px = {a: float((data_live['GBPUSD'] if a == 'USD' else data_live[a])['close'].iloc[-1]) for a in s.assets}
         preview_prov = order_preview(res, s, prov, fx_now, live_px, joining=joining) if prov else []
         latest_date = tables[s.key].index[-1].strftime('%Y-%m-%d')
         curve = res.curve
@@ -137,17 +140,20 @@ def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
         }
 
     strategies_out = {k: {'key': k, 'name': s.name, 'kind': s.kind, 'paper': s.paper, 'timing': s.timing,
-                          'history': _history(k, tables[k]), 'asof': tables[k].index[-1].strftime('%Y-%m-%d')}
+                          'history': _history(k, STRATEGIES[k].compute_us(data) if k == 'qqq_value' else tables[k]), 'asof': tables[k].index[-1].strftime('%Y-%m-%d')}
                       for k, s in STRATEGIES.items()}
     # chart data for the value page: QQQ close vs trend line and zones, last ~2 years
-    vt = tables['qqq_value'].tail(500)
+    vt = STRATEGIES['qqq_value'].compute_us(data).tail(500)
     strategies_out['qqq_value']['chart'] = [[d.strftime('%Y-%m-%d'), r['close'], r['trend_line'], r['s1000'], bool(r['zone'])]
                                             for d, r in vt.iterrows()]
 
-    # at-the-close order cut-off (15:55 New York) for the next US session, in UK time
-    ny = now.astimezone(D.NY)
-    nxt = ny.date() if (ny.weekday() < 5 and ny.hour < 16) else (pd.Timestamp(ny.date()) + pd.offsets.BDay(1)).date()
-    moc = datetime(nxt.year, nxt.month, nxt.day, 15, 55, tzinfo=D.NY).astimezone(D.LDN)  # 15:55 New York: last safe minute for an at-the-close order
+    # order cut-off: 16:25 London on the next LSE session (the close auction starts at 16:30)
+    from .calendar import add_trading_days
+    ldn = now.astimezone(D.LDN)
+    today = pd.Timestamp(ldn.date())
+    is_session = add_trading_days(today - pd.Timedelta(days=1), 1, 'lse') == today
+    nxt = today if (is_session and (ldn.hour, ldn.minute) < (16, 25)) else add_trading_days(today, 1, 'lse')
+    moc = datetime(nxt.year, nxt.month, nxt.day, 16, 25, tzinfo=D.LDN)
     tot_eq = sum(p['equity'] for p in pots_out.values())
     tot_dep = sum(p['deposits'] for p in pots_out.values())
     snap = {
@@ -172,32 +178,54 @@ def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
 
 # ----------------------------------------------------------------------------- alerts
 def _fmt_order(o, pot_name):
-    u = f" (~{o['units']:.4f} units at ${o['price']:,.2f})" if o.get('units') and o.get('price') else ''
-    return f"{o['side']} {o['asset']} £{o['gbp']:,.0f}{u} · {pot_name}"
+    from .assets import account
+    if o['ccy'] == 'GBX':
+        u = f" (~{o['units']:.2f} shares at £{o['price'] / 100:,.2f})" if o.get('units') else ''
+    elif o['ccy'] == 'USDCASH':
+        u = f" (~${o['units']:,.0f} at {o['price']:.4f})" if o.get('units') else ''
+        return f"{'Convert GBP→USD' if o['side'] == 'BUY' else 'Convert USD→GBP'} £{o['gbp']:,.0f}{u} · {account('USD')} · {pot_name}"
+    else:
+        u = f" (~{o['units']:.4f} units at ${o['price']:,.2f})" if o.get('units') and o.get('price') else ''
+    return f"{o['side']} {o['asset']} £{o['gbp']:,.0f}{u} · {account(o['asset'])} · {pot_name}"
+
+
+def _fmt_trade(t, pot_name):
+    if t.get('ccy') == 'GBX':
+        px = f"£{t['price'] / 100:,.2f}"
+    elif t.get('ccy') == 'USDCASH':
+        px = f"GBP/USD {t['price']:.4f}"
+    else:
+        px = f"${t['price']:,.2f}"
+    return f"{t['side']} {t['asset']} £{t['gbp']:,.0f} at {px} on {t['date']} · {pot_name} — {t['reason']}"
 
 
 def alerts_for(snap: dict, mode: str, now: datetime) -> list:
-    """Returns [(id, subject, lines)] still to send."""
+    """Returns [(ids, subject, lines)] still to send."""
     cfg_a = snap['config'].get('alerts', {})
     if not cfg_a.get('email_enabled', True):
         return []
     out = []
     pots = snap['pots']
+    today = now.astimezone(D.LDN).strftime('%Y-%m-%d')
     if mode == 'preclose' and cfg_a.get('preclose_warning', True):
         lines, ids = [], []
         for p in pots.values():
-            if p['bench_asset'] != 'QQQ' or not p['status_provisional']:
+            if p['bench_asset'] != 'EQQQ':
                 continue
-            for o in p['preview_provisional']:
-                ids.append(f"pre-{p['status_provisional']['asof']}-{p['key']}-{o['asset']}-{o['side']}")
-                lines.append(_fmt_order(o, p['name']) + ' — market-on-close')
+            if p['kind'] == 'weights' and p['status_provisional']:
+                for o in p['preview_provisional']:
+                    ids.append(f"pre-{today}-{p['key']}-{o['asset']}-{o['side']}")
+                    lines.append(_fmt_order(o, p['name']))
+            if p['kind'] == 'accumulate' and p['status']['action'] == 'BUY' and p['status'].get('executes') == today:
+                for o in p['preview']:
+                    ids.append(f"pre-{today}-{p['key']}-{o['asset']}-{o['side']}")
+                    lines.append(_fmt_order(o, p['name']) + ' (value zone at the last US close)')
         if lines and not all(A.already_sent(i) for i in ids):
-            asof = next(p['status_provisional']['asof'] for p in pots.values() if p['status_provisional'])
-            out.append((ids, f'ACTION before the US close · {len(lines)} QQQ order(s) likely today',
-                        ['Based on the live price ~25 minutes before the close. Place market-on-close orders now:'] + lines +
-                        ['', 'If the close moves the other way the signal can still change; the post-close email confirms.', f'Session {asof}.']))
+            out.append((ids, f"ACTION before 16:25 · {len(lines)} order(s) likely at today's London close",
+                        ['Based on the live London price ~25 minutes before the close. Place these now:'] + lines +
+                        ['', 'If the price moves a lot before 16:30 the signal can change; the 16:55 email confirms.']))
     if mode in ('close', 'btc'):
-        want = ('BTC',) if mode == 'btc' else ('QQQ', 'BTC')
+        want = ('BTC',) if mode == 'btc' else ('EQQQ',)
         lines, ids = [], []
         for p in pots.values():
             if p['bench_asset'] not in want:
@@ -205,22 +233,28 @@ def alerts_for(snap: dict, mode: str, now: datetime) -> list:
             for t in p['trades_latest']:
                 if not A.already_sent('trade-' + t['id']):
                     ids.append('trade-' + t['id'])
-                    lines.append(f"{t['side']} {t['asset']} £{t['gbp']:,.0f} at ${t['price']:,.2f} on {t['date']} · {p['name']} — {t['reason']}")
+                    lines.append(_fmt_trade(t, p['name']))
         if lines:
-            when = 'at the close' if mode == 'close' else 'at 00:00 UTC'
+            when = 'at the London close' if mode == 'close' else 'at 00:00 UTC'
             out.append((ids, f"Signal · {lines[0].split(' · ')[0]}" + (f' (+{len(lines) - 1} more)' if len(lines) > 1 else ''),
                         [f'New system trades {when}:'] + lines +
-                        ['', 'QQQ orders are market-on-close; if you missed the close, the research assumes the close price, so trade as early as possible next session.']))
-    if mode == 'close' and cfg_a.get('daily_summary', True):
-        us = pots.get('qqq_trading') or next(iter(pots.values()))
-        sid = f"summary-{us['latest_date']}"
+                        ['', 'If you missed the close, trade as early as possible in the next session and record your real fill in the journal.']))
+    if mode == 'us':
+        v = next((p for p in pots.values() if p['kind'] == 'accumulate'), None)
+        if v and v['status']['action'] == 'BUY':
+            vid = f"value-{v['status']['executes']}"
+            if not A.already_sent(vid):
+                lines = [f"{v['name']}: {v['status']['plain']}"] + [_fmt_order(o, v['name']) for o in v['preview']]
+                out.append(([vid], f"Value plan · BUY EQQQ at the {v['status']['executes']} London close", lines))
+    if mode == 'us' and cfg_a.get('daily_summary', True):
+        sid = f"summary-{today}"
         if not A.already_sent(sid):
             lines = [f"{p['name']}: {p['status']['action']} — {p['status']['action_sub']} · value £{p['equity']:,.0f} ({p['pnl_pct']:+.1%})"
                      for p in pots.values()]
             stale = [f"{r['key']} last {r['last']}" for r in snap['freshness'] if r['status'] != 'ok']
             if stale:
                 lines += ['', 'Data warning: ' + ', '.join(stale)]
-            out.append(([sid], f"Daily summary · {us['latest_date']} · total £{snap['totals']['equity']:,.0f}", lines))
+            out.append(([sid], f"Daily summary · {today} · total £{snap['totals']['equity']:,.0f}", lines))
     return out
 
 
@@ -246,15 +280,15 @@ def send_alerts(snap: dict, mode: str, now: datetime) -> list:
 
 # ----------------------------------------------------------------------------- entry point
 def in_preclose_window(now: datetime) -> bool:
-    ny = now.astimezone(D.NY)
-    return ny.weekday() < 5 and (15 * 60) <= ny.hour * 60 + ny.minute <= (15 * 60 + 58)
+    ldn = now.astimezone(D.LDN)
+    return ldn.weekday() < 5 and (15 * 60 + 50) <= ldn.hour * 60 + ldn.minute <= (16 * 60 + 22)
 
 
-def run(mode: str = 'close', fetch: bool = True, email: bool = True, build: bool = True, force: bool = False,
+def run(mode: str = 'us', fetch: bool = True, email: bool = True, build: bool = True, force: bool = False,
         now: datetime | None = None) -> dict:
     now = now or datetime.now(timezone.utc)
     if mode == 'preclose' and not force and not in_preclose_window(now):
-        return {'skipped': f'outside the pre-close window (New York time {now.astimezone(D.NY):%H:%M})'}
+        return {'skipped': f'outside the pre-close window (London time {now.astimezone(D.LDN):%H:%M})'}
     report = {}
     if fetch and mode != 'build':
         report['refresh'] = D.refresh(now=now)

@@ -12,16 +12,36 @@ class Asset:
     calendar: str = 'us'   # 'us' = NYSE days, 'crypto' = every day (close 00:00 UTC), 'fx', 'macro'
     tradable: bool = False
     fallback: str = ''     # FRED series used if the main source fails
+    fair_ref: str = ''     # US-listed twin used to repair bad prints (UK-listed ETFs on Yahoo)
+    account: str = ''      # where you hold it (shown next to orders)
 
 
 ASSETS = {a.key: a for a in [
-    Asset('QQQ', 'Invesco QQQ (Nasdaq-100)', 'yahoo', 'QQQ', tradable=True),
-    Asset('UUP', 'Invesco DB US Dollar Index Bullish', 'yahoo', 'UUP', tradable=True),
+    Asset('EQQQ', 'Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence)', 'yahoo', 'EQQQ.L', currency='GBX', calendar='lse',
+          tradable=True, fair_ref='QQQ', account='ISA'),
+    Asset('QQQ', 'Invesco QQQ (Nasdaq-100, US)', 'yahoo', 'QQQ'),
+    Asset('UUP', 'Invesco DB US Dollar Index Bullish (signal only)', 'yahoo', 'UUP'),
     Asset('BTC', 'Bitcoin (spot, USD)', 'yahoo', 'BTC-USD', calendar='crypto', tradable=True),
     Asset('TLT', 'iShares 20+ Year Treasury Bond', 'yahoo', 'TLT'),
     Asset('GLD', 'SPDR Gold Shares', 'yahoo', 'GLD'),
     Asset('IRX', '13-week T-bill yield', 'yahoo', '^IRX', calendar='macro', fallback='DTB3'),
     Asset('DXY', 'US dollar index', 'yahoo', 'DX-Y.NYB', calendar='macro'),
-    Asset('GBPUSD', 'GBP/USD', 'yahoo', 'GBPUSD=X', currency='FX', calendar='fx', fallback='DEXUSUK'),
+    Asset('GBPUSD', 'GBP/USD', 'yahoo', 'GBPUSD=X', currency='FX', calendar='fx', fallback='DEXUSUK', account='Invest'),
     Asset('NETLIQ', 'Fed net liquidity (WALCL - TGA - RRP), $bn', 'fred', 'WALCL,WTREGEN,RRPONTSYD', calendar='macro'),
 ]}
+
+
+# Holdings that are not downloaded: US dollar cash, priced from GBP/USD (units = dollars).
+CASH_USD = 'USD'
+
+
+def currency(key: str) -> str:
+    if key == CASH_USD:
+        return 'USDCASH'
+    return ASSETS[key].currency if key in ASSETS else 'USD'
+
+
+def account(key: str) -> str:
+    if key == CASH_USD:
+        return 'Invest (USD balance)'
+    return ASSETS[key].account or ''

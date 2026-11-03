@@ -28,18 +28,19 @@
     <button class="btn" type="submit">Save start date</button>
   </form>
   <div class="scroll" style="margin-top:16px"><table class="t">
-    <thead><tr><th>Pot</th><th>Initial capital (£)</th><th>Monthly top-up (£)</th><th>Fee per trade (%)</th><th>Interest on cash (% a year)</th><th></th></tr></thead>
+    <thead><tr><th>Pot</th><th>Initial capital (£)</th><th>Monthly top-up (£)</th><th>Fee per trade (%)</th><th>Interest on cash (% a year)</th><th>GBP↔USD fee (%)</th><th></th></tr></thead>
     <tbody>{% for k, c in snap.config.pots.items() %}
     <tr><td><b>{{ c.name }}</b><div class="small muted">{{ c.strategy }}</div></td>
-    <td colspan="5"><form data-op="set_pot" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+    <td colspan="6"><form data-op="set_pot" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
       <input type="hidden" name="pot" value="{{ k }}">
       <input name="initial_capital" type="number" step="0.01" min="0" value="{{ c.initial_capital }}" class="amt" aria-label="Initial capital for {{ c.name }}">
       <input name="monthly_topup" type="number" step="0.01" min="0" value="{{ c.monthly_topup }}" class="amt" aria-label="Monthly top-up for {{ c.name }}">
       <input name="fee_pct" type="number" step="0.01" min="0" value="{{ c.fee_pct }}" class="w100" aria-label="Fee for {{ c.name }}">
       <input name="cash_rate_pct" type="number" step="0.01" min="0" value="{{ c.cash_rate_pct }}" class="w100" aria-label="Cash interest for {{ c.name }}">
+      {% if c.fx_fee_pct is defined %}<input name="fx_fee_pct" type="number" step="0.01" min="0" value="{{ c.fx_fee_pct }}" class="w100" aria-label="GBP to USD conversion fee for {{ c.name }}">{% endif %}
       <button class="btn small primary" type="submit">Save</button></form></td></tr>{% endfor %}</tbody>
   </table></div>
-  <p class="small muted">Fees: Trading 212 charges a 0.15% FX fee each time you buy or sell a USD asset from a GBP account. On a system that trades ~60 times a year this costs several % a year; it is included in the pots.</p>
+  <p class="small muted">Fees: EQQQ is priced in pence, so buying it from GBP in your ISA has no FX fee; 0.05% covers the bid/ask spread. The dollar add-on converts GBP↔USD in your Invest account at Trading 212's 0.15% each time. BTC: set your exchange's fee.</p>
 </section>
 
 <section class="card" id="alerts" aria-label="Alerts">
@@ -49,8 +50,8 @@
   {% set a = snap.config.alerts %}
   <form data-op="set_alerts" style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
     <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="email_enabled" value="true" style="height:20px;width:20px" {{ 'checked' if a.email_enabled }}> Send emails when a signal fires</label>
-    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="preclose_warning" value="true" style="height:20px;width:20px" {{ 'checked' if a.preclose_warning }}> Warn ~25 minutes before the US close when a QQQ order is likely</label>
-    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="daily_summary" value="true" style="height:20px;width:20px" {{ 'checked' if a.daily_summary }}> Daily summary after the US close</label>
+    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="preclose_warning" value="true" style="height:20px;width:20px" {{ 'checked' if a.preclose_warning }}> Warn ~16:05 UK when an EQQQ or USD order is likely at the London close</label>
+    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="daily_summary" value="true" style="height:20px;width:20px" {{ 'checked' if a.daily_summary }}> Daily summary after the US close (~21:20 UK)</label>
     <div><button class="btn primary" type="submit">Save alert settings</button></div>
   </form>
   {% if snap.last_alerts %}<p class="small muted">Last run: {% for x in snap.last_alerts %}“{{ x.subject }}” ({{ x.result }}){% if not loop.last %}; {% endif %}{% endfor %}</p>{% endif %}

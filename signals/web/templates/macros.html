@@ -35,7 +35,7 @@
 {% set items = pot.preview_provisional if provisional else pot.preview %}
 {% if items %}
 <ul style="margin:6px 0 0;padding-left:18px">
-{% for o in items %}<li><b>{{ o.side }} {{ o.asset }} {{ o.gbp|gbp }}</b>{% if o.units %} <span class="muted">(~{{ '%.4f'|format(o.units) }} units at {{ o.price|usd }})</span>{% endif %}</li>{% endfor %}
+{% for o in items %}<li>{% if o.ccy == 'USDCASH' %}<b>{{ 'Convert GBP→USD' if o.side == 'BUY' else 'Convert USD→GBP' }} {{ o.gbp|gbp }}</b> <span class="muted">(~${{ '{:,.0f}'.format(o.units) }} · Invest account)</span>{% else %}<b>{{ o.side }} {{ o.asset }} {{ o.gbp|gbp }}</b>{% if o.units %} <span class="muted">(~{{ '%.2f'|format(o.units) if o.ccy == 'GBX' else '%.4f'|format(o.units) }} units at {{ o.price|px(o.ccy) }}{{ ' · ISA' if o.ccy == 'GBX' }})</span>{% endif %}{% endif %}</li>{% endfor %}
 </ul>
 {% endif %}
 {%- endmacro %}
@@ -70,9 +70,9 @@
 {% macro positions_table(p) -%}
 {% if p.positions %}
 <div class="scroll"><table class="t">
-<thead><tr><th>Asset</th><th class="n">Units</th><th class="n">Price</th><th class="n">Value</th><th class="n">Cost</th><th class="n">Unrealised</th></tr></thead>
+<thead><tr><th>Asset</th><th>Account</th><th class="n">Units</th><th class="n">Price</th><th class="n">Value</th><th class="n">Cost</th><th class="n">Unrealised</th></tr></thead>
 <tbody>{% for a, x in p.positions.items() %}
-<tr><td><b>{{ a }}</b></td><td class="n">{{ '%.4f'|format(x.units) }}</td><td class="n">{{ x.price|usd }}</td><td class="n">{{ x.value|gbp }}</td><td class="n">{{ x.cost|gbp }}</td><td class="n {{ x.unrealised|cls }}">{{ x.unrealised|gbp(True) }} ({{ x.unrealised_pct|pct }})</td></tr>
+<tr><td><b>{{ 'USD cash' if a == 'USD' else a }}</b></td><td class="small">{{ {'GBX':'ISA','USDCASH':'Invest'}.get(x.ccy, '') }}</td><td class="n">{{ '%.4f'|format(x.units) if x.ccy != 'USDCASH' else '$' ~ '{:,.2f}'.format(x.units) }}</td><td class="n">{{ x.price|px(x.ccy) }}</td><td class="n">{{ x.value|gbp }}</td><td class="n">{{ x.cost|gbp }}</td><td class="n {{ x.unrealised|cls }}">{{ x.unrealised|gbp(True) }} ({{ x.unrealised_pct|pct }})</td></tr>
 {% endfor %}</tbody></table></div>
 {% else %}<p class="muted small" style="margin:0">No open positions: the pot is in cash.</p>{% endif %}
 {%- endmacro %}
@@ -82,14 +82,14 @@
 <div class="scroll"><table class="t">
 <thead><tr><th>Date</th><th>Side</th><th>Asset</th><th class="n">Amount</th><th class="n">Price</th><th class="n">Fee</th><th class="n">P&amp;L</th><th>Why</th>{% if fills %}<th>Your fill</th>{% endif %}</tr></thead>
 <tbody>{% for t in trades[:limit] %}
-<tr><td class="mono">{{ t.date|d }}</td><td><span class="pill {{ 't-green' if t.side=='BUY' else 't-red' }}">{{ t.side }}</span></td><td>{{ t.asset }}</td>
-<td class="n">{{ t.gbp|gbp }}</td><td class="n">{{ t.price|usd }}</td><td class="n">{{ t.fee|gbp2 }}</td><td class="n {{ t.pnl|cls }}">{{ t.pnl|gbp(True) if t.pnl is not none else '—' }}</td>
+<tr><td class="mono">{{ t.date|d }}</td><td><span class="pill {{ 't-green' if t.side=='BUY' else 't-red' }}">{{ t.side }}</span></td><td>{{ 'USD cash' if t.asset == 'USD' else t.asset }}</td>
+<td class="n">{{ t.gbp|gbp }}</td><td class="n">{{ t.price|px(t.ccy) }}</td><td class="n">{{ t.fee|gbp2 }}</td><td class="n {{ t.pnl|cls }}">{{ t.pnl|gbp(True) if t.pnl is not none else '—' }}</td>
 <td class="small">{{ t.reason }}</td>
 {% if fills %}<td>{% if t.filled %}<span class="pill t-green">recorded</span>{% endif %}
 <details><summary class="small">{{ 'Edit' if t.filled else 'Record' }}</summary>
 <form data-op="set_fill" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
 <input type="hidden" name="trade_id" value="{{ t.id }}">
-<input name="price" type="number" step="0.0001" placeholder="price $" class="w100" required aria-label="Fill price in USD">
+<input name="price" type="number" step="0.0001" placeholder="{{ {'GBX':'pence','USDCASH':'GBP/USD'}.get(t.ccy, 'price $') }}" class="w100" required aria-label="Fill price ({{ {'GBX':'pence','USDCASH':'GBP/USD rate'}.get(t.ccy, 'USD') }})">
 <input name="fx" type="number" step="0.0001" placeholder="GBP/USD" class="w100" aria-label="GBP/USD rate">
 <input name="fee_gbp" type="number" step="0.01" placeholder="fee £" class="w100" aria-label="Fee in GBP">
 <button class="btn small primary" type="submit">Save</button>

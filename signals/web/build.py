@@ -16,12 +16,12 @@ from .charts import line_chart
 HERE = Path(__file__).parent
 
 PAPERS = [
-    {'slug': 'qqq-regime-system', 'kind': 'TRADING · QQQ', 'version': 'v1.0', 'title': 'QQQ regime trading system + dollar add-on',
-     'desc': 'Regime detector, 50% trend leg, dip-buying leg, dollar add-on and risk flag. Exact rules, data, execution and results.',
-     'stats': [('CAGR 2000–24', '10.4%'), ('Max drawdown', '−15.3%'), ('Holdout 25–26', '8.5%')],
-     'period': 'Trained 1999–2024 with held-out years · final holdout 2025–26 run once',
+    {'slug': 'qqq-regime-system', 'kind': 'TRADING · NASDAQ-100', 'version': 'v1.1', 'title': 'Nasdaq-100 regime system + dollar add-on (UK: EQQQ at the London close)',
+     'desc': 'Regime detector, 50% trend leg, dip-buying leg, dollar add-on and risk flag. Traded in EQQQ (ISA, no FX fee) at the London close.',
+     'stats': [('CAGR 2010–24*', '9.0%'), ('Max drawdown', '−14.1%'), ('QQQ research 2000–24', '10.4%')],
+     'period': '*EQQQ at the London close with the dollar add-on, cash 0% · rules fitted on QQQ 1999–2024, not re-tuned',
      'ext': 'https://claude.ai/artifact/Kjtfn4jJ1JdCrynU9ubXvc'},
-    {'slug': 'qqq-value-plan', 'kind': 'INVESTING · QQQ', 'version': 'v1.0', 'title': 'QQQ value-zone accumulation plan',
+    {'slug': 'qqq-value-plan', 'kind': 'INVESTING · NASDAQ-100', 'version': 'v1.1', 'title': 'Nasdaq-100 value-zone accumulation plan',
      'desc': 'Contributions wait in cash and buy only in the trend zone or the 200-week zone. Never sells.',
      'stats': [('Account DD vs DCA', '−34% / −49%'), ('Wealth vs DCA', '−5.4%'), ('Horizon', '10 years')],
      'period': 'Median of rolling 10-year plans started 2000 onwards'},
@@ -31,6 +31,7 @@ PAPERS = [
      'period': 'Training 2015–2024 · ~180 variants tested, so treat returns as optimistic'},
 ]
 CHANGELOG = [
+    ('2026-11-03', 'Nasdaq systems', 'v1.1: traded in EQQQ (London, pence, ISA) at the London close; dollar add-on held as USD cash in the Invest account. Removes the 0.15% FX fee on Nasdaq trades.'),
     ('2026-11-03', 'Platform', 'v1.0 live: signals, pots, top-ups, fills, email alerts.'),
     ('2026-11-02', 'BTC trend blend', 'Adopted. Cycle bag removed; liquidity and dollar filters shown as context only.'),
     ('2026-11-02', 'QQQ value plan', 'Adopted. Static drawdown rungs replaced by the trend and 200-week zones.'),
@@ -55,6 +56,16 @@ def f_gbp(x, sign=False):
 
 def f_gbp2(x):
     return '—' if not _num(x) else ('−' if x < 0 else '') + f'£{abs(x):,.2f}'
+
+
+def f_px(x, ccy='USD'):
+    if not _num(x):
+        return '—'
+    if ccy == 'GBX':
+        return f'£{x / 100:,.2f}'
+    if ccy == 'USDCASH':
+        return f'{x:.4f}'
+    return f_usd(x)
 
 
 def f_usd(x):
@@ -160,7 +171,7 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
     if snap is None:
         snap = json.loads((STATE / 'snapshot.json').read_text())
     env = Environment(loader=FileSystemLoader(HERE / 'templates'), autoescape=select_autoescape(['html']))
-    env.filters.update(gbp=f_gbp, gbp2=f_gbp2, usd=f_usd, pct=f_pct, cls=f_cls, d=f_d, dshort=f_dshort)
+    env.filters.update(gbp=f_gbp, gbp2=f_gbp2, usd=f_usd, px=f_px, pct=f_pct, cls=f_cls, d=f_d, dshort=f_dshort)
     out.mkdir(parents=True, exist_ok=True)
     shutil.copytree(HERE / 'static', out / 'static', dirs_exist_ok=True)
     pots = list(snap['pots'].values())
@@ -169,7 +180,7 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
     charts['total'] = _total_chart(pots)
     names = {p['key']: p['name'] for p in pots}
     events = []
-    sys_names = {'qqq_regime': 'QQQ trading', 'qqq_value': 'QQQ value plan', 'btc_trend': 'BTC trend'}
+    sys_names = {'qqq_regime': 'Nasdaq trading', 'qqq_value': 'Nasdaq value plan', 'btc_trend': 'BTC trend'}
     for k, s in snap['strategies'].items():
         for e in s['history'][:6]:
             events.append({**e, 'system': sys_names.get(k, k)})
@@ -182,7 +193,7 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
                 applied.add(d['id'])
     deposits.sort(key=lambda d: d['date'], reverse=True)
     future = [{**t, 'pot_name': names.get(t['pot'], t['pot'])} for t in snap['config']['topups'] if t.get('id') not in applied]
-    live_preview = [p for p in pots if p.get('status_provisional') and p['bench_asset'] == 'QQQ']
+    live_preview = [p for p in pots if p.get('status_provisional') and p['bench_asset'] == 'EQQQ']
     base = dict(snap=snap, pots=pots, charts=charts, today=date.today().isoformat(), health=_health(pots),
                 recent_events=events[:10], deposits=deposits, future_topups=future, live_preview=live_preview,
                 papers=[{**r, 'href': f"research/{r['slug']}.html"} for r in PAPERS], changelog=CHANGELOG,

@@ -8,7 +8,7 @@
   <div>
     <div class="kicker">Investing · accumulation plans</div>
     <h1>{{ p.name }}</h1>
-    <p class="sub">Money waits in cash and is invested only when QQQ closes in a value zone. Never sells.</p>
+    <p class="sub">Money waits in cash (ISA) and goes into EQQQ only when the Nasdaq-100 (QQQ) closes in a value zone. Never sells.</p>
   </div>
   <a class="btn" href="{{ snap.strategies[p.strategy].paper }}">Read the paper</a>
 </div>
@@ -23,10 +23,10 @@
     {% if p.status_provisional %}<p class="banner warn small" style="margin:10px 0 0">Live preview: {{ p.status_provisional.action }} — {{ p.status_provisional.action_sub }}{{ m.preview_lines(p, True) }}</p>{% endif %}
   </div>
   <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 26px;font-size:13px;color:var(--muted)">
-    <div>QQQ close<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ st.levels.close|usd }}</div></div>
+    <div>QQQ close ({{ st.asof|dshort }})<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ st.levels.close|usd }}</div></div>
     <div>Would buy (50% of cash)<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ (p.cash*0.5)|gbp }}</div></div>
     <div>5-year trend line<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ st.levels.trend_line|usd }}</div></div>
-    <div>Top of 200-week zone<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ st.levels.zone_top_200w|usd }}</div></div>
+    <div>EQQQ (buys here)<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ st.levels.eqqq|px('GBX') }}</div></div>
   </div>
 </section>
 
@@ -46,16 +46,16 @@
 
 <section class="card" aria-label="Performance">
   <div class="row" style="justify-content:space-between;align-items:flex-end;gap:12px">
-    <div><h2>Plan vs QQQ buy &amp; hold</h2>
-    <p class="note">Same deposits on the same days. Buy &amp; hold invests every pound in QQQ immediately.</p></div>
-    <div class="legend"><span><i style="background:#1D4ED8"></i>Value plan {{ p.equity|gbp }}</span><span><i style="background:#98A2B3"></i>QQQ buy &amp; hold {{ p.bench_equity|gbp }}</span><span><i class="dash" style="border-color:#475467"></i>Money in {{ p.deposits|gbp }}</span></div>
+    <div><h2>Plan vs EQQQ buy &amp; hold</h2>
+    <p class="note">Same deposits on the same days. Buy &amp; hold invests every pound in EQQQ immediately.</p></div>
+    <div class="legend"><span><i style="background:#1D4ED8"></i>Value plan {{ p.equity|gbp }}</span><span><i style="background:#98A2B3"></i>EQQQ buy &amp; hold {{ p.bench_equity|gbp }}</span><span><i class="dash" style="border-color:#475467"></i>Money in {{ p.deposits|gbp }}</span></div>
   </div>
   <div class="scroll" style="margin-top:14px">{{ charts[p.key]|safe }}</div>
 </section>
 
 <section class="card" aria-label="Price and value zones">
   <div class="row" style="justify-content:space-between;align-items:flex-end;gap:12px">
-    <div><h2>QQQ and its value levels</h2><p class="note">Green bands = closes inside a value zone. Last ~2 years.</p></div>
+    <div><h2>QQQ and its value levels</h2><p class="note">Zones are judged on QQQ (US). Green bands = closes inside a value zone. Last ~2 years.</p></div>
     <div class="legend"><span><i style="background:#0B1220"></i>QQQ close (adjusted)</span><span><i style="background:#1D4ED8"></i>5-year trend line</span><span><i class="dash" style="border-color:#0E7A43"></i>200-week average</span></div>
   </div>
   <div class="scroll" style="margin-top:14px">{{ charts['value_levels']|safe }}</div>

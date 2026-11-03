@@ -56,7 +56,7 @@
     <details><summary>Signal history (recent)</summary>
     {% set h = snap.strategies[p.strategy].history %}
     <div class="scroll" style="margin-top:10px"><table class="t"><thead><tr><th>Date</th><th>Signal</th><th>What happened</th><th class="n">Price</th></tr></thead><tbody>
-    {% for e in h %}<tr><td class="mono">{{ e.date|d }}</td><td><span class="pill {{ 't-green' if e.kind=='BUY' else 't-red' }}">{{ e.kind }}</span></td><td>{{ e.text }}</td><td class="n">{{ e.price|usd }}</td></tr>{% else %}<tr><td colspan="4" class="muted">No signals in the last 120 sessions.</td></tr>{% endfor %}
+    {% for e in h %}<tr><td class="mono">{{ e.date|d }}</td><td><span class="pill {{ 't-green' if e.kind=='BUY' else 't-red' }}">{{ e.kind }}</span></td><td>{{ e.text }}</td><td class="n">{{ e.price_fmt or (e.price|usd) }}</td></tr>{% else %}<tr><td colspan="4" class="muted">No signals in the last 120 sessions.</td></tr>{% endfor %}
     </tbody></table></div></details>
   </div>
 </section>
@@ -64,7 +64,7 @@
 
 <section class="card" aria-label="Health">
   <h2>Live vs backtest health</h2>
-  <p class="note">Flags a system when live results drift outside what the research expects. Needs a few months of live data to mean much. Tested figures: QQQ 2000–2024; BTC 2015–2024 training (optimistic).</p>
+  <p class="note">Flags a system when live results drift outside what the research expects. Needs a few months of live data to mean much. Tested figures: EQQQ at the London close with the dollar add-on, 2010–2024 (cash 0%); BTC 2015–2024 training (optimistic).</p>
   <div class="scroll" style="margin-top:12px"><table class="t">
   <thead><tr><th>System</th><th class="n">Live since</th><th class="n">Trades</th><th class="n">Win rate</th><th class="n">Return live</th><th class="n">Tested return</th><th class="n">Max DD live</th><th class="n">Max DD tested</th><th>Status</th></tr></thead>
   <tbody>{% for h in health %}

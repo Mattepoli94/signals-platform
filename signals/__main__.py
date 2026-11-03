@@ -18,7 +18,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog='signals')
     sub = ap.add_subparsers(dest='cmd', required=True)
     r = sub.add_parser('run')
-    r.add_argument('--mode', default='close', choices=['close', 'preclose', 'btc', 'build'])
+    r.add_argument('--mode', default='us', choices=['preclose', 'close', 'us', 'btc', 'build'])
     r.add_argument('--no-fetch', action='store_true')
     r.add_argument('--no-email', action='store_true')
     r.add_argument('--force', action='store_true', help='preclose: run even outside the pre-close window')
@@ -32,8 +32,15 @@ def main(argv=None):
     a = ap.parse_args(argv)
 
     if a.cmd == 'run':
+        from datetime import datetime, timezone
+        from . import STATE
         rep = P.run(a.mode, fetch=not a.no_fetch, email=not a.no_email, force=a.force)
         print(json.dumps(rep, indent=1, default=str))
+        STATE.mkdir(parents=True, exist_ok=True)
+        summary = {'mode': a.mode, 'finished_utc': datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M'),
+                   'skipped': rep.get('skipped'), 'alerts': rep.get('alerts'),
+                   'refresh': {k: (v['last'] if v['ok'] else 'FAILED: ' + v['error'][:120]) for k, v in (rep.get('refresh') or {}).items()}}
+        (STATE / 'last_run.json').write_text(json.dumps(summary, indent=1, default=str))
         failed = [k for k, v in (rep.get('refresh') or {}).items() if not v['ok']]
         if failed:
             print('WARNING: download failed for ' + ', '.join(failed), file=sys.stderr)

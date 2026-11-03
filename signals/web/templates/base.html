@@ -26,7 +26,7 @@
 </header>
 <div class="statusbar">
   <div class="in">
-    {% for f in snap.freshness if f.key in ('QQQ','BTC','GBPUSD','UUP') %}
+    {% for f in snap.freshness if f.key in ('EQQQ','QQQ','BTC','GBPUSD') %}
     <span class="feed" title="{{ f.name }} · expected {{ f.expected }}"><span class="dot {{ f.status }}"></span>{{ f.key }} <span class="mono">{{ f.last|dshort }}</span></span>
     {% endfor %}
     {% set bad = snap.freshness|selectattr('status','ne','ok')|list %}
