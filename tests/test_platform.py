@@ -302,3 +302,8 @@ def test_value_status_not_overwritten_by_live_compute(stored):
     live['QQQ'] = pd.concat([q, extra * 1.05])
     s.compute(live)                                   # a later live compute
     assert s.status(final)['levels']['close'] == pytest.approx(float(stored['QQQ']['adj_close'].dropna().iloc[-1]))
+
+
+def test_site_builder_imports():
+    from signals.web import build   # a syntax error here would break every scheduled run
+    assert build.PAPERS and all(p['slug'] for p in build.PAPERS)
