@@ -42,6 +42,7 @@
       <a class="small" href="{{ p.page }}.html#{{ p.key }}">Details →</a>
     </div>
     {{ m.action_box(st) }}
+    {% if st.review %}<div class="banner warn small" style="background:var(--red-bg);border-color:var(--red-b);color:var(--red)"><b>Paper only.</b> Failed its out-of-sample re-test (3 Nov). Not for real money until re-validated.</div>{% endif %}
     <p style="margin:0;font-size:14px">{{ st.plain }}</p>
     {% if p.started and p.trades_latest %}
     <div class="banner ok small">Pot traded at that close:{% for t in p.trades_latest %} <b>{{ t.side }} {{ t.asset }} {{ t.gbp|gbp }}</b>{% if not loop.last %},{% endif %}{% endfor %}.</div>

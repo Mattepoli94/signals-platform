@@ -6,7 +6,7 @@
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
 {% for r in papers %}
 <article class="card" style="display:flex;flex-direction:column;gap:12px">
-  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="kicker">{{ r.kind }}</span><span class="pill t-green">Live · {{ r.version }}</span></div>
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="kicker">{{ r.kind }}</span><span class="pill {{ 't-red' if 'paper' in r.version else 't-green' }}">{{ r.version if 'paper' in r.version else 'Live · ' ~ r.version }}</span></div>
   <h2 style="font-size:19px">{{ r.title }}</h2>
   <p style="margin:0;font-size:14px;color:#344054">{{ r.desc }}</p>
   <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">

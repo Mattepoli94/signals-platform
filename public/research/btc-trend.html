@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BTC trend blend · Signals</title>
+<title>BTC trend blend (under review) · Signals</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../static/app.css">
@@ -50,7 +50,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 01:37</span>
+    <span>Updated Tue 03 Nov 2026, 01:47</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
@@ -126,12 +126,56 @@
 <li>Many small adjustments: each change in score moves the target by 20 points. With a 0.10% fee that is a real but small cost.</li>
 <li>Long flat periods inside the halving window, even if the price rises.</li>
 <li>The research used Coin Metrics closes. Live signals use Yahoo's BTC-USD close at 00:00 UTC; the two sources occasionally differ by a day's signal.</li>
-</ul></article>
+</ul>
+<h2 id="re-test-3-november-2026-failed-out-of-sample">Re-test, 3 November 2026: failed out of sample</h2>
+<p>After the live-vs-expected chart showed the pot far below its expected range, the system was re-fitted from scratch with the QQQ discipline. The design was written down before any test ran (<code>research/btc-recalibration/PREREG.md</code> in this repo).</p>
+<p><strong>Holdout.</strong> The years 2012–2026 were ranked by BTC's return and split into thirds (bear, middle, bull). One year was drawn at random from each third (seed 20261103): <strong>2018, 2016 and 2012</strong>. The other 12 years were used for fitting.</p>
+<p><strong>Search on the training years only.</strong> The search ran in stages, with the selection rules fixed in advance:</p>
+<ol>
+<li>Trend rule. From 26 candidates, the simplest family within 10% of the best was kept, and the centre of its best range of lengths was chosen: close above the 100-day EMA.</li>
+<li>Volatility sizing at a 100% target. It was kept because it improved both Calmar and drawdown.</li>
+<li>Halving window. It was <strong>dropped</strong>: its best setting improved training Calmar by only 9%, below the 20% bar set in advance.</li>
+</ol>
+<p><strong>Result.</strong> Training: 128% a year, worst fall −52%. Holdout years: <strong>8% a year, worst fall −57%</strong>. In 2018 it lost 49%: BTC crossed its 100-day EMA 25 times that year. That fails the adoption rule, which required holdout Calmar of at least half the training figure (0.14 against a required 1.25).</p>
+<p><strong>Walk-forward check of the whole procedure.</strong> For each year from 2016 to 2026, the same selection stages were re-run on the years before it, and that year was traded out of sample:</p>
+<table>
+<thead>
+<tr>
+<th>2016–Oct 2026, out of sample</th>
+<th>Yearly return</th>
+<th>Worst fall</th>
+<th>Calmar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Walk-forward trend system</td>
+<td>37%</td>
+<td>−64%</td>
+<td>0.57</td>
+</tr>
+<tr>
+<td>Holding BTC</td>
+<td>61%</td>
+<td>−84%</td>
+<td>0.73</td>
+</tr>
+<tr>
+<td>v1 system (the rules on this page; in-sample, for reference)</td>
+<td>83%</td>
+<td>−30%</td>
+<td>2.75</td>
+</tr>
+</tbody>
+</table>
+<p>The trend rule chosen changed from year to year, which is a sign of no stable edge. The v1 system's halving window would have saved 2018 (+12% against −72%), but the evidence for the window rests on only four halving cycles. When it was fitted only on the years before each test year, it did not hold up as a reliable improvement.</p>
+<p><strong>Conclusion.</strong> No version of the BTC trend system has a validated edge over simply holding BTC. Out of sample, trend timing cut the worst fall by about 20 points but gave up about 40% of the return. The gap between the v1 backtest (Calmar 2.75) and the walk-forward result (0.57) is the in-sample optimism the live chart exposed.</p>
+<p><strong>On the platform.</strong> The BTC pot keeps following the v1 rules as a <strong>paper-only</strong> track and is labelled as such. The rules were not swapped for a variant picked after seeing the holdout, because that would bring the bias straight back. The choice of what to do with BTC money is open; see the options in the project notes.</p></article>
 
 </main>
 <footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 01:37", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 01:47", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="../static/app.js"></script>
 </body>
 </html>

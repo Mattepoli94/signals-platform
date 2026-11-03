@@ -22,6 +22,7 @@
     </div>
     {{ m.action_box(st) }}
   </div>
+  {% if st.review %}<div class="banner warn" style="margin:0;border-radius:0;border-left:0;border-right:0;background:var(--red-bg);border-color:var(--red-b);color:var(--red)"><b>Under review.</b> {{ st.review }} <a href="{{ st.paper }}" style="color:inherit">Details</a></div>{% endif %}
   <div class="plain">{{ st.plain }}
   {% if p.status_provisional %}<div class="banner warn small" style="margin-top:10px"><b>Live preview:</b> {{ p.status_provisional.action }} — {{ p.status_provisional.action_sub }}. {{ p.status_provisional.plain }}{{ m.preview_lines(p, True) }}</div>{% endif %}
   </div>
@@ -49,7 +50,7 @@
     <div style="border:1px solid var(--line2);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
       <div class="row" style="justify-content:space-between;align-items:flex-end;gap:12px">
         <div><h3>Live vs expected</h3>
-        <p class="small muted" style="margin:4px 0 0">Return since the pot started, against the range the backtest produced over the same number of sessions ({{ e.bt_period }}, same fees). Shaded: 80% of backtest outcomes.</p></div>
+        <p class="small muted" style="margin:4px 0 0">Return since the pot started, against the range the backtest produced over the same number of sessions ({{ e.bt_period }}, same fees). Shaded: 80% of backtest outcomes.{% if st.review %} <b>This backtest is in-sample and optimistic: see the warning above.</b>{% endif %}</p></div>
         <div class="legend"><span><i style="background:#0B1220"></i>Pot</span><span><i class="dash" style="border-color:#1D4ED8"></i>Expected (median)</span><span><i style="background:#DCE6FF;height:10px"></i>Expected range</span><span><i style="background:#98A2B3;height:1px"></i>{{ 'EQQQ' if p.strategy == 'qqq_regime' else 'BTC' }} (underlying)</span></div>
       </div>
       <div class="scroll">{{ charts['exp_' ~ p.key]|safe }}</div>

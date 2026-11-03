@@ -134,6 +134,9 @@ class BTCTrend(Strategy):
             'targets': {'BTC': w}, 'prev_targets': {'BTC': w_prev},
             'levels': {'close': float(x['close']), 'score': float(x['score']), 'vol30': float(x['vol30'])},
             'paper': self.paper, 'timing': self.timing,
+            'review': ('Paper only: this system failed its out-of-sample re-test on 3 Nov 2026 (walk-forward 2016–2026: '
+                       '37% a year, worst fall −64%, vs holding BTC 61% / −84%). Its backtest figures are in-sample and '
+                       'optimistic. Tracked here for information; not recommended for real money until re-validated.'),
         }
 
 

@@ -26,12 +26,13 @@ PAPERS = [
      'desc': 'Contributions wait in cash and buy only in the trend zone or the 200-week zone. Never sells.',
      'stats': [('Account DD vs DCA', '−34% / −49%'), ('Wealth vs DCA', '−5.4%'), ('Horizon', '10 years')],
      'period': 'Median of rolling 10-year plans started 2000 onwards'},
-    {'slug': 'btc-trend', 'kind': 'TRADING · BTC', 'version': 'v1.0', 'title': 'BTC trend blend',
-     'desc': 'Five trend signals averaged into a score, volatility sizing, and a flat window 545–910 days after each halving.',
-     'stats': [('CAGR 2015–24', '105%'), ('Max drawdown', '−30%'), ('Calmar', '3.46')],
-     'period': 'Training 2015–2024 · ~180 variants tested, so treat returns as optimistic'},
+    {'slug': 'btc-trend', 'kind': 'TRADING · BTC', 'version': 'v1 · paper only', 'title': 'BTC trend blend (under review)',
+     'desc': 'Failed its out-of-sample re-test on 3 Nov 2026. Kept as a paper track; the paper has the full re-test and walk-forward results.',
+     'stats': [('Walk-forward CAGR', '37%'), ('Worst fall', '−64%'), ('Holding BTC', '61% / −84%')],
+     'period': 'Out of sample 2016–Oct 2026 (walk-forward). The old 105% / −30% figures were in-sample.'},
 ]
 CHANGELOG = [
+    ('2026-11-03', 'BTC trend blend', 'Re-tested with random holdout years (2012, 2016, 2018) and walk-forward: no validated edge over holding BTC. Marked paper only.'),
     ('2026-11-03', 'Nasdaq systems', 'v1.1: traded in EQQQ (London, pence, ISA) at the London close; dollar add-on held as USD cash in the Invest account. Removes the 0.15% FX fee on Nasdaq trades.'),
     ('2026-11-03', 'Platform', 'v1.0 live: signals, pots, top-ups, fills, email alerts.'),
     ('2026-11-02', 'BTC trend blend', 'Adopted. Cycle bag removed; liquidity and dollar filters shown as context only.'),

@@ -1,0 +1,16 @@
+ test year            core  vol      window system   HODL OLD v1 (in-sample)
+      2016 EMA cross 10/30  1.2 (365, 1000)  +100%  +129%               +96%
+      2017    momentum 200  1.2 (365, 1000)  +134% +1250%              +530%
+      2018    momentum 200  1.2        None   -49%   -72%               +12%
+      2019    momentum 200  1.2 (545, 1000)    +7%   +88%              +114%
+      2020    momentum 200  1.2 (545, 1000)  +216%  +310%              +251%
+      2021   above SMA 100  0.8 (640, 1000)   +63%   +62%              +108%
+      2022 EMA cross 10/30  0.8  (640, 910)   -23%   -65%                -5%
+      2023   above SMA 100  0.8 (640, 1000)   +53%  +165%              +114%
+      2024 EMA cross 10/30  1.2 (640, 1000)   +77%  +114%               +64%
+      2025   above SMA 100  0.8 (640, 1000)    +6%    -6%                -1%
+      2026   above SMA 100  0.8 (640, 1000)    +3%   -13%                -0%
+
+WALK-FORWARD out-of-sample 2016-2026: {'CAGR': np.float64(0.368), 'MaxDD': np.float64(-0.643), 'Calmar': np.float64(0.572), 'Sharpe': np.float64(0.92), 'Exposure': np.float64(0.508), 'Trades/yr': 4.152}
+HODL same years: {'CAGR': np.float64(0.613), 'MaxDD': np.float64(-0.838), 'Calmar': np.float64(0.732), 'Sharpe': np.float64(1.057), 'Exposure': np.float64(1.0), 'Trades/yr': 0.092}
+OLD v1 same years (in-sample, for reference): {'CAGR': np.float64(0.833), 'MaxDD': np.float64(-0.302), 'Calmar': np.float64(2.755), 'Sharpe': np.float64(1.736), 'Exposure': np.float64(0.457), 'Trades/yr': 9.042}
