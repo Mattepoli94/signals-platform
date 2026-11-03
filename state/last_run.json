@@ -1,7 +1,13 @@
 {
- "mode": "build",
- "finished_utc": "2026-11-03 17:12",
+ "mode": "us",
+ "finished_utc": "2026-11-03 17:13",
  "skipped": null,
  "alerts": [],
- "refresh": {}
+ "refresh": {
+  "EQQQ": "2026-11-03",
+  "QQQ": "2026-11-02",
+  "UUP": "2026-11-02",
+  "BTC": "2026-11-02",
+  "GBPUSD": "2026-11-02"
+ }
 }
