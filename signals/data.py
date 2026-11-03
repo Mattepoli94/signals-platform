@@ -23,6 +23,7 @@ from .assets import ASSETS
 NY = ZoneInfo('America/New_York')
 LDN = ZoneInfo('Europe/London')
 COLS = ['open', 'high', 'low', 'close', 'adj_close', 'volume']
+RAW_TAIL: dict = {}    # last raw daily bars per symbol, saved in state/live.json for diagnosis
 UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                     'Chrome/126.0 Safari/537.36'}
 
@@ -123,14 +124,51 @@ def fetch_yahoo(symbol: str, start: str = '1990-01-01') -> pd.DataFrame:
                        'adj_close': adj, 'volume': q.get('volume')}, index=pd.DatetimeIndex(dates, name='date'))
     df = df.astype(float)
     df['adj_close'] = df['adj_close'].fillna(df['close'])
+    RAW_TAIL[symbol] = [[str(d.date()), None if pd.isna(c) else float(c)] for d, c in df['close'].tail(4).items()]
     df = df[df['close'].notna()]
-    return df[~df.index.duplicated(keep='last')]
+    df = df[~df.index.duplicated(keep='last')]
+    # Yahoo often leaves the latest finished session out of the daily series (or null) for a while:
+    # rebuild it from the quote's last price and time.
+    meta = res['meta']
+    px, t_last = meta.get('regularMarketPrice'), meta.get('regularMarketTime')
+    if px and t_last:
+        d_last = pd.Timestamp(datetime.fromtimestamp(t_last, tz).date())
+        if d_last not in df.index and (df.empty or d_last > df.index[-1]):
+            row = pd.DataFrame({'open': np.nan, 'high': meta.get('regularMarketDayHigh', np.nan),
+                                'low': meta.get('regularMarketDayLow', np.nan), 'close': float(px), 'adj_close': float(px),
+                                'volume': meta.get('regularMarketVolume', np.nan)}, index=pd.DatetimeIndex([d_last], name='date'))
+            df = pd.concat([df, row.astype(float)])
+    # 24/7 markets: a missing day's close equals the next day's open (00:00 UTC)
+    if (meta.get('exchangeTimezoneName') or '') in ('UTC', 'Etc/UTC', 'GMT') and len(df) > 2:
+        full = pd.date_range(df.index[0], df.index[-1], freq='D')
+        missing = full.difference(df.index)
+        add = []
+        for d in missing[-5:]:
+            nxt = d + pd.Timedelta(days=1)
+            if nxt in df.index and pd.notna(df.at[nxt, 'open']):
+                o = float(df.at[nxt, 'open'])
+                add.append(pd.DataFrame({'open': np.nan, 'high': np.nan, 'low': np.nan, 'close': o, 'adj_close': o, 'volume': np.nan},
+                                        index=pd.DatetimeIndex([d], name='date')))
+        if add:
+            df = pd.concat([df] + add).sort_index()
+    for c in ('open', 'high', 'low'):
+        df[c] = df[c].fillna(df['close'])
+    return df
 
 
 def fetch_fred(series_id: str) -> pd.Series:
     url = 'https://fred.stlouisfed.org/graph/fredgraph.csv'
-    r = requests.get(url, params={'id': series_id}, headers=UA, timeout=30)
-    r.raise_for_status()
+    last = None
+    for _ in range(3):
+        try:
+            r = requests.get(url, params={'id': series_id}, headers=UA, timeout=60)
+            r.raise_for_status()
+            break
+        except Exception as e:  # noqa: BLE001
+            last = e
+            time.sleep(5)
+    else:
+        raise RuntimeError(f'FRED download failed for {series_id}: {last}')
     df = pd.read_csv(io.StringIO(r.text))
     df.columns = ['date', 'value']
     df['date'] = pd.to_datetime(df['date'])
@@ -181,7 +219,8 @@ def refresh(keys=None, now: datetime | None = None) -> dict:
             report[k] = {'ok': False, 'last': old.index[-1].strftime('%Y-%m-%d') if len(old) else '',
                          'rows_added': 0, 'error': str(e)[:300]}
     STATE.mkdir(parents=True, exist_ok=True)
-    (STATE / 'live.json').write_text(json.dumps({'fetched_utc': now.strftime('%Y-%m-%d %H:%M'), 'bars': live}, indent=1))
+    (STATE / 'live.json').write_text(json.dumps({'fetched_utc': now.strftime('%Y-%m-%d %H:%M'), 'bars': live,
+                                                 'raw_tail': RAW_TAIL}, indent=1))
     return report
 
 
