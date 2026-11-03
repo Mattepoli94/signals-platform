@@ -332,7 +332,7 @@ def test_manual_trading_rules_and_maths(monkeypatch):
     assert v['pnl_gbp'] == pytest.approx(29) and v['r_multiple'] == pytest.approx(29 / 15) and v['days'] == 10
     snap = MT.compute(cfg, 2000.0, None, '2026-11-03')
     assert snap['by_system']['2']['trades'] == 1 and snap['open_count'] == 2
-    assert snap['risk_budget_gbp'] == pytest.approx((2000 + 857 + 29) * 0.005)
+    assert snap['risk_budget_gbp'] == pytest.approx((857 + 29) * 0.005)
     # a short: P&L positive when price falls; USD converted with the rate
     s = MT.trade_view({'id': 's', 'system': '5', 'ticker': 'S', 'side': 'short', 'ccy': 'USD', 'opened': '2026-10-01', 'entry': 100,
                        'stop': 110, 'units': 2, 'status': 'closed', 'closed': '2026-10-05', 'exit': 90}, pd.Series([1.25], index=[pd.Timestamp('2026-09-01')]), '2026-11-03')

@@ -60,7 +60,7 @@ SYSTEMS = {
           ]},
 }
 
-DEFAULTS = {'capital': 857.0, 'target_share_pct': 30.0, 'risk_pct': 0.5, 'risk_base': 'portfolio',
+DEFAULTS = {'capital': 857.0, 'target_share_pct': 30.0, 'risk_pct': 0.5, 'risk_base': 'manual',
             'max_open': 5, 'max_per_system': 3}
 
 
