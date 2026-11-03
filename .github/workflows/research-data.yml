@@ -22,9 +22,26 @@ jobs:
           out = []
           for sym in open('research-data/tickers.txt').read().split():
               try:
+                  if sym.startswith('URL:'):
+                      import requests, os
+                      name, url = sym[4:].split('|', 1)
+                      os.makedirs('research-data/raw', exist_ok=True)
+                      r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (research script)'}, timeout=120)
+                      r.raise_for_status(); open('research-data/raw/' + name, 'wb').write(r.content)
+                      print(sym, len(r.content)); continue
                   if sym.startswith('FRED:'):
-                      from signals.data import fetch_fred
-                      v = fetch_fred(sym[5:]); df = pd.DataFrame({'open': v, 'high': v, 'low': v, 'close': v, 'adj_close': v, 'volume': 0.0})
+                      import requests, io
+                      v = None
+                      for k in range(5):
+                          try:
+                              r = requests.get('https://fred.stlouisfed.org/graph/fredgraph.csv', params={'id': sym[5:]},
+                                               headers={'User-Agent': 'Mozilla/5.0 (research script)'}, timeout=150)
+                              r.raise_for_status(); x = pd.read_csv(io.StringIO(r.text)); x.columns = ['date', 'v']
+                              x['date'] = pd.to_datetime(x['date']); v = pd.to_numeric(x.set_index('date')['v'], errors='coerce').dropna(); break
+                          except Exception as e:
+                              print('retry', sym, e); time.sleep(10)
+                      if v is None: raise RuntimeError('FRED failed')
+                      df = pd.DataFrame({'open': v, 'high': v, 'low': v, 'close': v, 'adj_close': v, 'volume': 0.0})
                       df.index.name = 'date'
                   else:
                       df = fetch_yahoo(sym, '1950-01-01')
@@ -38,4 +55,4 @@ jobs:
       - name: Commit
         run: |
           git config user.name "signals-bot"; git config user.email "signals-bot@users.noreply.github.com"
-          git add research-data/prices.csv && git commit -m "Research data" && git push
+          git add research-data/ && git commit -m "Research data" && git push
