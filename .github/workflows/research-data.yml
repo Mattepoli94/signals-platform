@@ -1,0 +1,35 @@
+name: Research data download
+on:
+  push:
+    branches: [research-data]
+    paths: ['research-data/tickers.txt']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install pandas requests
+      - name: Download
+        run: |
+          python - <<'PY'
+          import sys, time, pandas as pd
+          sys.path.insert(0, '.')
+          from signals.data import fetch_yahoo
+          out = []
+          for sym in open('research-data/tickers.txt').read().split():
+              try:
+                  df = fetch_yahoo(sym, '1995-01-01'); df.insert(0, 'ticker', sym)
+                  out.append(df); print(sym, len(df), df.index[0].date(), df.index[-1].date())
+              except Exception as e:
+                  print('FAILED', sym, e)
+              time.sleep(1)
+          pd.concat(out).to_csv('research-data/prices.csv', date_format='%Y-%m-%d')
+          PY
+      - name: Commit
+        run: |
+          git config user.name "signals-bot"; git config user.email "signals-bot@users.noreply.github.com"
+          git add research-data/prices.csv && git commit -m "Research data" && git push
