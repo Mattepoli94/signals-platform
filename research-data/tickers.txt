@@ -1,6 +1,19 @@
-^GSPC ^NDX ^DJI ^DJT ^RUT ^VIX ^TNX ^IRX ^FVX VWEHX VUSTX VFITX VWESX CL=F HG=F GC=F DX-Y.NYB XLY XLP
-URL:shiller_ie_data.xls|http://www.econ.yale.edu/~shiller/data/ie_data.xls
-URL:aaii_sentiment.xls|https://www.aaii.com/files/surveys/sentiment.xls
-URL:finra_margin.xlsx|https://www.finra.org/sites/default/files/2021-03/margin-statistics.xlsx
-URL:icsa.csv|https://fred.stlouisfed.org/graph/fredgraph.csv?id=ICSA,UNRATE,BAA10Y,PERMIT,FEDFUNDS,CPIAUCSL
-FRED:BAA10Y
+^GSPC ^NDX ^VIX
+URL:cboe_totalpc.csv|https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/totalpc.csv
+URL:cboe_equitypc.csv|https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/equitypc.csv
+URL:cboe_indexpc.csv|https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/indexpc.csv
+URL:cboe_vixpc.csv|https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/vixpc.csv
+URL:squeeze_dix.csv|https://squeezemetrics.com/monitor/static/DIX.csv
+URL:cnn_fg.json|https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2011-01-01
+URL:cftc_fin_2006_2016.zip|https://www.cftc.gov/files/dea/history/fin_fut_txt_hist_2006_2016.zip
+URL:cftc_fin_2017.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2017.zip
+URL:cftc_fin_2018.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2018.zip
+URL:cftc_fin_2019.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2019.zip
+URL:cftc_fin_2020.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2020.zip
+URL:cftc_fin_2021.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2021.zip
+URL:cftc_fin_2022.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2022.zip
+URL:cftc_fin_2023.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2023.zip
+URL:cftc_fin_2024.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2024.zip
+URL:cftc_fin_2025.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2025.zip
+URL:cftc_fin_2026.zip|https://www.cftc.gov/files/dea/history/fut_fin_txt_2026.zip
+BITMEX_FUNDING

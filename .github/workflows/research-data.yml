@@ -22,6 +22,18 @@ jobs:
           out = []
           for sym in open('research-data/tickers.txt').read().split():
               try:
+                  if sym == 'BITMEX_FUNDING':
+                      import requests, os
+                      rows, start = [], '2016-05-01'
+                      for _ in range(40):
+                          r = requests.get('https://www.bitmex.com/api/v1/funding', params={'symbol': 'XBTUSD', 'count': 500, 'startTime': start, 'reverse': 'false'}, timeout=60)
+                          r.raise_for_status(); j = r.json()
+                          if not j: break
+                          rows += j; start = j[-1]['timestamp']
+                          if len(j) < 500: break
+                          time.sleep(2)
+                      os.makedirs('research-data/raw', exist_ok=True)
+                      pd.DataFrame(rows).to_csv('research-data/raw/bitmex_funding.csv', index=False); print(sym, len(rows)); continue
                   if sym.startswith('URL:'):
                       import requests, os
                       name, url = sym[4:].split('|', 1)
