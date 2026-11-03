@@ -52,3 +52,9 @@ User: keeps the swing setup separate (manual use). Tested on QQQ and SOXX; exits
   - 9w reclaim below the 200-day: QQQ +2.3 / +1.6, SOXX +2.6 / -0.2. In 'range above 200-day' (consolidation): QQQ -1.2 / +0.5, SOXX -1.0 / -1.1.
   - Verdict: no reliable regime switch; the edge comes from the flush + breadth context, not the entry pattern.
 - Leaders: the S&P 1500 stock test (section 2) found RS leaders did not beat laggards after a flush (survivorship-biased). A sector-ETF test (no survivorship bias) is the clean next step if wanted.
+
+## 5) Leader sectors at the setup (3 Nov, /home/claude/wk9/sectors.py, sectors_growth.py; sector ETFs from Yahoo, no survivorship issue)
+Events: QQQ daily 9-EMA reclaim with the setup armed, first per campaign (33-35 events 2001-2025). Pick the top 3 ETFs by a rule, hold 6 months; compare with an equal-weight basket of all available ETFs and with QQQ.
+- All sectors (39 ETFs incl. defensives), mean excess vs basket over 6 months (to 2009 / 2010+): 12m leaders -3.2 / +1.5; held up best in the flush -5.7 / -2.7 (defensives); fell most +5.9 / +1.7; strongest bounce off the low -0.6 / +4.3.
+- Growth/cyclical universe (25 ETFs): 12m leaders -4.8 / -0.2 (beat QQQ 23% / 50% of the time); held up best -2.3 / -1.6; fell most +4.2 / +6.7 but median +2.6 / +0.5 (driven by 2020 clean energy +136% and 2025 ARKK/semis); strongest bounce off the low +0.7 / +6.6 (median -0.7 / +4.7; beat QQQ 39% / 65%).
+- Verdict: no ranking rule reliably beats just buying QQQ at the signal. Pre-flush leaders and defensive "held up best" names lag; the most-beaten high-beta groups bounce most on average but it is lumpy beta. "Strongest bounce off the low" (new leadership at the turn) worked since 2010 only.
