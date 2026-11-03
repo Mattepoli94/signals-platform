@@ -1,5 +1,1 @@
 ^VIX
-URL:cftc_fin_2006_2016.zip|https://www.cftc.gov/files/dea/history/fin_fut_txt_2006_2016.zip
-URL:cnn_fg.json|https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2021-01-01
-URL:cnn_fg2.json|https://production.dataviz.cnn.io/index/fearandgreed/graphdata
-DERIBIT_FUNDING
