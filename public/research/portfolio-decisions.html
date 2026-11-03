@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio decisions and rejected ideas · Poli's Hedge Fund</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../static/app.css">
+<link rel="icon" type="image/svg+xml" href="../static/flag.svg">
+</head>
+<body data-root="../">
+<header class="top">
+  <div class="in">
+    <a class="logo" href="../index.html">
+      <img src="../static/flag.svg" width="30" height="30" alt="">
+      Poli's Hedge Fund
+    </a>
+    <nav class="main" aria-label="Main">
+      
+      <a href="../index.html" class="">Today</a>
+      
+      <a href="../investing.html" class="">Investing</a>
+      
+      <a href="../trading.html" class="">Trading</a>
+      
+      <a href="../risk.html" class="">Risk radar</a>
+      
+      <a href="../journal.html" class="">Journal</a>
+      
+      <a href="../portfolio.html" class="">Portfolio</a>
+      
+      <a href="../research.html" class="on" aria-current="page">Research</a>
+      
+      <a href="../settings.html" class="">Settings</a>
+      
+    </nav>
+    <div class="cur">Base currency <b>GBP</b> · GBP/USD <b class="mono">1.3413</b></div>
+  </div>
+</header>
+<div class="statusbar">
+  <div class="in">
+    
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-03"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    
+    <span class="feed" title="GBP/USD · expected 2026-11-02"><span class="dot ok"></span>GBPUSD <span class="mono">02 Nov</span></span>
+    
+    
+    <span class="feed"></span>
+    <span class="sp"></span>
+    <span>Updated Tue 03 Nov 2026, 16:59</span>
+    <span style="display:flex;gap:8px">
+    <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
+    <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
+  </div>
+</div>
+<main>
+
+<p class="small"><a href="../research.html">← Research library</a></p>
+<article class="card paper"><h1 id="portfolio-decisions-and-rejected-ideas-3-november-2026">Portfolio decisions and rejected ideas (3 November 2026)</h1>
+<p>This page records what was tested around the three systems and <strong>not</strong> adopted, so the same ideas are not re-tested by accident. Nothing here runs on the platform.</p>
+<h2 id="1-the-three-pots-together">1. The three pots together</h2>
+<p>Platform rules and fees (EQQQ 0.05%, GBP↔USD 0.15%, BTC 0.40%), in GBP, June 2015 – October 2026.</p>
+<ul>
+<li>The Nasdaq trading system and the BTC system are almost uncorrelated: daily returns 0.06, weekly 0.12. Both were more than 10% down on only 2% of days, about what chance would give.</li>
+<li><strong>Alone:</strong> Nasdaq trading 8.6% a year, worst fall −13.3%. BTC system 84.9% a year, worst fall −33.6%.</li>
+<li><strong>Mixed and rebalanced monthly:</strong> 50/50 gives 45% a year with a −22% worst fall. 80/20 (Nasdaq/BTC) gives 23% and −14%.</li>
+<li>The worst combined fall was December 2017 – March 2018, driven by BTC.</li>
+</ul>
+<h3 id="rebalancing-between-pots-not-adopted-for-now">Rebalancing between pots: not adopted (for now)</h3>
+<table>
+<thead>
+<tr>
+<th>Method (50/50, costs included)</th>
+<th>Yearly return</th>
+<th>Worst fall</th>
+<th>Trades a year</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Never</td>
+<td>74%</td>
+<td>−33%</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Yearly</td>
+<td>53%</td>
+<td>−31%</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Quarterly</td>
+<td>49%</td>
+<td>−26.5%</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Monthly</td>
+<td>45%</td>
+<td>−22%</td>
+<td>12</td>
+</tr>
+<tr>
+<td>Drift band: rebalance when BTC's share is 10+ points off target</td>
+<td>46%</td>
+<td>−18.8%</td>
+<td>1.4</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Any rebalancing roughly halves the worst fall. That held in every sub-period and in 34 rolling 3-year windows.</li>
+<li>The differences between methods are mostly noise: the monthly result moves between −18% and −24% depending on the day of the month.</li>
+<li><strong>Decision:</strong> no rebalancing for now. If it is added later, the 10-point drift band is the cheapest version.</li>
+</ul>
+<h3 id="replay-10000-in-each-pot-from-1-january-2021">Replay: £10,000 in each pot from 1 January 2021</h3>
+<p>This used the platform's own ledger and fees, cash at 0%, no rebalancing and no taxes, up to 2 November 2026.</p>
+<table>
+<thead>
+<tr>
+<th>Pot</th>
+<th>End value</th>
+<th>Yearly return</th>
+<th>Worst fall</th>
+<th>Buy &amp; hold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Value plan v1.1 (zones only)</td>
+<td>£19,785</td>
+<td>12.4%</td>
+<td>−24.2%</td>
+<td>EQQQ £22,707</td>
+</tr>
+<tr>
+<td>Value plan v1.2 (with fast-crash buys)</td>
+<td>£21,467</td>
+<td>14.0%</td>
+<td>−24.2%</td>
+<td>EQQQ £22,707</td>
+</tr>
+<tr>
+<td>Nasdaq trading system</td>
+<td>£17,670</td>
+<td>10.3%</td>
+<td>−10.5%</td>
+<td>EQQQ £22,707</td>
+</tr>
+<tr>
+<td>BTC cycle trend system</td>
+<td>£52,504</td>
+<td>32.8%</td>
+<td>−26.3%</td>
+<td>BTC £26,557</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Total (v1.1):</strong> £89,958 from £30,000, with a −15.0% worst fall for the total. Buy and hold of the same three would have made £72,101, with a −48.2% worst fall.</li>
+<li><strong>Not included:</strong></li>
+<li>interest on idle cash (about +£5–6k);</li>
+<li>EQQQ dividends (about 0.5% a year);</li>
+<li>capital gains tax on BTC held outside the ISA.</li>
+<li><strong>All of 2021–26 is in-sample</strong> for the systems' design.</li>
+</ul>
+<h2 id="2-gold-trend-system-not-adopted">2. Gold trend system: not adopted</h2>
+<p>The system was designed from scratch on GLD 2006–2026, with 51 randomly held-out months.
+- <strong>Rules tried:</strong> 37 core rules (trend, momentum, OBV, VWAP, volume profile, CMF, dip-buying), then filters and sizing.
+- <strong>Chosen:</strong> a 50% EMA 50/150 trend leg plus an RSI(2) dip leg.</p>
+<p><strong>Results:</strong>
+- <strong>Held-out months:</strong> 9.6% a year with a −9.3% worst fall, against buy and hold at 13.5% and −26%.
+- <strong>Walk-forward 2012–26:</strong> only 3.5% a year with −25%, barely ahead of buy and hold on a risk-adjusted basis.
+- <strong>UK version on SGLN:</strong> 5.5% a year with −15.6%.</p>
+<p>Volume indicators did not help.</p>
+<p><strong>Decision:</strong> too little return for the effort. A cash ISA at about 4–5% gives similar returns without the drawdown risk.</p>
+<h2 id="3-diversifiers-for-bad-months-not-adopted">3. Diversifiers for bad months: not adopted</h2>
+<p>45 ETFs were screened in GBP over July 2015 – October 2026. Each was judged on how it did in the systems' worst third of months.</p>
+<ul>
+<li><strong>Defensive sectors, value, low-volatility, quality and dividend funds do not help.</strong> They are still equities, with a correlation of +0.25 to +0.40 to the systems, and they lost 0.4–0.8% a month in the systems' bad months.</li>
+<li><strong>Bonds and the dollar:</strong> close to zero correlation, but they also lost in bad months. TLT fell 23% in 2022.</li>
+<li><strong>What did help:</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Asset</th>
+<th>Gain in the systems' bad months</th>
+<th>Long-run return</th>
+<th>Worst fall</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gold</td>
+<td>+0.7% a month</td>
+<td>12.3% a year</td>
+<td>−27%</td>
+</tr>
+<tr>
+<td>Energy</td>
+<td>+0.8% a month</td>
+<td>11.4% a year</td>
+<td>−64%</td>
+</tr>
+<tr>
+<td>Broad commodities</td>
+<td>+0.6% a month</td>
+<td>8.8% a year</td>
+<td>−39%</td>
+</tr>
+<tr>
+<td>Managed futures (2022)</td>
+<td>+36–39%</td>
+<td>–</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+<p>2022 dominates these results.
+- <strong>Decision:</strong> "not enough alpha". Stick to the three systems.</p>
+<h2 id="4-other-ideas-tested-elsewhere">4. Other ideas tested elsewhere</h2>
+<ul>
+<li><strong>The old 3-point risk flag and stress gauges:</strong> see <a href="risk-radar.html">Risk radar</a>, section 4.</li>
+<li><strong>The fast-crash plan:</strong></li>
+<li>in the trading system: not adopted (more drawdown);</li>
+<li>a separate crash reserve in the value plan: not adopted;</li>
+<li>the bear washout in the value plan: not adopted.</li>
+</ul>
+<p>See <a href="bottom-signals.html">Bottom signals</a> and <a href="qqq-value-plan.html">Value plan</a>.
+- <strong>The BTC trend blend (v1):</strong> retired after failing its re-test. See <a href="btc-trend.html">BTC cycle trend system</a>.</p></article>
+
+</main>
+<footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>window.SIGNALS = {"generated": "2026-11-03 16:59", "repo": "Mattepoli94/signals-platform"};</script>
+<script src="../static/app.js"></script>
+</body>
+</html>

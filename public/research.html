@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Research · Signals</title>
+<title>Research · Poli's Hedge Fund</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="static/app.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="static/flag.svg">
 </head>
 <body data-root="">
 <header class="top">
   <div class="in">
     <a class="logo" href="index.html">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
-      Signals
+      <img src="static/flag.svg" width="30" height="30" alt="">
+      Poli's Hedge Fund
     </a>
     <nav class="main" aria-label="Main">
       
@@ -41,7 +41,7 @@
 <div class="statusbar">
   <div class="in">
     
-    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-03"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
     
     <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
     
@@ -52,7 +52,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 16:42</span>
+    <span>Updated Tue 03 Nov 2026, 16:59</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -61,13 +61,13 @@
 <main>
 
 <div class="pagehead"><div><div class="kicker">Research</div><h1>Research library</h1>
-<p class="sub">One paper per strategy: the exact rules, how they were tested, and what to expect. The platform runs exactly these rules.</p></div></div>
+<p class="sub">One paper per system or signal: the exact rules, how they were tested, and what to expect. The platform runs exactly these rules. The last card records what was tested and not adopted.</p></div></div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
 
 <article class="card" style="display:flex;flex-direction:column;gap:12px">
   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="kicker">TRADING · NASDAQ-100</span><span class="pill t-green">Live · v1.1</span></div>
   <h2 style="font-size:19px">Nasdaq-100 regime system + dollar add-on (UK: EQQQ at the London close)</h2>
-  <p style="margin:0;font-size:14px;color:#344054">Regime detector, 50% trend leg, dip-buying leg, dollar add-on and risk flag. Traded in EQQQ (ISA, no FX fee) at the London close.</p>
+  <p style="margin:0;font-size:14px;color:#344054">Regime detector, 50% trend leg, dip-buying leg and dollar add-on. Traded in EQQQ (ISA, no FX fee) at the London close.</p>
   <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
   <div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">CAGR 2010–24*</div><div class="mono" style="font-size:16px;font-weight:600">9.0%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Max drawdown</div><div class="mono" style="font-size:16px;font-weight:600">−14.1%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">QQQ research 2000–24</div><div class="mono" style="font-size:16px;font-weight:600">10.4%</div></div>
   </div>
@@ -124,16 +124,28 @@
   </div>
 </article>
 
+<article class="card" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="kicker">PORTFOLIO · DECISIONS</span><span class="pill t-blue">Record</span></div>
+  <h2 style="font-size:19px">Portfolio decisions and rejected ideas</h2>
+  <p style="margin:0;font-size:14px;color:#344054">How the pots work together, the rebalancing test, the £10k-each replay from 2021, and the ideas tested and not adopted (gold system, defensive and value diversifiers).</p>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+  <div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">£30k from 2021</div><div class="mono" style="font-size:16px;font-weight:600">£89,958</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Total worst fall</div><div class="mono" style="font-size:16px;font-weight:600">−15.0%</div></div><div style="background:var(--soft);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">Pot correlation</div><div class="mono" style="font-size:16px;font-weight:600">0.06</div></div>
+  </div>
+  <div class="small muted">Platform rules and fees, GBP. 2021–26 is in-sample for all three systems.</div>
+  <div style="margin-top:auto;display:flex;flex-wrap:wrap;gap:10px"><a class="btn primary" href="research/portfolio-decisions.html">Read the paper</a>
+  </div>
+</article>
+
 </div>
 <section class="card"><h2>Rule changes</h2><p class="note">Every change to a live rule is logged here. Signals always come from the version shown.</p>
 <div class="scroll" style="margin-top:12px"><table class="t"><tbody>
-<tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Value plan</b></td><td>v1.2: adds the fast-crash buys (buy 1 = 50% of cash at −10.8% from the high, buy 2 = all cash on 3+ capitulation groups; skipped when the override is on). Trading system unchanged.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Bottom signals</b></td><td>v1 live (display only): QQQ fast-crash two-step plan with rate/late-cycle override, and the bear-market washout for S&amp;P 500 and QQQ.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Risk radar</b></td><td>v1 live (display only): late-cycle, Nasdaq crash-risk and BTC leverage radars with their track records. Replaces the old 3-point risk flag on the Nasdaq system.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>BTC cycle trend system</b></td><td>v2 live: 30/50 EMA cross, bear window day 541–900, half size when ADX &lt; 25 or day 1,081–1,260. Replaces v1.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>BTC trend blend</b></td><td>Re-tested with random holdout years (2012, 2016, 2018) and walk-forward: no validated edge over holding BTC. Marked paper only.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Nasdaq systems</b></td><td>v1.1: traded in EQQQ (London, pence, ISA) at the London close; dollar add-on held as USD cash in the Invest account. Removes the 0.15% FX fee on Nasdaq trades.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Platform</b></td><td>v1.0 live: signals, pots, top-ups, fills, email alerts.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>BTC trend blend</b></td><td>Adopted. Cycle bag removed; liquidity and dollar filters shown as context only.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ value plan</b></td><td>Adopted. Static drawdown rungs replaced by the trend and 200-week zones.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ regime system</b></td><td>v1.0 frozen. Regime turning Trending closes an open dip trade. Gold/TLT hedge dropped; dollar add-on kept.</td></tr>
+<tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Platform</b></td><td>v2.0: renamed Poli&#39;s Hedge Fund. Review and tidy-up: the retired risk flag and unused feeds (TLT, GLD, T-bill, dollar index, Fed liquidity) removed; radar inputs listed in Settings; daily routine on Today; signal-history labels fixed.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Value plan</b></td><td>v1.2: adds the fast-crash buys (buy 1 = 50% of cash at −10.8% from the high, buy 2 = all cash on 3+ capitulation groups; skipped when the override is on). Trading system unchanged.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Bottom signals</b></td><td>v1 live (display only): QQQ fast-crash two-step plan with rate/late-cycle override, and the bear-market washout for S&amp;P 500 and QQQ.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Risk radar</b></td><td>v1 live (display only): late-cycle, Nasdaq crash-risk and BTC leverage radars with their track records. Replaces the old 3-point risk flag on the Nasdaq system.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>BTC cycle trend system</b></td><td>v2 live: 30/50 EMA cross, bear window day 541–900, half size when ADX &lt; 25 or day 1,081–1,260. Replaces v1.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>BTC trend blend</b></td><td>Re-tested with random holdout years (2012, 2016, 2018) and walk-forward: no validated edge over holding BTC. Marked paper only.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Nasdaq systems</b></td><td>v1.1: traded in EQQQ (London, pence, ISA) at the London close; dollar add-on held as USD cash in the Invest account. Removes the 0.15% FX fee on Nasdaq trades.</td></tr><tr><td class="mono" style="width:120px">2026-11-03</td><td style="width:220px"><b>Platform</b></td><td>v1.0 live: signals, pots, top-ups, fills, email alerts.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>BTC trend blend</b></td><td>Adopted. Cycle bag removed; liquidity and dollar filters shown as context only.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ value plan</b></td><td>Adopted. Static drawdown rungs replaced by the trend and 200-week zones.</td></tr><tr><td class="mono" style="width:120px">2026-11-02</td><td style="width:220px"><b>QQQ regime system</b></td><td>v1.0 frozen. Regime turning Trending closes an open dip trade. Gold/TLT hedge dropped; dollar add-on kept.</td></tr>
 </tbody></table></div></section>
 
 </main>
-<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 16:42", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 16:59", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>

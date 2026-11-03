@@ -1,24 +1,30 @@
-# Signals platform
+# Poli's Hedge Fund
 
-A personal trading and investing dashboard that runs three research-tested systems, tracks a GBP pot for each, and publishes a dashboard on Vercel (email alerts are built in but switched off for now). It sends signals only: no orders go to any broker.
+A personal trading and investing dashboard (repository `signals-platform`, Python package `signals`). It runs three research-tested systems, tracks a GBP pot for each, shows early-warning and bottom signals, and publishes everything on Vercel. Email alerts are built in but switched off for now. It sends signals only: no orders go to any broker.
+
+Live rules (v2.0 platform): Nasdaq trading system v1.1 · Nasdaq value plan v1.2 · BTC cycle trend system v2 · Risk radar v1 · Bottom signals v1. Every rule change is logged on the Research page.
 
 | Page | What it shows |
 |---|---|
-| **Today** | The action for each pot (BUY / SELL / HOLD / WAIT) with stops and exit dates, the order cut-off time, total P&L and recent signals |
-| **Investing** | The Nasdaq-100 value plan (buys EQQQ): live checklist for both value zones, what a buy would invest, the pot's P&L, the plan vs QQQ buy & hold with the same deposits, and a QQQ chart with value levels |
-| **Trading** | The Nasdaq-100 regime system (EQQQ + dollar add-on) and the BTC trend blend. Under each system, a *Live vs expected* chart: the pot's return against the 80% range its backtest produced over the same number of sessions, with EQQQ/BTC as a grey line and flags when return or drawdown leave the backtest range. Also: every rule with its live value, entry/stop/take-profit/time exits, the risk flag, each pot and its chart, trades, signal history, and live-vs-backtest health |
-| **Journal** | Every order the systems suggested, written once when first shown (preview at 16:05, then confirmed or cancelled by the close), with your real fill next to it |
-| **Portfolio** | All pots, total value chart, top-ups, deposit history and the trade journal (record your real fills) |
+| **Today** | The action for each pot (BUY / SELL / HOLD / WAIT) with stops and exit dates, the order cut-off time, radar and bottom-signal pills, fills waiting to be recorded, total P&L, recent signals and the daily routine |
+| **Investing** | The Nasdaq-100 value plan (buys EQQQ): live checklist for both value zones and the fast-crash buys, what a buy would invest, the pot's P&L, the plan vs QQQ buy & hold with the same deposits, and a QQQ chart with value levels |
+| **Trading** | The Nasdaq-100 regime system (EQQQ + dollar add-on) and the BTC cycle trend system. Under each system, a *Live vs expected* chart: the pot's return against the 80% range its backtest produced over the same number of sessions, with EQQQ/BTC as a grey line and flags when return or drawdown leave the backtest range. Also: every rule with its live value, entry/stop/take-profit/time exits, each pot and its chart, trades, signal history, and live-vs-backtest health |
+| **Risk radar** | Three predictive warning flags (late cycle, Nasdaq crash risk, BTC leverage) and two bottom signals (QQQ fast-crash plan, bear-market washout), each with its backtested track record and a live track record from 2 Nov 2026. Display only |
+| **Journal** | Every order the systems suggested, written once when first shown (preview at 16:05, then confirmed or cancelled by the close), with your real fill next to it, and the system's ideal result against yours (execution decay) |
+| **Portfolio** | All pots, top-ups, deposit history and every trade by pot (fills can be recorded here too) |
 | **Research** | One paper per system with the exact rules and test results |
-| **Settings** | Initial capital, monthly top-up, fees and cash interest per pot, start date, data status and CSV upload |
+| **Settings** | Initial capital, monthly top-up, fees and cash interest per pot, start date, status of every data feed (systems and radar) and CSV upload |
 
 ## How it works
 
 ```
 GitHub Actions (free, on a schedule)
-  └─ download prices (Yahoo, FRED)  →  data/prices/*.csv
+  └─ download prices (Yahoo)  →  data/prices/*.csv
+  └─ radar inputs (Cboe, SqueezeMetrics, FINRA, multpl, Yahoo, Deribit, CFTC)  →  data/radar/*.csv   [US and BTC runs]
   └─ compute signals (signals/strategies/*)            same code as the research
-  └─ replay each pot from its start date (signals/ledger.py)
+  └─ replay each pot from its start date (signals/ledger.py), with and without your fills
+  └─ risk radar + bottom signals (signals/radar.py, signals/bottoms.py); live track record (signals/radar_track.py)
+  └─ signal journal (signals/journal.py)
   └─ email alerts (ready, switched off for now)
   └─ build the website (site/ → public/)  →  Vercel serves public/
 ```
@@ -31,14 +37,14 @@ The pots are **rebuilt from scratch on every run** from three inputs: the prices
 |---|---|---|
 | `qqq_value` | Nasdaq-100 value plan: zones on QQQ, buys EQQQ in your **ISA** | £1,000 |
 | `qqq_trading` | Nasdaq-100 regime system on EQQQ (**ISA**) + USD cash add-on (**Invest** account) | £500 |
-| `btc_trend` | BTC trend blend | £500 |
+| `btc_trend` | BTC cycle trend system (v2) | £500 |
 
 - **Initial capital** is deposited at the start date (`start_date`, default 3 Nov 2026). At its first close, each pot joins its system's current position.
 - **Top-ups** go into a pot's cash at the close of their date (Portfolio page, or the box on each pot). An optional **monthly top-up** per pot is added on the first trading day of each month.
 - **Trades** happen at the close. EQQQ is priced in pence, so it needs no conversion. USD cash and BTC are valued with that day's GBP/USD.
-- **Fees** (editable in Settings): 0.05% on EQQQ trades (the spread; no FX fee in pence); 0.15% on each GBP↔USD conversion for the dollar add-on (Trading 212); 0.10% for BTC.
+- **Fees** (editable in Settings): 0.05% on EQQQ trades (the spread; no FX fee in pence); 0.15% on each GBP↔USD conversion for the dollar add-on (Trading 212); 0.40% for BTC (Kraken Pro limit orders).
 - **Dividends:** EQQQ's small dividends are not in Yahoo's price series, so the pots slightly understate them. **Interest on cash** is optional (Settings).
-- **Your real fills.** Each model trade has an id. Record your real price (and optionally the GBP/USD rate and fee) in the trade journal, and the pot is re-valued with it.
+- **Your real fills.** Each model trade has an id. Record your real price (and optionally the GBP/USD rate and fee) in the Journal, and the pot is re-valued with it. The Journal also keeps the ideal pot (model fills) so you can see execution decay.
 
 ## Schedule (all automatic)
 
@@ -93,7 +99,7 @@ pytest -q
 
 ## Data
 
-Data is free and daily. Prices come from Yahoo Finance (EQQQ.L, QQQ, UUP, BTC-USD, TLT, GLD, ^IRX, DX-Y.NYB, GBPUSD=X). Yahoo's London ETF history has bad prints, such as whole weeks quoted in US cents. EQQQ is repaired against QQQ ÷ GBP/USD whenever it is loaded. Fed net liquidity (WALCL − WTREGEN − RRPONTSYD) comes from FRED. If Yahoo fails, GBP/USD and the T-bill fall back to FRED. Any feed can be replaced by uploading a CSV (Settings → Data). Yahoo, Investing.com, Nasdaq.com and FRED exports are accepted. Only completed daily closes are stored; a bar still forming is used only for the pre-close preview. To move to a paid live feed later, add a fetcher in `signals/data.py`.
+Data is free and daily. System prices come from Yahoo Finance (EQQQ.L, QQQ, UUP, BTC-USD, GBPUSD=X). Yahoo's London ETF history has bad prints, such as whole weeks quoted in US cents. EQQQ is repaired against QQQ ÷ GBP/USD whenever it is loaded. If Yahoo fails, GBP/USD falls back to FRED (FRED is often unreachable from GitHub's runners, so upload a CSV if both fail). The radar inputs are listed in Settings → Data with their latest date. Any system price feed can be replaced by uploading a CSV (Settings → Data). Yahoo, Investing.com, Nasdaq.com and FRED exports are accepted. Only completed daily closes are stored; a bar still forming is used only for the pre-close preview. To move to a paid live feed later, add a fetcher in `signals/data.py`.
 
 ## Extending
 
@@ -102,6 +108,7 @@ Data is free and daily. Prices come from Yahoo Finance (EQQQ.L, QQQ, UUP, BTC-US
 
 ## Important
 
+- **Display-only signals.** The Risk radar and bottom signals never change the trading system's orders. The value plan does use the fast-crash buys (v1.2).
 - **Fees and the UK route (v1.1).** The Nasdaq system trades its pot about 15–22 times a year. Trading 212's 0.15% currency fee would cost several percent a year on USD-quoted funds, so v1.1 trades EQQQ (pence) in the ISA at the London close, with no FX fee. Tested 2010–2024: 9.0% a year, worst drawdown −14.1% (with the dollar add-on, cash 0%). QQQ and UUP are used only as signals.
 - **Timing.** Yahoo's London prices can be about 15 minutes delayed. The 16:05 preview uses them; the 16:55 run confirms with the official close.
 - **Data source.** The rules were validated on adjusted closes. Yahoo data is unofficial and can occasionally be wrong or late, so the freshness bar flags stale feeds.

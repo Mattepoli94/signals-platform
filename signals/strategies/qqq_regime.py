@@ -11,8 +11,7 @@ held in the ISA: no currency conversion, so no FX fee. Rules are the v1.0 resear
   EQQQ weight = trend + dip x (1 - trend).
   Dollar add-on  USD cash (Invest account) = 0.5 x (1 - EQQQ weight) while UUP is Trending, judged at
   the latest US close before the London close. Each switch converts GBP<->USD (0.15% fee).
-  Risk flag (display only): W1 3m T-bill +0.5 pt over 126 sessions, W2 dollar index +5% over 126
-  sessions, W3 two or more of QQQ/TLT/GLD below their 200-day SMA (US data, latest US close).
+  The old 3-point risk flag (W1-W3) was retired on 3 Nov 2026: the Risk radar page replaces it.
 """
 from __future__ import annotations
 
@@ -115,7 +114,7 @@ class QQQRegime(Strategy):
     def __init__(self):
         super().__init__(
             key='qqq_regime', name='Nasdaq-100 regime system + dollar add-on', kind='weights', page='trading',
-            assets=('EQQQ', 'USD'), inputs=('EQQQ', 'QQQ', 'UUP', 'TLT', 'GLD', 'IRX', 'DXY', 'GBPUSD'), calendar_asset='EQQQ',
+            assets=('EQQQ', 'USD'), inputs=('EQQQ', 'QQQ', 'UUP', 'GBPUSD'), calendar_asset='EQQQ',
             band=1.0,   # trades only when the rules change the target (weights are discrete)
             params=dict(stop=0.03, max_days=10, rsi_exit=70, rsi_in_above=10, rsi_in_below=5, usd_share=0.5),
             paper='research/qqq-regime-system.html',
@@ -147,28 +146,6 @@ class QQQRegime(Strategy):
         t['w_USD'] = np.where(t['uup_trending'], p['usd_share'] * (1 - t['w_EQQQ']), 0.0)
         t['state'] = t['w_EQQQ'].round(4).astype(str) + '|' + t['w_USD'].round(4).astype(str)
 
-        # risk flag on US data, known at the London close
-        q = data.get('QQQ')
-        if q is not None and len(q):
-            qc = q['adj_close'].dropna()
-            irx, dxy = _align(data.get('IRX'), qc.index), _align(data.get('DXY'), qc.index)
-            w1 = irx - irx.shift(126)
-            w2 = (dxy / dxy.shift(126) - 1) * 100
-            qb = qc < sma(qc, 200)
-            below = {'QQQ': qb}
-            for k in ('TLT', 'GLD'):
-                s = _align(data.get(k), qc.index)
-                below[k] = (s < sma(s, 200)).fillna(False)
-            n_below = sum(b.astype(int) for b in below.values())
-            t['w1_val'], t['w2_val'], t['w3_val'] = lag_to(w1, idx), lag_to(w2, idx), lag_to(n_below.astype(float), idx)
-            for k, b in below.items():
-                t[f'{k.lower()}_below'] = lag_to(b.astype(float), idx).fillna(0).astype(bool)
-        else:
-            t['w1_val'] = t['w2_val'] = t['w3_val'] = np.nan
-            t['qqq_below'] = t['tlt_below'] = t['gld_below'] = False
-        t['W1'], t['W2'], t['W3'] = t['w1_val'] > 0.5, t['w2_val'] > 5, t['w3_val'] >= 2
-        t['risk_score'] = t[['W1', 'W2', 'W3']].sum(axis=1)
-        t['risk_level'] = t['risk_score'].map({0: 'GREEN', 1: 'AMBER'}).fillna('RED')
         return t
 
     def status(self, t: pd.DataFrame, pot: dict | None = None, provisional: bool = False) -> dict:
@@ -252,13 +229,6 @@ class QQQRegime(Strategy):
                 orders.append({'kind': 'TREND EXIT', 'tone': 'grey', 'text': f"Sell the trend leg at the London close when the regime stops Trending (close below {fmt_p(x['s50'])} or a falling 50-day)."})
         orders.append({'kind': 'DOLLAR ADD-ON', 'tone': 'blue', 'text': f'USD cash target {u:.0%} of the pot in your Invest account ' +
                        ('(UUP trending). ' if x['uup_trending'] else '(UUP not trending). ') + 'Each switch is a GBP↔USD conversion (0.15%).'})
-        below = [k for k, b in (('QQQ', x['qqq_below']), ('TLT', x['tlt_below']), ('GLD', x['gld_below'])) if b]
-        extra = [
-            {'label': 'W1 · 3-month T-bill +0.5 pt over 6 months', 'value': f"{x['w1_val']:+.2f} pt" if pd.notna(x['w1_val']) else '—', 'tone': 'amber' if x['W1'] else ''},
-            {'label': 'W2 · dollar index +5% over 6 months', 'value': fmt_pct(x['w2_val'], 2), 'tone': 'amber' if x['W2'] else ''},
-            {'label': 'W3 · 2+ of QQQ/TLT/GLD below 200-day', 'value': ', '.join(below) or 'none', 'tone': 'amber' if x['W3'] else ''},
-        ]
-        lvl = x['risk_level']
         return {
             'key': self.key, 'name': self.name, 'asof': d.strftime('%Y-%m-%d'), 'provisional': provisional,
             'kicker': 'System #1 · EQQQ (ISA) daily · orders at the London close',
@@ -271,6 +241,6 @@ class QQQRegime(Strategy):
             'levels': {'close': float(x['raw_close']), 'close_fmt': fmt_p(x['raw_close']),
                        'stop': None if pd.isna(stop) else float(stop), 'stop_fmt': fmt_p(stop) if pd.notna(stop) else None,
                        'entry': None if pd.isna(entry) else float(entry),
-                       'exit_date': exit_date.strftime('%Y-%m-%d') if exit_date is not None else None, 'risk_level': lvl},
+                       'exit_date': exit_date.strftime('%Y-%m-%d') if exit_date is not None else None},
             'paper': self.paper, 'timing': self.timing,
         }

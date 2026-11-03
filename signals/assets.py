@@ -22,12 +22,7 @@ ASSETS = {a.key: a for a in [
     Asset('QQQ', 'Invesco QQQ (Nasdaq-100, US)', 'yahoo', 'QQQ'),
     Asset('UUP', 'Invesco DB US Dollar Index Bullish (signal only)', 'yahoo', 'UUP'),
     Asset('BTC', 'Bitcoin (spot, USD)', 'yahoo', 'BTC-USD', calendar='crypto', tradable=True),
-    Asset('TLT', 'iShares 20+ Year Treasury Bond', 'yahoo', 'TLT'),
-    Asset('GLD', 'SPDR Gold Shares', 'yahoo', 'GLD'),
-    Asset('IRX', '13-week T-bill yield', 'yahoo', '^IRX', calendar='macro', fallback='DTB3'),
-    Asset('DXY', 'US dollar index', 'yahoo', 'DX-Y.NYB', calendar='macro'),
     Asset('GBPUSD', 'GBP/USD', 'yahoo', 'GBPUSD=X', currency='FX', calendar='fx', fallback='DEXUSUK', account='Invest'),
-    Asset('NETLIQ', 'Fed net liquidity (WALCL - TGA - RRP), $bn', 'fred', 'WALCL,WTREGEN,RRPONTSYD', calendar='macro'),
 ]}
 
 

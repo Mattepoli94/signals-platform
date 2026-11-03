@@ -175,17 +175,6 @@ def fetch_fred(series_id: str) -> pd.Series:
     return pd.to_numeric(df.set_index('date')['value'], errors='coerce').dropna()
 
 
-def fetch_netliq() -> pd.DataFrame:
-    walcl = fetch_fred('WALCL') / 1000.0          # $m -> $bn (weekly, Wednesday)
-    tga = fetch_fred('WTREGEN')                   # $bn (weekly)
-    rrp = fetch_fred('RRPONTSYD')                 # $bn (daily)
-    idx = walcl.index.union(tga.index).union(rrp.index)
-    f = lambda s: s.reindex(idx).ffill()
-    v = (f(walcl) - f(tga) - f(rrp)).dropna()
-    v = v[v.index >= '2010-01-01']
-    return pd.DataFrame({'open': v, 'high': v, 'low': v, 'close': v, 'adj_close': v, 'volume': np.nan})
-
-
 # ----------------------------------------------------------------------------- refresh
 def refresh(keys=None, now: datetime | None = None) -> dict:
     """Download every asset, store confirmed bars, keep forming bars in state/live.json.
@@ -198,7 +187,7 @@ def refresh(keys=None, now: datetime | None = None) -> dict:
         old = load(k)
         try:
             try:
-                new = fetch_netliq() if a.source == 'fred' else fetch_yahoo(a.symbol)
+                new = fetch_yahoo(a.symbol)
             except Exception:
                 if not a.fallback:
                     raise

@@ -13,16 +13,15 @@ Plain monthly buying (DCA) is hard to beat on wealth, but it buys tops as readil
 3. **200-week zone.** Close 0–15% above the 1,000-day SMA **and** close above the 50-day SMA.
 4. On a close in either zone, buy **50% of the cash** at the close. At most one buy every 10 trading days.
 5. **Safety cap.** On the first trading day of a month, if cash is above 24 × the monthly contribution, invest the excess.
-
 6. **Fast-crash buys (v1.2).** In a QQQ fast crash (down 8%+ within 15 sessions from near its 1-year high), use the Risk radar's fast-crash plan:
-   - **Buy 1:** at the first close 10.8% below the 1-year high, invest **50% of the cash**.
-   - **Buy 2:** at a later, lower close with 3+ of 6 capitulation groups on, invest **all the cash**.
-   - Both are skipped when the override is on (rate/inflation pressure, or the late-cycle radar red). They ignore the 10-day cooldown.
-   - Full rules: [Bottom signals](bottom-signals.html).
+    - **Buy 1:** at the first close 10.8% below the 1-year high, invest **50% of the cash**.
+    - **Buy 2:** at a later, lower close with 3+ of 6 capitulation groups on, invest **all the cash**.
+    - Both are skipped when the override is on (rate/inflation pressure, or the late-cycle radar red). They ignore the 10-day cooldown.
+    - Full rules: [Bottom signals](bottom-signals.html).
 
 Price below the trend zone (z ≤ −1) is not bought. Deep levels behaved like falling knives in secular bear markets (2000–2002).
 
-## Results (rolling plans, $1,000 a month, cash at the T-bill rate)
+## Results of the zones alone (v1.1; rolling plans, $1,000 a month, cash at the T-bill rate)
 
 | Plans | Wealth vs monthly DCA (median) | Account drawdown (median) | Below money in (median / worst) |
 |---|---|---|---|
@@ -58,7 +57,7 @@ Level study: after a trend-zone close, QQQ returned +39% over the next year in 1
 
 ## UK implementation (v1.1)
 
-The zones are still judged on QQQ at the US close: the rules were validated on that series, and they move slowly. A buy is placed in **EQQQ** (pence, ISA) at the next London close. That is one session later than in the research, which matters little for a plan that buys a few times a year, and it avoids any currency fee. The cut-off is 16:25 UK; an email the evening before says when a buy is due.
+The zones are still judged on QQQ at the US close: the rules were validated on that series, and they move slowly. A buy is placed in **EQQQ** (pence, ISA) at the next London close. That is one session later than in the research, which matters little for a plan that buys a few times a year, and it avoids any currency fee. The cut-off is 16:25 UK. The site shows a buy as due the evening before (after the US close), and again in the ~16:05 live preview.
 
 ## On this platform
 

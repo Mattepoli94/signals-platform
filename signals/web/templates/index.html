@@ -64,11 +64,25 @@
 <div class="row">
   <section class="card grow" aria-label="Recent signals">
     <h2>Recent signals</h2>
-    <p class="note">The site refreshes at ~16:05 UK (preview before the London close), ~16:55 (confirmed), ~21:20 after the US close and ~00:20 for BTC.</p>
+    <p class="note">The systems' own signals, including any from before your pots started. Your actual trades are in the <a href="journal.html">Journal</a>.</p>
     {% set evs = recent_events %}
-    {% if evs %}<div class="scroll" style="margin-top:12px"><table class="t"><thead><tr><th>Date</th><th>System</th><th>Signal</th><th class="n">Price</th></tr></thead><tbody>
-    {% for e in evs %}<tr><td class="mono">{{ e.date|d }}</td><td>{{ e.system }}</td><td><span class="pill {{ {'BUY':'t-green','SELL':'t-red','ZONE':'t-blue'}.get(e.kind,'t-grey') }}">{{ e.kind }}</span> {{ e.text }}</td><td class="n">{{ e.price_fmt or (e.price|usd) }}</td></tr>{% endfor %}
+    {% if evs %}<div class="scroll" style="margin-top:12px"><table class="t"><thead><tr><th>Date</th><th class="hide-sm">System</th><th>Signal</th><th class="n hide-sm">Price</th></tr></thead><tbody>
+    {% for e in evs %}<tr><td class="mono">{{ e.date|d }}</td><td class="hide-sm">{{ e.system }}</td><td><span class="show-sm small muted">{{ e.system }} · </span><span class="pill {{ {'BUY':'t-green','SELL':'t-red','ZONE':'t-blue'}.get(e.kind,'t-grey') }}">{{ e.kind }}</span> {{ e.text }}</td><td class="n hide-sm">{{ e.price_fmt or (e.price|usd) }}</td></tr>{% endfor %}
     </tbody></table></div>{% endif %}
   </section>
 </div>
+
+<section class="card" aria-label="Daily routine">
+  <details class="routine"><summary><b>Daily routine</b> <span class="small muted">— what to check, and when (UK time)</span></summary>
+  <ol class="small" style="margin:10px 0 0;padding-left:20px;line-height:1.75">
+    <li><b>~16:05, trading days:</b> open <b>Today</b>. The yellow live-preview box lists any EQQQ order for the Nasdaq trading system or the value plan. Place it in your ISA (and any USD switch in your Invest account) <b>before 16:25</b>.</li>
+    <li><b>After you trade:</b> open <b>Journal</b> and record your real fill. The site compares your execution with the system's ideal fills.</li>
+    <li><b>~16:55:</b> the run after the London close confirms or cancels the preview. Nothing to do unless an order was cancelled.</li>
+    <li><b>~00:20 (BTC):</b> the BTC system checks the 00:00 UTC close. If the BTC card shows BUY or SELL, trade at the next opportunity (Kraken Pro limit order) and record the fill.</li>
+    <li><b>Weekly:</b> glance at <b>Risk radar</b>. The flags never change orders; they tell you how much risk is building and when the bottom signals are live.</li>
+    <li><b>Money in:</b> add top-ups on <b>Portfolio</b>; each system invests them by its own rules. Change capital, fees or the start date in <b>Settings</b>.</li>
+  </ol>
+  <p class="small muted" style="margin:8px 0 0">The site refreshes at ~16:05 UK (preview), ~16:55 (confirmed), ~21:20 (after the US close: zones, radar, bottom signals) and ~00:20 (BTC). If a feed falls behind, the bar at the top says so; press Refresh data or upload a CSV in Settings.</p>
+  </details>
+</section>
 {% endblock %}

@@ -109,7 +109,7 @@ A depth tied to implied volatility helped in 2007–15 but hurt in 2016–26.
 
 The **2.5-sigma Bollinger band re-entry** was the best first-entry pattern: 8 of 23 crashes, +14% after 3 months, consistent in both eras. But it is rare and sensitive to its settings, so it is not used.
 
-**SOXX** (same rules, thresholds ×1.41): two buys raised the share up after 3 months from 73% to 91%. It is noisier, with slower recoveries, so it is not on the platform yet.
+**SOXX:** see section 3. It is studied as a flag only and is not on the platform.
 
 ---
 
@@ -147,7 +147,37 @@ Rejected alternatives:
 
 ---
 
-## 3. Method and limits
+## 3. SOXX fast-crash study (flag only, 3 Nov 2026)
+
+SOXX (semiconductors) has been the market's growth leader, so the same framework was tested on it. SOXX moves about 1.44× as much as QQQ each day.
+
+**Inputs:** the capitulation groups use SOXX's own price and volume (stretch; capitulation volume on a 2.9%+ down day; oversold), plus the market-wide groups (put/call, VXN/VIX9D, dealer gamma). The override is the same.
+
+**Two versions:**
+
+| | A: fall from the 1-year high | **B: fall from the 3-month high (preferred)** |
+|---|---|---|
+| Crash definition | −11.5% in 15 sessions, from near the 1-year high | the same fall, from near the 3-month high |
+| Crashes 2007–2026 | 16 (only 4 before 2016) | 25 |
+| Buys (skipped by the override) | 14 (2) | 20 (5) |
+| Buy 1 depth | −12% from the high | −12% from the window's high |
+| Entries within 5% of the low | 71% | 70% |
+| Further fall (median / worst) | −1.6% / −19% | −1.7% / −19% |
+| Return after 3 / 6 months | +16.1% / +24.8% | **+18.3% / +27.2%** |
+| Up after 3 months | 93% | **95%** (2016–26: 100%) |
+| Days until back above entry (median) | ~104 | **~29** |
+
+- Version A misses second-leg crashes that start below the 1-year high, such as October 2026 (SOXX went from −10% to −28%).
+- Version B was chosen after seeing A, so it is partly in-sample.
+- A depth scaled by volatility (−15% or more) missed half the crashes.
+
+**Now (3 Nov 2026):** under version B, a crash started on 30 Sep. Buy 1 came on 15 Oct and buy 2 on 22 Oct. SOXX was about 8% below the averaged entry; the low is not yet known.
+
+**Status:** research only. If added, it would be a display-only flag on the Risk radar, not part of any system.
+
+---
+
+## 4. Method and limits
 
 - **Data:** QQQ and S&P 500 daily prices and volume (Yahoo); Cboe put/call ratios (archive to 2019 plus daily reports); Cboe VIX, VIX9D and VXN; SqueezeMetrics GEX; and the platform's late-cycle radar for the override.
 - **Thresholds:** fixed, or measured against each indicator's own past year, using only data known on the day.

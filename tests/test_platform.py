@@ -11,7 +11,7 @@ from signals.strategies.base import Strategy
 
 @pytest.fixture(scope='module')
 def stored():
-    keys = ['EQQQ', 'QQQ', 'UUP', 'TLT', 'GLD', 'IRX', 'DXY', 'BTC', 'NETLIQ', 'GBPUSD']
+    keys = ['EQQQ', 'QQQ', 'UUP', 'BTC', 'GBPUSD']
     return D.load_all(keys)
 
 
@@ -281,3 +281,24 @@ def test_radar_track_scoring():
     log = {str(d.date()): {'ndx': {'level': 'AMBER' if i < 3 else 'GREEN'}} for i, d in enumerate(idx[:20])}
     r = T.score(log, px)['ndx']
     assert r['n'] == 1 and r['hits'] == 1 and r['episodes'][0]['outcome'] == 'hit'
+
+
+def test_trend_leg_off_is_a_sell(stored):
+    from signals.pipeline import _history
+    t = STRATEGIES['qqq_regime'].compute(stored)
+    ev = _history('qqq_regime', t, 2000)
+    offs = [e for e in ev if e['text'].startswith('Trend leg off')]
+    ons = [e for e in ev if e['text'].startswith('Trend leg on')]
+    assert offs and all(e['kind'] == 'SELL' for e in offs)
+    assert ons and all(e['kind'] == 'BUY' for e in ons)
+
+
+def test_value_status_not_overwritten_by_live_compute(stored):
+    s = STRATEGIES['qqq_value']
+    final = s.compute(stored)
+    live = {k: v.copy() for k, v in stored.items()}
+    q = live['QQQ']
+    extra = q.iloc[[-1]].copy(); extra.index = [q.index[-1] + pd.Timedelta(days=1)]
+    live['QQQ'] = pd.concat([q, extra * 1.05])
+    s.compute(live)                                   # a later live compute
+    assert s.status(final)['levels']['close'] == pytest.approx(float(stored['QQQ']['adj_close'].dropna().iloc[-1]))

@@ -95,7 +95,7 @@
 <button class="btn small primary" type="submit">Save</button>
 </form></details></td>{% endif %}
 </tr>{% endfor %}</tbody></table></div>
-{% if trades|length > limit %}<p class="small muted">Showing the latest {{ limit }} of {{ trades|length }} trades. Full journal on the <a href="portfolio.html#journal">Portfolio</a> page.</p>{% endif %}
+{% if trades|length > limit %}<p class="small muted">Showing the latest {{ limit }} of {{ trades|length }} trades. All trades on the <a href="portfolio.html#trades">Portfolio</a> page.</p>{% endif %}
 {% else %}<p class="muted small" style="margin:0">No trades yet.</p>{% endif %}
 {%- endmacro %}
 

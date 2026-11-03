@@ -17,29 +17,34 @@ from .charts import line_chart
 HERE = Path(__file__).parent
 
 PAPERS = [
-    {'slug': 'qqq-regime-system', 'kind': 'TRADING · NASDAQ-100', 'version': 'v1.1', 'title': 'Nasdaq-100 regime system + dollar add-on (UK: EQQQ at the London close)',
-     'desc': 'Regime detector, 50% trend leg, dip-buying leg, dollar add-on and risk flag. Traded in EQQQ (ISA, no FX fee) at the London close.',
+    {'slug': 'qqq-regime-system', 'short': 'Nasdaq trading', 'kind': 'TRADING · NASDAQ-100', 'version': 'v1.1', 'title': 'Nasdaq-100 regime system + dollar add-on (UK: EQQQ at the London close)',
+     'desc': 'Regime detector, 50% trend leg, dip-buying leg and dollar add-on. Traded in EQQQ (ISA, no FX fee) at the London close.',
      'stats': [('CAGR 2010–24*', '9.0%'), ('Max drawdown', '−14.1%'), ('QQQ research 2000–24', '10.4%')],
      'period': '*EQQQ at the London close with the dollar add-on, cash 0% · rules fitted on QQQ 1999–2024, not re-tuned',
      'ext': 'https://claude.ai/artifact/Kjtfn4jJ1JdCrynU9ubXvc'},
-    {'slug': 'qqq-value-plan', 'kind': 'INVESTING · NASDAQ-100', 'version': 'v1.2', 'title': 'Nasdaq-100 value-zone accumulation plan',
+    {'slug': 'qqq-value-plan', 'short': 'Value plan', 'kind': 'INVESTING · NASDAQ-100', 'version': 'v1.2', 'title': 'Nasdaq-100 value-zone accumulation plan',
      'desc': 'Contributions wait in cash and buy in the trend zone or the 200-week zone, plus the two-step fast-crash buys (v1.2). Never sells.',
      'stats': [('Wealth vs DCA (v1.2)', '−0.6% / −1.4%'), ('v1.1 zones only', '−4.3% / −6.2%'), ('Horizon', '10 years')],
      'period': 'Median of rolling 10-year plans started 2000–08 / 2009–16, $1,000 a month'},
-    {'slug': 'btc-trend', 'kind': 'TRADING · BTC', 'version': 'v2', 'title': 'BTC cycle trend system',
+    {'slug': 'btc-trend', 'short': 'BTC trend', 'kind': 'TRADING · BTC', 'version': 'v2', 'title': 'BTC cycle trend system',
      'desc': '30/50-day EMA crossover, flat in the post-halving bear window, half size when ADX(14) < 25 or in the mid-cycle chop phase.',
      'stats': [('CAGR 2016–26', '83%'), ('Worst fall', '−34%'), ('Held out 16+18', '38% / −24%')],
      'period': '0.40% per trade (Kraken Pro limit). Buy & hold 2016–26: 61% / −84%. Selected after extensive testing: expect less.'},
-    {'slug': 'risk-radar', 'kind': 'RISK · EARLY WARNING', 'version': 'v1', 'title': 'Risk radar: late cycle, Nasdaq crash risk, BTC leverage',
+    {'slug': 'risk-radar', 'short': 'Risk radar', 'kind': 'RISK · EARLY WARNING', 'version': 'v1', 'title': 'Risk radar: late cycle, Nasdaq crash risk, BTC leverage',
      'desc': 'Three display-only early-warning flags, with the full research behind them: what was tested, what worked, what failed, and how often each flag is right.',
      'stats': [('Late cycle, 2+ signs', '2.0× odds'), ('Nasdaq, 2+ families', '1.9× odds'), ('BTC, 2+ signs', '3.4× odds')],
      'period': 'Late cycle: S&P 1955–2026 (chosen 1955–94, checked 1995–2026). Nasdaq: 2006–2026, all years tested. BTC: 2019–2026.'},
-    {'slug': 'bottom-signals', 'kind': 'BUY SIDE · BOTTOMS', 'version': 'v1', 'title': 'Bottom signals: QQQ fast-crash plan and bear-market washout',
+    {'slug': 'bottom-signals', 'short': 'Bottom signals', 'kind': 'BUY SIDE · BOTTOMS', 'version': 'v1', 'title': 'Bottom signals: QQQ fast-crash plan and bear-market washout',
      'desc': 'Two display-only buy signals: a two-step QQQ fast-crash plan (depth, then capitulation and options/positioning groups, with a rate/late-cycle override) and the bear-market washout.',
      'stats': [('Fast crash: within 5% of low', '79%'), ('Fast crash: 3m after', '+10.3%'), ('Washout S&P 6m', '+25%')],
      'period': 'Fast crash: QQQ 2007–2026 (19 crashes). Washout: S&P 1962–2026, QQQ 1987–2026.'},
+    {'slug': 'portfolio-decisions', 'kind': 'PORTFOLIO · DECISIONS', 'version': '', 'badge': 'Record', 'title': 'Portfolio decisions and rejected ideas',
+     'desc': 'How the pots work together, the rebalancing test, the £10k-each replay from 2021, and the ideas tested and not adopted (gold system, defensive and value diversifiers).',
+     'stats': [('£30k from 2021', '£89,958'), ('Total worst fall', '−15.0%'), ('Pot correlation', '0.06')],
+     'period': 'Platform rules and fees, GBP. 2021–26 is in-sample for all three systems.'},
 ]
 CHANGELOG = [
+    ('2026-11-03', 'Platform', "v2.0: renamed Poli's Hedge Fund. Review and tidy-up: the retired risk flag and unused feeds (TLT, GLD, T-bill, dollar index, Fed liquidity) removed; radar inputs listed in Settings; daily routine on Today. Fixes: "Trend leg off" was labelled BUY in the signal history; the value plan card could show the live pre-close QQQ price as the confirmed close."),
     ('2026-11-03', 'Value plan', 'v1.2: adds the fast-crash buys (buy 1 = 50% of cash at −10.8% from the high, buy 2 = all cash on 3+ capitulation groups; skipped when the override is on). Trading system unchanged.'),
     ('2026-11-03', 'Bottom signals', 'v1 live (display only): QQQ fast-crash two-step plan with rate/late-cycle override, and the bear-market washout for S&P 500 and QQQ.'),
     ('2026-11-03', 'Risk radar', 'v1 live (display only): late-cycle, Nasdaq crash-risk and BTC leverage radars with their track records. Replaces the old 3-point risk flag on the Nasdaq system.'),
@@ -247,6 +252,7 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
     base = dict(snap=snap, pots=pots, charts=charts, today=date.today().isoformat(), health=_health(pots),
                 recent_events=events[:10], deposits=deposits, future_topups=future, live_preview=live_preview,
                 papers=[{**r, 'href': f"research/{r['slug']}.html"} for r in PAPERS], changelog=CHANGELOG,
+                rules=[(r['short'], r['version']) for r in PAPERS if r.get('short')],
                 js_ctx={'generated': snap['generated_utc'], 'repo': os.environ.get('GITHUB_REPOSITORY', 'Mattepoli94/signals-platform')})
     base['journal'] = snap.get('journal') or []
     for page in ('index', 'investing', 'trading', 'risk', 'journal', 'portfolio', 'research', 'settings'):

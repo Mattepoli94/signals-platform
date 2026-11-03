@@ -1,4 +1,4 @@
-"""Signals platform: research-exact trading and investing signals, pot tracking and alerts."""
+"""Poli's Hedge Fund (Python package `signals`): research-exact trading and investing signals, pot tracking and alerts."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -9,4 +9,5 @@ UPLOADS = DATA / 'uploads'
 STATE = ROOT / 'state'
 SITE = ROOT / 'site'
 RESEARCH = ROOT / 'research'
-__version__ = '1.1.0'
+__version__ = '2.0.0'
+BRAND = "Poli's Hedge Fund"

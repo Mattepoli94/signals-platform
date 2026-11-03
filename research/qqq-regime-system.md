@@ -30,13 +30,7 @@ Exit the dip trade at the close on the first of these:
 
 **Dollar add-on.** UUP weight = 0.5 × (1 − QQQ weight) while UUP is Trending (same definition as QQQ). Otherwise 0.
 
-**Risk flag (display only).** One point each for:
-
-- W1: 3-month T-bill yield up more than 0.5 pt over 126 sessions;
-- W2: dollar index up more than 5% over 126 sessions;
-- W3: two or more of QQQ, TLT and GLD below their 200-day SMA.
-
-0 = green, 1 = amber, 2+ = red. The flag does not change orders: acting on it did not help in tests.
+**Risk flag: retired (3 Nov 2026).** v1.0 showed a display-only 3-point flag (3-month T-bill up 0.5 pt in 6 months; dollar index up 5% in 6 months; 2+ of QQQ, TLT and GLD below their 200-day SMA). It never changed orders, because acting on it did not help in tests. The [Risk radar](risk-radar.html) replaces it. The radar research found the old flag only marked markets already under stress; it did not predict falls, so it was dropped rather than merged.
 
 Indicators: SMA = simple average of adjusted closes. RSI(2) uses Wilder smoothing. Bollinger uses the sample standard deviation.
 
@@ -64,9 +58,8 @@ Bear markets, peak to trough: 2000–02 +40% vs −83%; 2008 +0.2% vs −53%; 20
 
 **What runs now**
 
-- The same rules, applied to EQQQ's own daily closes at the London close (16:30 UK). A preview email goes out at ~16:05 with the live London price; place orders before 16:25.
+- The same rules, applied to EQQQ's own daily closes at the London close (16:30 UK). The site shows a live preview at ~16:05 with the live London price; place orders before 16:25.
 - Dollar add-on: USD cash = 0.5 × (1 − EQQQ weight) while UUP trends. UUP is judged at the latest US close before the London close. Each switch is a GBP↔USD conversion at 0.15%.
-- Risk flag: unchanged. It uses US data from the latest US close.
 
 **Test** (EQQQ 2010–Oct 2026, in GBP, rules not re-tuned, cash earning 0%). Yahoo's EQQQ history had bad prints, including weeks quoted in US cents. They were repaired against QQQ ÷ GBP/USD, and the platform does the same live.
 
@@ -85,6 +78,6 @@ EQQQ dip trades: 9.2 a year, 75.5% winners, average +0.64%, worst −5.8%. Compu
 
 ## Execution notes
 
-- Signals use the London close, so orders go in just before it: the preview email arrives at ~16:05 and the cut-off is 16:25 UK. Yahoo's London prices can be about 15 minutes delayed.
+- Signals use the London close, so orders go in just before it: the live preview appears at ~16:05 and the cut-off is 16:25 UK. Yahoo's London prices can be about 15 minutes delayed.
 - If an order is missed, trade as early as possible next session. Record the real fill (in pence) in the trade journal so the pot reflects it.
 - EQQQ pays small dividends (about 0.3–0.5% a year). They are not in the price series, so the pot slightly understates the return. CNX1 (iShares, accumulating) tracks the same index if you prefer.

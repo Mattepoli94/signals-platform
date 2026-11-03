@@ -1,7 +1,7 @@
 {
- "mode": "preclose",
- "finished_utc": "2026-11-03 16:56",
- "skipped": "outside the pre-close window (London time 16:56)",
- "alerts": null,
+ "mode": "build",
+ "finished_utc": "2026-11-03 16:59",
+ "skipped": null,
+ "alerts": [],
  "refresh": {}
 }

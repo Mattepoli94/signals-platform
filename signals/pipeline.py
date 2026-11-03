@@ -67,7 +67,7 @@ def _history(key: str, t: pd.DataFrame, n: int = 120) -> list:
         for d, r in x.iterrows():
             for col, kind in (('event_in', 'BUY'), ('event_out', 'SELL'), ('event_trend', 'TREND')):
                 if r[col]:
-                    ev.append({'date': d, 'kind': kind if kind != 'TREND' else ('BUY' if 'on' in r[col] else 'SELL'),
+                    ev.append({'date': d, 'kind': kind if kind != 'TREND' else ('BUY' if r[col].startswith('Trend leg on') else 'SELL'),
                                'text': r[col], 'price': r['raw_close'], 'price_fmt': f"£{r['raw_close'] / 100:,.2f}"})
     elif key == 'btc_trend':
         prev = None
@@ -284,9 +284,9 @@ def alerts_for(snap: dict, mode: str, now: datetime) -> list:
 def _email_html(subject: str, lines: list) -> str:
     body = ''.join(f'<p style="margin:0 0 8px">{l}</p>' if l else '<br>' for l in lines)
     return (f'<div style="font-family:Arial,sans-serif;font-size:15px;color:#0B1220;max-width:640px">'
-            f'<div style="background:#0B1220;color:#fff;padding:12px 16px;font-weight:bold">Signals</div>'
+            f'<div style="background:#0B1220;color:#fff;padding:12px 16px;font-weight:bold">&#9760; Poli&#39;s Hedge Fund</div>'
             f'<div style="padding:16px;border:1px solid #D5DBE5;border-top:0"><h2 style="font-size:18px;margin:0 0 12px">{subject}</h2>{body}'
-            f'<p style="color:#475467;font-size:12px;margin-top:16px">Signals only. Check the dashboard before acting.</p></div></div>')
+            f'<p style="color:#475467;font-size:12px;margin-top:16px">Signals only: no orders are sent. Check the dashboard before acting.</p></div></div>')
 
 
 def send_alerts(snap: dict, mode: str, now: datetime) -> list:
@@ -325,6 +325,7 @@ def run(mode: str = 'us', fetch: bool = True, email: bool = True, build: bool = 
     try:
         snap['radar'] = _clean(R.compute())
         snap['radar']['fetch'] = report.get('radar_fetch')
+        snap['radar']['feeds'] = R.feeds()
     except Exception as e:  # noqa: BLE001
         snap['radar'] = {'error': str(e)[:300], 'panels': []}
     from .journal import update as journal_update, summary as journal_summary

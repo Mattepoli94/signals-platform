@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bottom signals: QQQ fast-crash plan and bear-market washout · Signals</title>
+<title>Bottom signals: QQQ fast-crash plan and bear-market washout · Poli's Hedge Fund</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../static/app.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="../static/flag.svg">
 </head>
 <body data-root="../">
 <header class="top">
   <div class="in">
     <a class="logo" href="../index.html">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
-      Signals
+      <img src="../static/flag.svg" width="30" height="30" alt="">
+      Poli's Hedge Fund
     </a>
     <nav class="main" aria-label="Main">
       
@@ -41,7 +41,7 @@
 <div class="statusbar">
   <div class="in">
     
-    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-03"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
     
     <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
     
@@ -52,7 +52,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 16:42</span>
+    <span>Updated Tue 03 Nov 2026, 16:59</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
@@ -315,7 +315,7 @@
 - Bollinger re-entry.</p>
 <p>A depth tied to implied volatility helped in 2007–15 but hurt in 2016–26.</p>
 <p>The <strong>2.5-sigma Bollinger band re-entry</strong> was the best first-entry pattern: 8 of 23 crashes, +14% after 3 months, consistent in both eras. But it is rare and sensitive to its settings, so it is not used.</p>
-<p><strong>SOXX</strong> (same rules, thresholds ×1.41): two buys raised the share up after 3 months from 73% to 91%. It is noisier, with slower recoveries, so it is not on the platform yet.</p>
+<p><strong>SOXX:</strong> see section 3. It is studied as a flag only and is not on the platform.</p>
 <hr />
 <h2 id="2-bear-market-washout-sp-500-and-qqq">2. Bear-market washout (S&amp;P 500 and QQQ)</h2>
 <h3 id="rules_1">Rules</h3>
@@ -388,7 +388,75 @@
 - <strong>A "thrust" after the washout</strong> (+5–7% in 10–15 days): later and worse.
 - <strong>First VIX ≥ 30 or capitulation volume:</strong> too early.</p>
 <hr />
-<h2 id="3-method-and-limits">3. Method and limits</h2>
+<h2 id="3-soxx-fast-crash-study-flag-only-3-nov-2026">3. SOXX fast-crash study (flag only, 3 Nov 2026)</h2>
+<p>SOXX (semiconductors) has been the market's growth leader, so the same framework was tested on it. SOXX moves about 1.44× as much as QQQ each day.</p>
+<p><strong>Inputs:</strong> the capitulation groups use SOXX's own price and volume (stretch; capitulation volume on a 2.9%+ down day; oversold), plus the market-wide groups (put/call, VXN/VIX9D, dealer gamma). The override is the same.</p>
+<p><strong>Two versions:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A: fall from the 1-year high</th>
+<th><strong>B: fall from the 3-month high (preferred)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Crash definition</td>
+<td>−11.5% in 15 sessions, from near the 1-year high</td>
+<td>the same fall, from near the 3-month high</td>
+</tr>
+<tr>
+<td>Crashes 2007–2026</td>
+<td>16 (only 4 before 2016)</td>
+<td>25</td>
+</tr>
+<tr>
+<td>Buys (skipped by the override)</td>
+<td>14 (2)</td>
+<td>20 (5)</td>
+</tr>
+<tr>
+<td>Buy 1 depth</td>
+<td>−12% from the high</td>
+<td>−12% from the window's high</td>
+</tr>
+<tr>
+<td>Entries within 5% of the low</td>
+<td>71%</td>
+<td>70%</td>
+</tr>
+<tr>
+<td>Further fall (median / worst)</td>
+<td>−1.6% / −19%</td>
+<td>−1.7% / −19%</td>
+</tr>
+<tr>
+<td>Return after 3 / 6 months</td>
+<td>+16.1% / +24.8%</td>
+<td><strong>+18.3% / +27.2%</strong></td>
+</tr>
+<tr>
+<td>Up after 3 months</td>
+<td>93%</td>
+<td><strong>95%</strong> (2016–26: 100%)</td>
+</tr>
+<tr>
+<td>Days until back above entry (median)</td>
+<td>~104</td>
+<td><strong>~29</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Version A misses second-leg crashes that start below the 1-year high, such as October 2026 (SOXX went from −10% to −28%).</li>
+<li>Version B was chosen after seeing A, so it is partly in-sample.</li>
+<li>A depth scaled by volatility (−15% or more) missed half the crashes.</li>
+</ul>
+<p><strong>Now (3 Nov 2026):</strong> under version B, a crash started on 30 Sep. Buy 1 came on 15 Oct and buy 2 on 22 Oct. SOXX was about 8% below the averaged entry; the low is not yet known.</p>
+<p><strong>Status:</strong> research only. If added, it would be a display-only flag on the Risk radar, not part of any system.</p>
+<hr />
+<h2 id="4-method-and-limits">4. Method and limits</h2>
 <ul>
 <li><strong>Data:</strong> QQQ and S&amp;P 500 daily prices and volume (Yahoo); Cboe put/call ratios (archive to 2019 plus daily reports); Cboe VIX, VIX9D and VXN; SqueezeMetrics GEX; and the platform's late-cycle radar for the override.</li>
 <li><strong>Thresholds:</strong> fixed, or measured against each indicator's own past year, using only data known on the day.</li>
@@ -398,9 +466,9 @@
 </ul></article>
 
 </main>
-<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 16:42", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 16:59", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="../static/app.js"></script>
 </body>
 </html>

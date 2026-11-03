@@ -50,13 +50,23 @@
 
 <section class="card" id="data" aria-label="Data">
   <h2>Data</h2>
-  <p class="note">Free daily data from Yahoo Finance (prices, FX) and FRED (Fed liquidity). Downloaded automatically after each close; press Refresh to download now.</p>
+  <p class="note">Free daily data. <b>System prices</b> come from Yahoo Finance and are downloaded after each close (press Refresh to download now). If a feed is behind, upload a CSV below.</p>
   <div class="scroll" style="margin-top:12px"><table class="t"><thead><tr><th>Feed</th><th>Source</th><th class="n">Last close</th><th class="n">Expected</th><th>Status</th></tr></thead><tbody>
   {% for f in snap.freshness %}<tr><td><b>{{ f.key }}</b> <span class="small muted">{{ f.name }}</span></td><td>{{ f.source }}</td><td class="n">{{ f.last }}</td><td class="n">{{ f.expected }}</td>
   <td><span class="pill {{ {'ok':'t-green','stale':'t-amber','missing':'t-red'}[f.status] }}">{{ f.status }}</span></td></tr>{% endfor %}</tbody></table></div>
   {% if snap.refresh %}{% set errs = snap.refresh.items()|selectattr('1.ok','false')|list %}{% if errs %}<p class="banner warn small">Last download failed for: {% for k, r in errs %}{{ k }} ({{ r.error[:80] }}){% if not loop.last %}; {% endif %}{% endfor %}. Upload a CSV below if it keeps failing.</p>{% endif %}{% endif %}
+  {% set RF = (snap.radar or {}).get('feeds') or [] %}
+  {% if RF %}
+  <h3 style="margin:18px 0 4px">Risk radar and bottom-signal inputs</h3>
+  <p class="small muted" style="margin:0 0 8px">Downloaded after the US close and after the BTC close. Monthly series lag by up to six weeks; that is normal.</p>
+  <div class="scroll"><table class="t"><thead><tr><th>Input</th><th>Source</th><th>Updates</th><th class="n">Latest data</th><th>Last download</th></tr></thead><tbody>
+  {% set FR = (snap.radar or {}).get('fetch') or {} %}
+  {% for f in RF %}{% set r = FR.get(f.key) if FR else none %}<tr><td>{{ f.what }}</td><td>{{ f.source }}</td><td>{{ f.freq }}</td><td class="n">{{ f.last or '—' }}</td>
+  <td>{% if r is none %}<span class="small muted">—</span>{% elif r is string and r.startswith('failed') %}<span class="pill t-amber" title="{{ r }}">failed</span>{% else %}<span class="pill t-green">ok</span>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% endif %}
   <h3 style="margin:18px 0 8px">Upload a CSV</h3>
-  <p class="small muted" style="margin:0 0 10px">Accepts Yahoo, Investing.com, Nasdaq.com and FRED exports (needs a date and a close/price column). Uploaded rows replace stored rows on the same dates.</p>
+  <p class="small muted" style="margin:0 0 10px">Accepts Yahoo, Investing.com, Nasdaq.com and FRED exports for the system prices (needs a date and a close/price column). Uploaded rows replace stored rows on the same dates.</p>
   <form id="upload" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
     <label class="f">Asset<select name="asset" required>{% for a in snap.assets %}<option value="{{ a.key }}">{{ a.key }} · {{ a.name }}</option>{% endfor %}</select></label>
     <label class="f">File<input type="file" name="file" accept=".csv,text/csv" required style="padding-top:8px"></label>

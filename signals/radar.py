@@ -130,6 +130,38 @@ def _multpl(slug) -> pd.Series:
     return s
 
 
+FEEDS = [  # file, what, source, how often
+    ('yahoo_GSPC', 'S&P 500 index', 'Yahoo', 'daily'),
+    ('yahoo_QQEW', 'Nasdaq-100 equal weight ETF (breadth)', 'Yahoo', 'daily'),
+    ('yahoo_TNX', '10-year Treasury yield', 'Yahoo', 'daily'),
+    ('yahoo_IRX', '3-month T-bill yield', 'Yahoo', 'daily'),
+    ('cboe_VIX', 'VIX', 'Cboe', 'daily'),
+    ('cboe_VIX9D', 'VIX9D (9-day VIX)', 'Cboe', 'daily'),
+    ('cboe_VXN', 'Nasdaq-100 VIX (VXN)', 'Cboe', 'daily'),
+    ('cboe_DSPX', 'S&P 500 dispersion index', 'Cboe', 'daily'),
+    ('putcall_total', 'Total and equity put/call ratios', 'Cboe', 'daily'),
+    ('squeeze', 'Dark-pool index (DIX) and dealer gamma (GEX)', 'SqueezeMetrics', 'daily'),
+    ('margin_debt', 'Margin debt', 'FINRA', 'monthly'),
+    ('cape', 'Shiller CAPE', 'multpl', 'monthly'),
+    ('inflation', 'CPI inflation', 'multpl', 'monthly'),
+    ('btc_funding', 'BTC perpetual funding rate', 'Deribit', 'daily'),
+    ('cftc_btc', 'CME bitcoin futures positioning', 'CFTC', 'weekly'),
+]
+
+
+def feeds() -> list:
+    """Last stored date of every radar input, for the Settings page."""
+    out = []
+    for name, what, src, freq in FEEDS:
+        df = _read(name)
+        last = df.index[-1].strftime('%Y-%m-%d') if len(df) else None
+        step = {'putcall_total': 'cboe put/call', 'squeeze': 'squeezemetrics gex/dix', 'margin_debt': 'finra margin',
+                'cape': 'multpl cape', 'inflation': 'multpl inflation', 'btc_funding': 'deribit funding',
+                'cftc_btc': 'cftc bitcoin'}.get(name, name.replace('_', ' '))
+        out.append({'key': step, 'what': what, 'source': src, 'freq': freq, 'last': last})
+    return out
+
+
 def fetch(now: datetime | None = None) -> dict:
     """Download/extend every radar input. Each source is independent; failures are reported, not raised."""
     from .data import fetch_yahoo

@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nasdaq-100 regime system + dollar add-on (UK: EQQQ at the London close) · Signals</title>
+<title>Nasdaq-100 regime system + dollar add-on (UK: EQQQ at the London close) · Poli's Hedge Fund</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../static/app.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="../static/flag.svg">
 </head>
 <body data-root="../">
 <header class="top">
   <div class="in">
     <a class="logo" href="../index.html">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
-      Signals
+      <img src="../static/flag.svg" width="30" height="30" alt="">
+      Poli's Hedge Fund
     </a>
     <nav class="main" aria-label="Main">
       
@@ -41,7 +41,7 @@
 <div class="statusbar">
   <div class="in">
     
-    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-03"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
     
     <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
     
@@ -52,7 +52,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 16:42</span>
+    <span>Updated Tue 03 Nov 2026, 16:59</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="../settings.html#data">Upload CSV</a></span>
@@ -99,13 +99,7 @@
 </ul>
 <p><strong>QQQ weight</strong> = trend + dip × (1 − trend).</p>
 <p><strong>Dollar add-on.</strong> UUP weight = 0.5 × (1 − QQQ weight) while UUP is Trending (same definition as QQQ). Otherwise 0.</p>
-<p><strong>Risk flag (display only).</strong> One point each for:</p>
-<ul>
-<li>W1: 3-month T-bill yield up more than 0.5 pt over 126 sessions;</li>
-<li>W2: dollar index up more than 5% over 126 sessions;</li>
-<li>W3: two or more of QQQ, TLT and GLD below their 200-day SMA.</li>
-</ul>
-<p>0 = green, 1 = amber, 2+ = red. The flag does not change orders: acting on it did not help in tests.</p>
+<p><strong>Risk flag: retired (3 Nov 2026).</strong> v1.0 showed a display-only 3-point flag (3-month T-bill up 0.5 pt in 6 months; dollar index up 5% in 6 months; 2+ of QQQ, TLT and GLD below their 200-day SMA). It never changed orders, because acting on it did not help in tests. The <a href="risk-radar.html">Risk radar</a> replaces it. The radar research found the old flag only marked markets already under stress; it did not predict falls, so it was dropped rather than merged.</p>
 <p>Indicators: SMA = simple average of adjusted closes. RSI(2) uses Wilder smoothing. Bollinger uses the sample standard deviation.</p>
 <h2 id="original-research-results-qqq-at-the-us-close-3-bp-costs-cash-at-the-t-bill-rate">Original research results (QQQ at the US close, 3 bp costs, cash at the T-bill rate)</h2>
 <table>
@@ -151,9 +145,8 @@
 <p><strong>Why it changed.</strong> The fee is charged on the value of every trade, and this system trades a lot. The Nasdaq legs alone trade about 15–22 times the pot each year. The dollar add-on mirrors every Nasdaq change, so the total is about 35 times the pot a year. A 0.15% currency fee therefore costs about 5% a year, while the average dip trade only earns +0.7% to +1.0%. Trading 212 charges the fee only when it converts currency. EQQQ is priced in pence, so buying it from GBP in the ISA has no FX fee; the cost is just the bid/ask spread.</p>
 <p><strong>What runs now</strong></p>
 <ul>
-<li>The same rules, applied to EQQQ's own daily closes at the London close (16:30 UK). A preview email goes out at ~16:05 with the live London price; place orders before 16:25.</li>
+<li>The same rules, applied to EQQQ's own daily closes at the London close (16:30 UK). The site shows a live preview at ~16:05 with the live London price; place orders before 16:25.</li>
 <li>Dollar add-on: USD cash = 0.5 × (1 − EQQQ weight) while UUP trends. UUP is judged at the latest US close before the London close. Each switch is a GBP↔USD conversion at 0.15%.</li>
-<li>Risk flag: unchanged. It uses US data from the latest US close.</li>
 </ul>
 <p><strong>Test</strong> (EQQQ 2010–Oct 2026, in GBP, rules not re-tuned, cash earning 0%). Yahoo's EQQQ history had bad prints, including weeks quoted in US cents. They were repaired against QQQ ÷ GBP/USD, and the platform does the same live.</p>
 <table>
@@ -210,15 +203,15 @@
 <p>EQQQ dip trades: 9.2 a year, 75.5% winners, average +0.64%, worst −5.8%. Computing the signals on EQQQ converted to USD did worse (6.7%). So did timing the dollar with its own trend against the pound (7.3%) instead of UUP's.</p>
 <h2 id="execution-notes">Execution notes</h2>
 <ul>
-<li>Signals use the London close, so orders go in just before it: the preview email arrives at ~16:05 and the cut-off is 16:25 UK. Yahoo's London prices can be about 15 minutes delayed.</li>
+<li>Signals use the London close, so orders go in just before it: the live preview appears at ~16:05 and the cut-off is 16:25 UK. Yahoo's London prices can be about 15 minutes delayed.</li>
 <li>If an order is missed, trade as early as possible next session. Record the real fill (in pence) in the trade journal so the pot reflects it.</li>
 <li>EQQQ pays small dividends (about 0.3–0.5% a year). They are not in the price series, so the pot slightly understates the return. CNX1 (iShares, accumulating) tracks the same index if you prefer.</li>
 </ul></article>
 
 </main>
-<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 16:42", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 16:59", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="../static/app.js"></script>
 </body>
 </html>

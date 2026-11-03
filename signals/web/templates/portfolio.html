@@ -47,9 +47,9 @@
   </tbody></table></div>
 </section>
 
-<section class="card" id="journal" aria-label="Trade journal">
-  <h2>Trade journal</h2>
-  <p class="note">Every trade the systems made for your pots, at the close price. If your real fill was different, record it and the pot is re-valued with your price.</p>
+<section class="card" id="trades" aria-label="Trades by pot">
+  <h2>Trades by pot</h2>
+  <p class="note">Every trade the systems made for your pots, at the close price. A fill recorded here or in the <a href="journal.html">Journal</a> is the same record: the pot is re-valued with your price.</p>
   {% for p in pots %}
   <h3 style="margin:18px 0 8px">{{ p.name }}</h3>
   {{ m.trades_table(p.trades, 200) }}

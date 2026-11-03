@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Settings · Signals</title>
+<title>Settings · Poli's Hedge Fund</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="static/app.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B1220'/%3E%3Cpolyline points='4 16 9 11 13 14 20 7' fill='none' stroke='%2360A5FA' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="static/flag.svg">
 </head>
 <body data-root="">
 <header class="top">
   <div class="in">
     <a class="logo" href="index.html">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="15 7 21 7 21 13"></polyline></svg>
-      Signals
+      <img src="static/flag.svg" width="30" height="30" alt="">
+      Poli's Hedge Fund
     </a>
     <nav class="main" aria-label="Main">
       
@@ -41,7 +41,7 @@
 <div class="statusbar">
   <div class="in">
     
-    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-02"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-03"><span class="dot ok"></span>EQQQ <span class="mono">02 Nov</span></span>
     
     <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-02"><span class="dot ok"></span>QQQ <span class="mono">02 Nov</span></span>
     
@@ -52,7 +52,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 16:42</span>
+    <span>Updated Tue 03 Nov 2026, 16:59</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -127,33 +127,52 @@
 
 <section class="card" id="data" aria-label="Data">
   <h2>Data</h2>
-  <p class="note">Free daily data from Yahoo Finance (prices, FX) and FRED (Fed liquidity). Downloaded automatically after each close; press Refresh to download now.</p>
+  <p class="note">Free daily data. <b>System prices</b> come from Yahoo Finance and are downloaded after each close (press Refresh to download now). If a feed is behind, upload a CSV below.</p>
   <div class="scroll" style="margin-top:12px"><table class="t"><thead><tr><th>Feed</th><th>Source</th><th class="n">Last close</th><th class="n">Expected</th><th>Status</th></tr></thead><tbody>
-  <tr><td><b>EQQQ</b> <span class="small muted">Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence)</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
+  <tr><td><b>EQQQ</b> <span class="small muted">Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence)</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-03</td>
   <td><span class="pill t-green">ok</span></td></tr><tr><td><b>QQQ</b> <span class="small muted">Invesco QQQ (Nasdaq-100, US)</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
   <td><span class="pill t-green">ok</span></td></tr><tr><td><b>UUP</b> <span class="small muted">Invesco DB US Dollar Index Bullish (signal only)</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
   <td><span class="pill t-green">ok</span></td></tr><tr><td><b>BTC</b> <span class="small muted">Bitcoin (spot, USD)</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
-  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>TLT</b> <span class="small muted">iShares 20+ Year Treasury Bond</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
-  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>GLD</b> <span class="small muted">SPDR Gold Shares</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
-  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>IRX</b> <span class="small muted">13-week T-bill yield</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
-  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>DXY</b> <span class="small muted">US dollar index</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
   <td><span class="pill t-green">ok</span></td></tr><tr><td><b>GBPUSD</b> <span class="small muted">GBP/USD</span></td><td>yahoo</td><td class="n">2026-11-02</td><td class="n">2026-11-02</td>
-  <td><span class="pill t-green">ok</span></td></tr><tr><td><b>NETLIQ</b> <span class="small muted">Fed net liquidity (WALCL - TGA - RRP), $bn</span></td><td>fred</td><td class="n">2026-10-30</td><td class="n">2026-10-24</td>
   <td><span class="pill t-green">ok</span></td></tr></tbody></table></div>
-  <p class="banner warn small">Last download failed for: NETLIQ (FRED download failed for WALCL: HTTPSConnectionPool(host=&#39;fred.stlouisfed.org&#39;, ). Upload a CSV below if it keeps failing.</p>
+  
+  
+  
+  <h3 style="margin:18px 0 4px">Risk radar and bottom-signal inputs</h3>
+  <p class="small muted" style="margin:0 0 8px">Downloaded after the US close and after the BTC close. Monthly series lag by up to six weeks; that is normal.</p>
+  <div class="scroll"><table class="t"><thead><tr><th>Input</th><th>Source</th><th>Updates</th><th class="n">Latest data</th><th>Last download</th></tr></thead><tbody>
+  
+  <tr><td>S&amp;P 500 index</td><td>Yahoo</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>Nasdaq-100 equal weight ETF (breadth)</td><td>Yahoo</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>10-year Treasury yield</td><td>Yahoo</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>3-month T-bill yield</td><td>Yahoo</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>VIX</td><td>Cboe</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>VIX9D (9-day VIX)</td><td>Cboe</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>Nasdaq-100 VIX (VXN)</td><td>Cboe</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>S&amp;P 500 dispersion index</td><td>Cboe</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>Total and equity put/call ratios</td><td>Cboe</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>Dark-pool index (DIX) and dealer gamma (GEX)</td><td>SqueezeMetrics</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>Margin debt</td><td>FINRA</td><td>monthly</td><td class="n">2026-09-01</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>Shiller CAPE</td><td>multpl</td><td>monthly</td><td class="n">2026-10-30</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>CPI inflation</td><td>multpl</td><td>monthly</td><td class="n">2026-09-01</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>BTC perpetual funding rate</td><td>Deribit</td><td>daily</td><td class="n">2026-11-02</td>
+  <td><span class="small muted">—</span></td></tr><tr><td>CME bitcoin futures positioning</td><td>CFTC</td><td>weekly</td><td class="n">2026-10-27</td>
+  <td><span class="small muted">—</span></td></tr>
+  </tbody></table></div>
+  
   <h3 style="margin:18px 0 8px">Upload a CSV</h3>
-  <p class="small muted" style="margin:0 0 10px">Accepts Yahoo, Investing.com, Nasdaq.com and FRED exports (needs a date and a close/price column). Uploaded rows replace stored rows on the same dates.</p>
+  <p class="small muted" style="margin:0 0 10px">Accepts Yahoo, Investing.com, Nasdaq.com and FRED exports for the system prices (needs a date and a close/price column). Uploaded rows replace stored rows on the same dates.</p>
   <form id="upload" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
-    <label class="f">Asset<select name="asset" required><option value="EQQQ">EQQQ · Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence)</option><option value="QQQ">QQQ · Invesco QQQ (Nasdaq-100, US)</option><option value="UUP">UUP · Invesco DB US Dollar Index Bullish (signal only)</option><option value="BTC">BTC · Bitcoin (spot, USD)</option><option value="TLT">TLT · iShares 20+ Year Treasury Bond</option><option value="GLD">GLD · SPDR Gold Shares</option><option value="IRX">IRX · 13-week T-bill yield</option><option value="DXY">DXY · US dollar index</option><option value="GBPUSD">GBPUSD · GBP/USD</option><option value="NETLIQ">NETLIQ · Fed net liquidity (WALCL - TGA - RRP), $bn</option></select></label>
+    <label class="f">Asset<select name="asset" required><option value="EQQQ">EQQQ · Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence)</option><option value="QQQ">QQQ · Invesco QQQ (Nasdaq-100, US)</option><option value="UUP">UUP · Invesco DB US Dollar Index Bullish (signal only)</option><option value="BTC">BTC · Bitcoin (spot, USD)</option><option value="GBPUSD">GBPUSD · GBP/USD</option></select></label>
     <label class="f">File<input type="file" name="file" accept=".csv,text/csv" required style="padding-top:8px"></label>
     <button class="btn primary" type="submit">Upload</button>
   </form>
 </section>
 
 </main>
-<footer>Signals only: no orders are sent anywhere. Rules version 1.1.0. Past and backtested results do not guarantee future results.</footer>
+<footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 16:42", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-03 16:59", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>

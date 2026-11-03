@@ -79,10 +79,11 @@ class QQQValue(Strategy):
                 if len(nxt):
                     t.loc[nxt[0], col] = True
         t['us_date'] = lag_to(pd.Series(us.index, index=us.index), idx)
+        t.attrs['us'], t.attrs['fast'] = us, self.fast   # kept with the table: a later live compute must not overwrite it
         return t
 
     def status(self, t: pd.DataFrame, pot: dict | None = None, provisional: bool = False) -> dict:
-        us = self.us
+        us = t.attrs.get('us', self.us)
         x = us.iloc[-1]
         d = us.index[-1]
         next_lse = add_trading_days(max(d, t.index[-1]), 1, 'lse') if d >= t.index[-1] else t.index[-1]
@@ -95,7 +96,7 @@ class QQQValue(Strategy):
         n_w2 = int(w2_ok) + int(x['close'] > x['s50'])
         would = cash * frac if pd.notna(cash) else np.nan
         when = f'the {next_lse:%a %d %b} London close'
-        fast = self.fast or {}
+        fast = t.attrs.get('fast', self.fast) or {}
         if bool(x.get('fast_b2', False)):
             action, sub = 'BUY', f'fast-crash buy 2: all cash in EQQQ at {next_lse:%d %b} London close'
             plain = (f"Fast-crash buy 2 on {d:%d %b}: QQQ made a lower close with 3+ capitulation groups on. "
@@ -132,7 +133,7 @@ class QQQValue(Strategy):
                 check('QQQ close above 50-day average', fmt_usd(x['close']), f"above {fmt_usd(x['s50'])}", x['close'] > x['s50'])]},
         ]
         if fast.get('level') in ('WATCH', 'BUY 1', 'SKIP'):
-            plain += ' Fast-crash plan: ' + fast['summary']
+            plain += ' Fast-crash plan: ' + fast['summary'][0].lower() + fast['summary'][1:]
         groups.append({'title': 'Fast-crash buys (v1.2)', 'note': f"plan {fast.get('level', '—')}", 'met': fast.get('level') in ('BUY 1', 'BUY 2'),
                        'rows': [check(sg['label'], sg['value'], sg['trigger'], sg['on']) for sg in fast.get('signs', [])] +
                                ([check('Capitulation groups on (buy 2 needs 3 and a lower close)', f"{fast['groups_on']} of 6", '3 or more',

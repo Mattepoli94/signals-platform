@@ -47,7 +47,7 @@ class BTCTrend(Strategy):
     def __init__(self):
         super().__init__(
             key='btc_trend', name='BTC cycle trend system', kind='weights', page='trading',
-            assets=('BTC',), inputs=('BTC', 'DXY', 'NETLIQ'), calendar_asset='BTC', band=1.0,
+            assets=('BTC',), inputs=('BTC',), calendar_asset='BTC', band=1.0,
             params=dict(fast=30, slow=50, bear=(540, 900), chop=(1080, 1260), adx_n=14, adx_min=25, reduced=0.5),
             paper='research/btc-trend.html',
             timing='Checks at the daily close, 00:00 UTC. Trade soon after with a limit order (Kraken Pro) or at the next session (ETF).',
@@ -93,16 +93,6 @@ class BTCTrend(Strategy):
                     why.append('mid-cycle chop phase ' + ('started' if r['chop_window'] else 'ended'))
                 ev.append('Size ' + ('halved' if r['size'] < pr['size'] else 'back to full') + (': ' + ', '.join(why) if why else ''))
         t['event'] = ev
-        # context, display only
-        for k, n, col in (('DXY', 182, 'dxy_6m'), ('NETLIQ', 91, 'netliq_3m')):
-            dd = data.get(k)
-            if dd is not None and len(dd):
-                s = dd['adj_close'].dropna()
-                s.index = s.index + pd.Timedelta(days=1)
-                s = s.reindex(s.index.union(P.index)).ffill().reindex(P.index)
-                t[col] = (s / s.shift(n) - 1) * 100
-            else:
-                t[col] = np.nan
         return t
 
     def status(self, t: pd.DataFrame, pot: dict | None = None, provisional: bool = False) -> dict:
@@ -176,9 +166,9 @@ class BTCTrend(Strategy):
             {'kind': 'NO FIXED STOP', 'tone': 'grey', 'text': 'No stop loss or profit target: the cross, the bear window and the size rules are the only exits.'},
         ]
         extra = [
-            {'label': 'Dollar index, 6-month change', 'value': fmt_pct(x['dxy_6m']), 'tone': ''},
-            {'label': 'Fed net liquidity, 3-month change', 'value': fmt_pct(x['netliq_3m']), 'tone': ''},
             {'label': 'Next halving (est.)', 'value': f'{NEXT_HALVING_EST:%b %Y}', 'tone': ''},
+            {'label': 'Next bear window (flat)', 'value': f'from ~{nxt_bear:%b %Y}', 'tone': ''},
+            {'label': 'Leverage warning', 'value': 'see Risk radar', 'tone': ''},
         ]
         return {
             'key': self.key, 'name': self.name, 'asof': d.strftime('%Y-%m-%d'), 'provisional': provisional,
@@ -188,8 +178,8 @@ class BTCTrend(Strategy):
                       {'text': phase, 'tone': tone},
                       {'text': f"ADX {x['adx']:.0f} · size {x['size']:.0%}", 'tone': 'blue' if not x['weak_trend'] else 'amber'}],
             'groups': groups, 'orders': orders,
-            'extra_title': 'Context · display only', 'extra': extra,
-            'extra_note': 'Dollar and liquidity were tested as filters in v1 and dropped.',
+            'extra_title': 'Calendar · display only', 'extra': extra,
+            'extra_note': 'Dollar and Fed-liquidity filters were tested in v1 and dropped, so they are no longer shown.',
             'targets': {'BTC': w}, 'prev_targets': {'BTC': w_prev},
             'levels': {'close': float(x['close']), 'ema_fast': float(x['ema_fast']), 'ema_slow': float(x['ema_slow']),
                        'adx': float(x['adx']), 'size': float(x['size'])},

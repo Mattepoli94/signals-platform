@@ -160,3 +160,8 @@ footer{max-width:1240px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:v
 .live-s>div{background:#fff;border:1px solid var(--line3);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column}
 .live-s .pv{font-family:var(--mono);font-size:20px;font-weight:700}
 .live-s .pl{font-size:12px;color:var(--muted)}
+.show-sm{display:none}
+@media (max-width:640px){.hide-sm{display:none}.show-sm{display:inline}}
+details.routine summary{cursor:pointer;list-style-position:outside}
+.logo img{display:block}
+.logo{white-space:nowrap}

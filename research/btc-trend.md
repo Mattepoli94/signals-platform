@@ -17,10 +17,10 @@ Every day at the 00:00 UTC daily close:
 1. **Trend.** Be in the market while the **30-day EMA** of daily closes is above the **50-day EMA**. Buy at the close when it crosses above; sell everything at the close when it crosses below.
 2. **Bear window.** From **day 541 to day 900 after each halving**, hold no BTC: sell if invested, and make no new entries. When the window ends, buy at the first close if the 30-day EMA is above the 50-day.
 3. **Size.** Hold **100% of the BTC pot**, except **50%** when either:
-   - **ADX(14)** is below 25 (Wilder's ADX on daily highs, lows and closes: the trend has no strength), or
-   - it is **day 1,081 to 1,260 after the halving** (mid-cycle chop phase).
+    - **ADX(14)** is below 25 (Wilder's ADX on daily highs, lows and closes: the trend has no strength), or
+    - it is **day 1,081 to 1,260 after the halving** (mid-cycle chop phase).
 
-   Rebalance at the close when the size changes.
+    Rebalance at the close when the size changes.
 4. **No other exits.** No stop loss and no profit target. The cross, the bear window and the size rules are the only exits.
 
 The EMAs are standard exponential moving averages (span 30 and 50) of daily closes. Days are counted from the halvings of 28 Nov 2012, 9 Jul 2016, 11 May 2020 and 20 Apr 2024. The next halving is expected around April 2028.
