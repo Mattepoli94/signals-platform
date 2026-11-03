@@ -41,7 +41,7 @@ alerts:
   daily_summary: true
   preclose_warning: true
 manual:
-  capital: 857.0
+  capital: 1000.0
   target_share_pct: 30.0
   risk_pct: 0.5
   risk_base: manual
