@@ -1,37 +1,14 @@
-import requests, time, re, os, json, pandas as pd
-os.makedirs('research-data/raw', exist_ok=True)
+import requests, re
 H={'User-Agent':'Mozilla/5.0 (research script)'}
-def get(u,**k):
-    r=requests.get(u,headers=H,timeout=60,**k); print('GET',u[:120],r.status_code,len(r.content),r.headers.get('content-type')); return r
-# Cboe index histories
-for s in ['DSPX','COR3M','COR1M','COR10D','VIX','SKEW','VVIX','VIX9D','VXN','VIX1D','VIX3M','VIX6M','VXD','RVX','VOLI']:
+for u in ['https://www.multpl.com/shiller-pe/table/by-month','https://www.multpl.com/inflation/table/by-month',
+          'https://www.finra.org/sites/default/files/2021-03/margin-statistics.xlsx',
+          'https://www.cftc.gov/files/dea/history/fut_fin_txt_2026.zip',
+          'https://www.deribit.com/api/v2/public/get_funding_rate_history?instrument_name=BTC-PERPETUAL&start_timestamp=1761955200000&end_timestamp=1762128000000',
+          'https://cdn.cboe.com/data/us/options/market_statistics/daily/2026-11-02_daily_options',
+          'https://cdn.cboe.com/api/global/us_indices/daily_prices/DSPX_History.csv']:
     try:
-        r=get(f'https://cdn.cboe.com/api/global/us_indices/daily_prices/{s}_History.csv')
-        if r.ok and len(r.content)>500: open(f'research-data/raw/cboe_idx_{s}.csv','wb').write(r.content)
-    except Exception as e: print('ERR',s,e)
-# NAAIM
-try:
-    r=get('https://naaim.org/programs/naaim-exposure-index/')
-    links=re.findall(r'href="([^"]+\.xlsx?)"',r.text); print('naaim links',links[:5])
-    if links:
-        r2=get(links[0]); open('research-data/raw/naaim.xlsx','wb').write(r2.content)
-except Exception as e: print('ERR naaim',e)
-# Cboe daily options stats (put/call) - probe then loop
-def daily(d):
-    for u in [f'https://cdn.cboe.com/data/us/options/market_statistics/daily/{d}_daily_options']:
-        r=requests.get(u,headers=H,timeout=30)
-        if r.ok:
-            try: return r.json()
-            except Exception: return None
-    return None
-probe=daily('2024-03-01'); print('probe', None if probe is None else str(probe)[:1500])
-if probe is not None:
-    out={}
-    for d in pd.bdate_range('2019-09-01', pd.Timestamp.today()):
-        ds=d.strftime('%Y-%m-%d')
-        try:
-            j=daily(ds)
-            if j: out[ds]=j
-        except Exception as e: print('ERR',ds,e)
-        time.sleep(0.15)
-    json.dump(out,open('research-data/raw/cboe_daily.json','w')); print('cboe daily days',len(out))
+        r=requests.get(u,headers=H,timeout=40); t=r.text if 'text' in (r.headers.get('content-type') or '') or 'json' in (r.headers.get('content-type') or '') else ''
+        print('PROBE',r.status_code,len(r.content),u[:90])
+        if 'multpl' in u:
+            rows=re.findall(r'<td>([A-Z][a-z]{2} \d{1,2}, \d{4})</td>\s*<td>\s*(?:&#x2002;)?\s*([\d.]+)',t); print('PROBE rows',len(rows),rows[:3],rows[-2:])
+    except Exception as e: print('PROBE ERR',u[:60],e)
