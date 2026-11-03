@@ -7,6 +7,8 @@ at the next London close, so no currency conversion is needed. Never sells.
   200-week zone  close 0-15% above its 1,000-day SMA AND close > 50-day SMA.
   Buy            50% of the cash, at most once every 10 trading days.
   Safety cap     on the first trading day of a month, cash above 24 x the monthly top-up is invested.
+  Fast-crash buys (v1.2, from signals/bottoms.py, same rules as the Risk radar plan; skipped when the
+                 override is on): buy 1 = 50% of the cash, buy 2 = all of the cash. They ignore the cooldown.
 """
 from __future__ import annotations
 
@@ -27,7 +29,7 @@ class QQQValue(Strategy):
             params=dict(frac=0.5, cooldown=10, cap_months=24, z_window=1260),
             paper='research/qqq-value-plan.html',
             timing='Zones are checked at the US close (QQQ). A buy is placed in EQQQ at the next London close (order before 16:25 UK).',
-            tested={'note': 'Median 10-year plan from 2000: account drawdown -34% vs -49% for monthly buying; wealth -5.4%.'})
+            tested={'note': 'v1.2: 10-year plans from 2000: wealth vs monthly buying -0.6% (starts 2000-08) / -1.4% (2009-16), account drawdown -42% / -29% vs -44% / -30%.'})
         self.us = None
 
     def compute_us(self, data: dict) -> pd.DataFrame:
@@ -41,6 +43,24 @@ class QQQValue(Strategy):
         t['w200_zone'] = (t['vs200w'] > 0) & (t['vs200w'] <= 15) & (c > t['s50'])
         t['zone'] = t['trend_zone'] | t['w200_zone']
         t['trend_line'] = _trend_line(c, self.params['z_window'])
+        t['fast_b1'] = False
+        t['fast_b2'] = False
+        self.fast = None
+        try:
+            from .. import bottoms
+            X, L, ovr, cnt, plans = bottoms.fast_crash_plan()
+            for p in plans:
+                if p['skipped']:
+                    continue
+                if p['buy1'] is not None and p['buy1'] in t.index:
+                    t.loc[p['buy1'], 'fast_b1'] = True
+                if p['buy2'] is not None and p['buy2'] in t.index:
+                    t.loc[p['buy2'], 'fast_b2'] = True
+            panel = bottoms.fast_panel()
+            self.fast = {'level': panel['level'], 'summary': panel['summary'], 'signs': panel['signs'][:4],
+                         'groups_on': int(panel['score']) if panel.get('score') == panel.get('score') else None}
+        except Exception as e:  # noqa: BLE001  (radar data missing: plan runs without fast-crash buys)
+            self.fast = {'level': 'NO DATA', 'summary': f'Fast-crash data unavailable: {e}'[:200], 'signs': [], 'groups_on': None}
         return t
 
     def compute(self, data: dict) -> pd.DataFrame:
@@ -52,6 +72,12 @@ class QQQValue(Strategy):
         t['close'] = eq['close'].reindex(idx)              # EQQQ, pence (trade price)
         for col in ('trend_zone', 'w200_zone', 'zone'):
             t[col] = lag_to(us[col].astype(float), idx).fillna(0).astype(bool)
+        for col in ('fast_b1', 'fast_b2'):                   # one-off events: first London session after the US close
+            t[col] = False
+            for d in us.index[us[col].astype(bool)]:
+                nxt = idx[idx > d]
+                if len(nxt):
+                    t.loc[nxt[0], col] = True
         t['us_date'] = lag_to(pd.Series(us.index, index=us.index), idx)
         return t
 
@@ -69,7 +95,16 @@ class QQQValue(Strategy):
         n_w2 = int(w2_ok) + int(x['close'] > x['s50'])
         would = cash * frac if pd.notna(cash) else np.nan
         when = f'the {next_lse:%a %d %b} London close'
-        if x['zone'] and cool_left <= 1:
+        fast = self.fast or {}
+        if bool(x.get('fast_b2', False)):
+            action, sub = 'BUY', f'fast-crash buy 2: all cash in EQQQ at {next_lse:%d %b} London close'
+            plain = (f"Fast-crash buy 2 on {d:%d %b}: QQQ made a lower close with 3+ capitulation groups on. "
+                     f"Invest all the cash ({'£{:,.0f}'.format(cash) if pd.notna(cash) else 'all cash'}) in EQQQ at {when}.")
+        elif bool(x.get('fast_b1', False)):
+            action, sub = 'BUY', f'fast-crash buy 1: 50% of cash in EQQQ at {next_lse:%d %b} London close'
+            plain = (f"Fast-crash buy 1 on {d:%d %b}: QQQ closed 10.8% below its 1-year high during a fast crash, and the override is off. "
+                     f"Buy {'£{:,.0f}'.format(would) if pd.notna(would) else '50% of the cash'} of EQQQ at {when}.")
+        elif x['zone'] and cool_left <= 1:
             action, sub = 'BUY', f'50% of cash in EQQQ at {next_lse:%d %b} London close'
             plain = (f"QQQ closed inside a value zone on {d:%d %b} ({'trend zone' if x['trend_zone'] else '200-week zone'}). "
                      f"Buy {'£{:,.0f}'.format(would) if pd.notna(would) else '50% of the cash'} of EQQQ in your ISA at {when}.")
@@ -96,6 +131,12 @@ class QQQValue(Strategy):
                 check('QQQ above 200-week (1,000-day) average', f"{x['vs200w']:+.1f}%", '0% to +15%', w2_ok),
                 check('QQQ close above 50-day average', fmt_usd(x['close']), f"above {fmt_usd(x['s50'])}", x['close'] > x['s50'])]},
         ]
+        if fast.get('level') in ('WATCH', 'BUY 1', 'SKIP'):
+            plain += ' Fast-crash plan: ' + fast['summary']
+        groups.append({'title': 'Fast-crash buys (v1.2)', 'note': f"plan {fast.get('level', '—')}", 'met': fast.get('level') in ('BUY 1', 'BUY 2'),
+                       'rows': [check(sg['label'], sg['value'], sg['trigger'], sg['on']) for sg in fast.get('signs', [])] +
+                               ([check('Capitulation groups on (buy 2 needs 3 and a lower close)', f"{fast['groups_on']} of 6", '3 or more',
+                                       (fast['groups_on'] or 0) >= 3)] if fast.get('groups_on') is not None else [])})
         eq_px = float(t['close'].iloc[-1])
         return {
             'key': self.key, 'name': self.name, 'asof': d.strftime('%Y-%m-%d'), 'provisional': provisional,

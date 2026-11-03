@@ -1,4 +1,4 @@
-# Nasdaq-100 value-zone accumulation plan (v1.1)
+# Nasdaq-100 value-zone accumulation plan (v1.2)
 
 A monthly savings plan (a *piano di accumulo*) that buys QQQ only at value, instead of on a fixed date. It complements trading system #1: it buys in the conditions where the trading system is usually flat.
 
@@ -14,6 +14,12 @@ Plain monthly buying (DCA) is hard to beat on wealth, but it buys tops as readil
 4. On a close in either zone, buy **50% of the cash** at the close. At most one buy every 10 trading days.
 5. **Safety cap.** On the first trading day of a month, if cash is above 24 × the monthly contribution, invest the excess.
 
+6. **Fast-crash buys (v1.2).** In a QQQ fast crash (down 8%+ within 15 sessions from near its 1-year high), use the Risk radar's fast-crash plan:
+   - **Buy 1:** at the first close 10.8% below the 1-year high, invest **50% of the cash**.
+   - **Buy 2:** at a later, lower close with 3+ of 6 capitulation groups on, invest **all the cash**.
+   - Both are skipped when the override is on (rate/inflation pressure, or the late-cycle radar red). They ignore the 10-day cooldown.
+   - Full rules: [Bottom signals](bottom-signals.html).
+
 Price below the trend zone (z ≤ −1) is not bought. Deep levels behaved like falling knives in secular bear markets (2000–2002).
 
 ## Results (rolling plans, $1,000 a month, cash at the T-bill rate)
@@ -25,6 +31,23 @@ Price below the trend zone (z ≤ −1) is not bought. Deep levels behaved like 
 | 20 years | −3% to +1% | — | — |
 
 Level study: after a trend-zone close, QQQ returned +39% over the next year in 1990–2005 and +23% in 2006–25 (loss in 1% and 11% of cases). After a 200-week-zone close: +26% and +23%.
+
+## v1.2: what the fast-crash buys add
+
+10-year plans, $1,000 a month, started every month 2000–2016, cash at the T-bill rate.
+
+| Version | Wealth vs DCA (starts 2000–08 / 2009–16) | Account drawdown, median | Worst time below money in |
+|---|---|---|---|
+| Monthly DCA | – | −44% / −30% | −56% / −14% |
+| v1.1 zones only | −4.3% / −6.2% | −42% / −28% | −37% / −10% |
+| **v1.2 zones + fast-crash buys** | **−0.6% / −1.4%** | −42% / −29% | **−37% / −9%** |
+| v1.2 + bear washout buys (not adopted) | +0.8% / −1.2% | −43% / −29% | −48% / −9% |
+
+- The zones rarely buy during a crash: they need the price back above its 20- or 50-day average. So cash builds up exactly when the fast-crash buys fire, and no separate reserve is needed.
+- **A dedicated crash reserve was tested and not adopted.** Setting aside 10–30% of each contribution cost 0.7–2.5 points of wealth versus DCA, and only trimmed drawdowns because more money sat uninvested.
+- **The bear washout was left out.** It added little, and in the dot-com years it deepened the worst time below money put in from −37% to −48%.
+- **The trading system does not use these buys.** By the user's choice, it keeps its lower drawdown.
+- **Caveat:** the fast-crash plan was designed on the 2007–26 crashes. 1999–2006 gives only partly independent evidence.
 
 ## What to expect
 

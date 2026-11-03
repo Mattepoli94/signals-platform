@@ -242,3 +242,20 @@ def test_bottom_signals():
     assert hist['2020-02-05']['buy1'] == '2020-02-27' and hist['2020-02-05']['buy2'] == '2020-03-09'
     assert hist['2021-12-27']['skipped'] is True
     assert hist['2024-07-09']['buy2'] == '2024-08-07'
+
+
+def test_accumulate_fast_crash_buys():
+    idx, px, t, fx = _toy([100] * 12, zone=[False] * 12)
+    t['fast_b1'] = [False, False, True] + [False] * 9
+    t['fast_b2'] = [False] * 5 + [True] + [False] * 6
+    cfg = {'initial_capital': 1000, 'fee_pct': 0, 'cash_rate_pct': 0}
+    r = run_pot('v', cfg, Toy('accumulate'), t, {'AAA': px}, fx, '2026-01-01', [], [], 'AAA')
+    assert [x['gbp'] for x in r.trades] == [500.0, 500.0]      # buy 1 = half the cash, buy 2 = the rest
+    assert r.cash == pytest.approx(0)
+
+
+def test_value_plan_fast_crash_history(stored):
+    s = STRATEGIES['qqq_value']
+    us = s.compute_us(stored)
+    assert bool(us.loc['2020-02-27', 'fast_b1']) and bool(us.loc['2020-03-09', 'fast_b2'])
+    assert not us.loc['2022-01-01':'2022-03-31', 'fast_b1'].any()      # override skipped Jan 2022

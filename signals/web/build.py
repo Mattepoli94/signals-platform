@@ -22,10 +22,10 @@ PAPERS = [
      'stats': [('CAGR 2010–24*', '9.0%'), ('Max drawdown', '−14.1%'), ('QQQ research 2000–24', '10.4%')],
      'period': '*EQQQ at the London close with the dollar add-on, cash 0% · rules fitted on QQQ 1999–2024, not re-tuned',
      'ext': 'https://claude.ai/artifact/Kjtfn4jJ1JdCrynU9ubXvc'},
-    {'slug': 'qqq-value-plan', 'kind': 'INVESTING · NASDAQ-100', 'version': 'v1.1', 'title': 'Nasdaq-100 value-zone accumulation plan',
-     'desc': 'Contributions wait in cash and buy only in the trend zone or the 200-week zone. Never sells.',
-     'stats': [('Account DD vs DCA', '−34% / −49%'), ('Wealth vs DCA', '−5.4%'), ('Horizon', '10 years')],
-     'period': 'Median of rolling 10-year plans started 2000 onwards'},
+    {'slug': 'qqq-value-plan', 'kind': 'INVESTING · NASDAQ-100', 'version': 'v1.2', 'title': 'Nasdaq-100 value-zone accumulation plan',
+     'desc': 'Contributions wait in cash and buy in the trend zone or the 200-week zone, plus the two-step fast-crash buys (v1.2). Never sells.',
+     'stats': [('Wealth vs DCA (v1.2)', '−0.6% / −1.4%'), ('v1.1 zones only', '−4.3% / −6.2%'), ('Horizon', '10 years')],
+     'period': 'Median of rolling 10-year plans started 2000–08 / 2009–16, $1,000 a month'},
     {'slug': 'btc-trend', 'kind': 'TRADING · BTC', 'version': 'v2', 'title': 'BTC cycle trend system',
      'desc': '30/50-day EMA crossover, flat in the post-halving bear window, half size when ADX(14) < 25 or in the mid-cycle chop phase.',
      'stats': [('CAGR 2016–26', '83%'), ('Worst fall', '−34%'), ('Held out 16+18', '38% / −24%')],
@@ -40,6 +40,7 @@ PAPERS = [
      'period': 'Fast crash: QQQ 2007–2026 (19 crashes). Washout: S&P 1962–2026, QQQ 1987–2026.'},
 ]
 CHANGELOG = [
+    ('2026-11-03', 'Value plan', 'v1.2: adds the fast-crash buys (buy 1 = 50% of cash at −10.8% from the high, buy 2 = all cash on 3+ capitulation groups; skipped when the override is on). Trading system unchanged.'),
     ('2026-11-03', 'Bottom signals', 'v1 live (display only): QQQ fast-crash two-step plan with rate/late-cycle override, and the bear-market washout for S&P 500 and QQQ.'),
     ('2026-11-03', 'Risk radar', 'v1 live (display only): late-cycle, Nasdaq crash-risk and BTC leverage radars with their track records. Replaces the old 3-point risk flag on the Nasdaq system.'),
     ('2026-11-03', 'BTC cycle trend system', 'v2 live: 30/50 EMA cross, bear window day 541–900, half size when ADX < 25 or day 1,081–1,260. Replaces v1.'),

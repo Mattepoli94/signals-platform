@@ -82,6 +82,11 @@ def _history(key: str, t: pd.DataFrame, n: int = 120) -> list:
         for d, r in x[z].iterrows():
             ev.append({'date': d, 'kind': 'ZONE', 'text': 'QQQ entered the ' + ('trend zone' if r['trend_zone'] else '200-week zone'),
                        'price': r['close'], 'price_fmt': f"${r['close']:,.2f}"})
+        for col, txt in (('fast_b1', 'Fast-crash buy 1 (50% of cash)'), ('fast_b2', 'Fast-crash buy 2 (all cash)')):
+            if col in x:
+                for d, r in x[x[col].astype(bool)].iterrows():
+                    ev.append({'date': d, 'kind': 'BUY', 'text': txt, 'price': r['close'], 'price_fmt': f"${r['close']:,.2f}"})
+        ev.sort(key=lambda e: e['date'])
     return list(reversed(ev))[:25]
 
 

@@ -228,6 +228,10 @@ def run_pot(key: str, cfg: dict, strategy, table: pd.DataFrame, prices: dict, fx
                 amt = cash * params['frac']
                 why = 'value zone: ' + ('trend zone' if row['trend_zone'] else '200-week zone')
                 last_buy_i = i
+            if bool(row.get('fast_b2', False)) and cash > amt:          # v1.2 fast-crash buys ignore the cooldown
+                amt, why = cash, 'fast-crash buy 2 (all cash)'
+            elif bool(row.get('fast_b1', False)) and cash * 0.5 > amt:
+                amt, why = cash * 0.5, 'fast-crash buy 1 (50% of cash)'
             first_of_month = i > 0 and d.to_period('M') != cal[i - 1].to_period('M')
             if monthly > 0 and first_of_month and cash - amt > params['cap_months'] * monthly:
                 amt = cash - params['cap_months'] * monthly
