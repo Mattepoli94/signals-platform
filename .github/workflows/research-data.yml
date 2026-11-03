@@ -22,7 +22,13 @@ jobs:
           out = []
           for sym in open('research-data/tickers.txt').read().split():
               try:
-                  df = fetch_yahoo(sym, '1995-01-01'); df.insert(0, 'ticker', sym)
+                  if sym.startswith('FRED:'):
+                      from signals.data import fetch_fred
+                      v = fetch_fred(sym[5:]); df = pd.DataFrame({'open': v, 'high': v, 'low': v, 'close': v, 'adj_close': v, 'volume': 0.0})
+                      df.index.name = 'date'
+                  else:
+                      df = fetch_yahoo(sym, '1950-01-01')
+                  df.insert(0, 'ticker', sym)
                   out.append(df); print(sym, len(df), df.index[0].date(), df.index[-1].date())
               except Exception as e:
                   print('FAILED', sym, e)
