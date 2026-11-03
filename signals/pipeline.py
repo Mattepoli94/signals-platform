@@ -309,6 +309,14 @@ def run(mode: str = 'us', fetch: bool = True, email: bool = True, build: bool = 
     cfg = C.load()
     snap, _ = compute(cfg, now, mode)
     snap['refresh'] = report.get('refresh')
+    from . import radar as R
+    if fetch and mode in ('us', 'btc'):
+        report['radar_fetch'] = R.fetch(now)
+    try:
+        snap['radar'] = _clean(R.compute())
+        snap['radar']['fetch'] = report.get('radar_fetch')
+    except Exception as e:  # noqa: BLE001
+        snap['radar'] = {'error': str(e)[:300], 'panels': []}
     from .journal import update as journal_update
     snap['journal'] = journal_update(snap, now)
     STATE.mkdir(parents=True, exist_ok=True)

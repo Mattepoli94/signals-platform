@@ -30,8 +30,13 @@ PAPERS = [
      'desc': '30/50-day EMA crossover, flat in the post-halving bear window, half size when ADX(14) < 25 or in the mid-cycle chop phase.',
      'stats': [('CAGR 2016–26', '83%'), ('Worst fall', '−34%'), ('Held out 16+18', '38% / −24%')],
      'period': '0.40% per trade (Kraken Pro limit). Buy & hold 2016–26: 61% / −84%. Selected after extensive testing: expect less.'},
+    {'slug': 'risk-radar', 'kind': 'RISK · EARLY WARNING', 'version': 'v1', 'title': 'Risk radar: late cycle, Nasdaq crash risk, BTC leverage',
+     'desc': 'Three display-only early-warning flags, with the full research behind them: what was tested, what worked, what failed, and how often each flag is right.',
+     'stats': [('Late cycle, 2+ signs', '2.0× odds'), ('Nasdaq, 2+ families', '1.9× odds'), ('BTC, 2+ signs', '3.4× odds')],
+     'period': 'Late cycle: S&P 1955–2026 (chosen 1955–94, checked 1995–2026). Nasdaq: 2006–2026, all years tested. BTC: 2019–2026.'},
 ]
 CHANGELOG = [
+    ('2026-11-03', 'Risk radar', 'v1 live (display only): late-cycle, Nasdaq crash-risk and BTC leverage radars with their track records. Replaces the old 3-point risk flag on the Nasdaq system.'),
     ('2026-11-03', 'BTC cycle trend system', 'v2 live: 30/50 EMA cross, bear window day 541–900, half size when ADX < 25 or day 1,081–1,260. Replaces v1.'),
     ('2026-11-03', 'BTC trend blend', 'Re-tested with random holdout years (2012, 2016, 2018) and walk-forward: no validated edge over holding BTC. Marked paper only.'),
     ('2026-11-03', 'Nasdaq systems', 'v1.1: traded in EQQQ (London, pence, ISA) at the London close; dollar add-on held as USD cash in the Invest account. Removes the 0.15% FX fee on Nasdaq trades.'),
@@ -164,6 +169,16 @@ def _value_levels_chart(snap):
         zones=[r[4] for r in ch])
 
 
+def _radar_chart(p):
+    h = p.get('hist') or []
+    if len(h) < 2:
+        return ''
+    return line_chart([
+        {'name': f"Amber line ({p['amber']})", 'color': '#E0A23A', 'dash': True, 'width': 1.5, 'points': [(r[0], p['amber']) for r in h]},
+        {'name': 'Signs on', 'color': '#0B1220', 'width': 2, 'points': [(r[0], r[1]) for r in h]},
+    ], height=200, yfmt='{:.0f}', label=f"{p['title']}: number of signs on")
+
+
 def _health(pots):
     out = []
     for p in pots:
@@ -204,6 +219,8 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
     for p in pots:
         charts['exp_' + p['key']] = _expect_chart(p)
     charts['total'] = _total_chart(pots)
+    for rp in (snap.get('radar') or {}).get('panels') or []:
+        charts['radar_' + rp['key']] = _radar_chart(rp)
     names = {p['key']: p['name'] for p in pots}
     events = []
     sys_names = {'qqq_regime': 'Nasdaq trading', 'qqq_value': 'Nasdaq value plan', 'btc_trend': 'BTC trend'}
@@ -225,7 +242,7 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
                 papers=[{**r, 'href': f"research/{r['slug']}.html"} for r in PAPERS], changelog=CHANGELOG,
                 js_ctx={'generated': snap['generated_utc'], 'repo': os.environ.get('GITHUB_REPOSITORY', 'Mattepoli94/signals-platform')})
     base['journal'] = snap.get('journal') or []
-    for page in ('index', 'investing', 'trading', 'journal', 'portfolio', 'research', 'settings'):
+    for page in ('index', 'investing', 'trading', 'risk', 'journal', 'portfolio', 'research', 'settings'):
         html = env.get_template(f'{page}.html').render(page=page, root='', **base)
         (out / f'{page}.html').write_text(html)
     (out / 'research').mkdir(exist_ok=True)

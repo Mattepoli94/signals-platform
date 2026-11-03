@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Risk radar{% endblock %}
+{% block body %}
+{% set R = snap.radar or {} %}
+<div class="pagehead">
+  <div>
+    <div class="kicker">Early warnings · display only</div>
+    <h1>Risk radar</h1>
+    <p class="sub">Three warning flags that look <b>ahead</b>, not at damage already done. Each one shows its tested track record, so you can judge how much weight to give it. None of them changes any order: the trading systems' own rules handle exits.</p>
+  </div>
+  <a class="btn primary" href="research/risk-radar.html">Full research &amp; backtests</a>
+</div>
+
+{% if R.error %}<div class="banner warn">Risk radar could not be computed: {{ R.error }}</div>{% endif %}
+
+<div class="radar-strip">
+{% for p in R.panels or [] %}
+  <a class="radar-tile" href="#{{ p.key }}">
+    <div class="kicker">{{ p.title }}</div>
+    <div class="lvl t-{{ p.tone or 'grey' }}">{{ p.level or 'NO DATA' }}</div>
+    <div class="small">{% if p.score is not none and p.of %}{{ p.score|int }} of {{ p.of }} signs on · {% endif %}horizon {{ p.horizon }}</div>
+  </a>
+{% endfor %}
+</div>
+
+{% for p in R.panels or [] %}
+<section class="card radar" id="{{ p.key }}" aria-label="{{ p.title }}">
+  <div class="radar-head">
+    <div>
+      <div class="kicker">{{ p.market }} · predicts the next {{ p.horizon }}</div>
+      <h2>{{ p.title }}</h2>
+      <div class="small muted">{{ p.rule }}{% if p.asof %} · data to {{ p.asof|d }}{% endif %}</div>
+    </div>
+    <div class="lvl big t-{{ p.tone or 'grey' }}">{{ p.level or 'NO DATA' }}{% if p.score is not none and p.of %}<span>{{ p.score|int }}/{{ p.of }}</span>{% endif %}</div>
+  </div>
+  {% if p.error %}<div class="banner warn small">Could not compute: {{ p.error }}</div>{% endif %}
+  {% if p.summary %}<p class="radar-sum">{{ p.summary }}</p>{% endif %}
+  {% if p.context %}<p class="small muted" style="margin:-6px 0 0">{{ p.context }}</p>{% endif %}
+
+  <div class="radar-grid">
+    <div>
+      <h3>Signs now</h3>
+      <div class="checks">
+      {% for s in p.signs or [] %}
+        <div class="chk rs">
+          {% if s.on is none %}<span class="rdot nd" title="no data"></span>{% elif s.on %}<span class="rdot on" title="on"></span>{% else %}<span class="rdot off" title="off"></span>{% endif %}
+          <div class="lab"><b>{{ s.label }}</b><div class="small muted">{{ s.explain }}</div></div>
+          <div class="rv"><div class="mono">{{ s.value }}</div><div class="small muted">trigger: {{ s.trigger }}</div></div>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+    <div class="perf">
+      <div class="perf-h"><span class="kicker" style="color:var(--blue-d)">Track record</span><span class="small">What it predicts: {{ p.perf.predicts }}</span></div>
+      <div class="perf-big">
+      {% for v, l in p.perf.headline %}<div><div class="pv">{{ v }}</div><div class="pl">{{ l }}</div></div>{% endfor %}
+      </div>
+      <table class="perf-t"><tbody>
+      {% for k, v in p.perf.detail %}<tr><th>{{ k }}</th><td>{{ v }}</td></tr>{% endfor %}
+      </tbody></table>
+      <div class="small" style="color:var(--amber)"><b>Limits:</b> {{ p.perf.caveat }}</div>
+    </div>
+  </div>
+  {% if charts['radar_' ~ p.key] %}
+  <details class="radar-chart"><summary>Score history</summary>{{ charts['radar_' ~ p.key]|safe }}</details>
+  {% endif %}
+</section>
+{% endfor %}
+
+<section class="card">
+  <h2>How to read this</h2>
+  <ul class="small" style="margin:8px 0 0;padding-left:18px;line-height:1.7">
+    <li><b>"2.0× odds"</b> means the bad outcome happened about twice as often after the flag was on as on an average day in the same conditions. It is a tilt in the odds, not a forecast.</li>
+    <li>Every threshold is fixed in advance or measured against the indicator's own past, using only data known on the day.</li>
+    <li>Warnings are often early and sometimes wrong; some crashes come with no warning at all. That is why the radar never changes orders.</li>
+    <li>Data: Cboe (put/call, VXN, VIX, dispersion), FINRA margin debt, multpl (CAPE, CPI inflation), Yahoo (yields, S&amp;P, QQQ, QQEW, BTC), Deribit funding, CFTC futures positioning. Updated after the US close and after the BTC close.</li>
+  </ul>
+  <div style="margin-top:14px"><a class="btn primary" href="research/risk-radar.html">Read the full research and backtests</a></div>
+</section>
+{% endblock %}

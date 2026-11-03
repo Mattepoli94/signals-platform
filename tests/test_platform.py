@@ -212,3 +212,19 @@ def test_journal_keeps_first_record(tmp_path, monkeypatch):
     assert out[0]['gbp'] == 500.0 and out[0]['status'] == 'confirmed'
     snap['pots']['p']['trades'] = []
     assert J.update(snap, now)[0]['status'] == 'superseded'
+
+
+def test_risk_radar_panels():
+    from signals import radar as R
+    out = R.compute()
+    keys = [p['key'] for p in out['panels']]
+    assert keys == ['late', 'ndx', 'btc']
+    for p in out['panels']:
+        assert 'error' not in p, p.get('error')
+        assert p['level'] in ('GREEN', 'AMBER', 'RED', 'IDLE', 'NO DATA')
+        assert p['perf']['headline'] and len(p['signs']) == p['of']
+    # thresholds behave as documented
+    L = R.late_cycle()
+    assert set(L['score'].dropna().unique()) <= {0, 1, 2, 3, 4, 5}
+    B = R.btc()
+    assert ((B['funding_ann'] > 30) == (B['funding'] == 1))[B['funding'].notna()].all()

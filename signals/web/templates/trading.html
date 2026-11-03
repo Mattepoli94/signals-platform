@@ -31,11 +31,11 @@
     <div class="r">
       <h3>Orders and exits</h3>
       {{ m.orders_list(st.orders) }}
-      <div style="border:1px solid var(--line2);border-radius:10px;padding:12px 14px">
+      {% if st.extra %}<div style="border:1px solid var(--line2);border-radius:10px;padding:12px 14px">
         <div style="font-size:13px;font-weight:700">{{ st.extra_title }}</div>
         {% for e in st.extra %}<div class="kv"><span>{{ e.label }}</span><b class="{{ 'neg' if e.tone=='amber' }}">{{ e.value }}</b></div>{% endfor %}
         <div class="small muted" style="margin-top:6px">{{ st.extra_note }}</div>
-      </div>
+      </div>{% endif %}
       <p class="small muted" style="margin:0">{{ st.timing }}</p>
       <div><a class="btn" href="{{ st.paper }}">Read the paper</a></div>
     </div>
