@@ -1,0 +1,15 @@
+{
+ "$MMFI": "403 21 '{\"error\":\"Forbidden\"}'",
+ "$MMTW": "403 21 '{\"error\":\"Forbidden\"}'",
+ "$MMOH": "403 21 '{\"error\":\"Forbidden\"}'",
+ "$MMTH": "403 21 '{\"error\":\"Forbidden\"}'",
+ "$NCFI": "403 21 '{\"error\":\"Forbidden\"}'",
+ "$S5FI": "403 21 '{\"error\":\"Forbidden\"}'",
+ "$NDFI": "403 21 '{\"error\":\"Forbidden\"}'",
+ "sp500": 503,
+ "sp400": 400,
+ "sp600": 603,
+ "ndx": 0,
+ "fail_CWEN-A": "Yahoo download failed for CWEN-A: 404 Client Error: Not Found for url: https://q",
+ "stocks": 1502
+}
