@@ -1,0 +1,60 @@
+name: Signals (edit from the website)
+
+# Called by the website's Settings / Portfolio forms with a GitHub token saved in your browser.
+on:
+  workflow_dispatch:
+    inputs:
+      op:
+        description: 'JSON edit, e.g. {"op":"add_topup","pot":"qqq_value","amount":500,"date":"2026-12-01"}'
+        required: true
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: signals
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Apply edit
+        env:
+          OP: ${{ github.event.inputs.op }}
+        run: python -m signals op "$OP"
+      - name: Rebuild
+        run: python -m signals run --mode build
+      - name: Save
+        env:
+          OP: ${{ github.event.inputs.op }}
+        run: |
+          git config user.name "signals-bot"
+          git config user.email "signals-bot@users.noreply.github.com"
+          git add data config state
+          if git diff --cached --quiet; then echo "nothing to save"; exit 0; fi
+          git commit -m "Edit from website: $(echo "$OP" | head -c 120)"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break; sleep 5; done
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: run
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

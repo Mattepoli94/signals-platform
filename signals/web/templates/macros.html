@@ -1,0 +1,107 @@
+{% macro icon(ok) -%}
+{% if ok is none %}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#475467" stroke-width="2.2" role="img" aria-label="Info"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16.5" r=".6" fill="#475467"/></svg>
+{% elif ok %}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E7A43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Met"><circle cx="12" cy="12" r="10"/><polyline points="7.5 12.5 10.5 15.5 16.5 9"/></svg>
+{% else %}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Not met"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>{% endif %}
+{%- endmacro %}
+
+{% macro checklist(groups) -%}
+{% for g in groups %}
+<div class="grp">
+  <div class="gh"><h3>{{ g.title }}</h3><span>{{ g.note }}</span></div>
+  <div class="checks">
+    {% for c in g.rows %}
+    <div class="chk">{{ icon(c.ok) }}<div class="lab">{{ c.label }}</div><div class="val">{{ c.value }}</div><div class="need">{{ c.need }}</div></div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+{%- endmacro %}
+
+{% macro action_box(st) -%}
+<div class="action a-{{ st.action }}">
+  <div class="l">{{ 'PREVIEW' if st.provisional else 'ACTION' }}</div>
+  <div class="v">{{ st.action }}</div>
+  <div class="s">{{ st.action_sub }}</div>
+</div>
+{%- endmacro %}
+
+{% macro orders_list(orders) -%}
+{% for o in orders %}
+<div class="order o-{{ o.tone }}"><div class="k">{{ o.kind }}</div><div class="x">{{ o.text }}</div></div>
+{% endfor %}
+{%- endmacro %}
+
+{% macro preview_lines(pot, provisional=False) -%}
+{% set items = pot.preview_provisional if provisional else pot.preview %}
+{% if items %}
+<ul style="margin:6px 0 0;padding-left:18px">
+{% for o in items %}<li><b>{{ o.side }} {{ o.asset }} {{ o.gbp|gbp }}</b>{% if o.units %} <span class="muted">(~{{ '%.4f'|format(o.units) }} units at {{ o.price|usd }})</span>{% endif %}</li>{% endfor %}
+</ul>
+{% endif %}
+{%- endmacro %}
+
+{% macro pot_stats(p) -%}
+<div class="stats">
+  <div class="stat"><div class="l">Pot value</div><div class="v">{{ p.equity|gbp }}</div></div>
+  <div class="stat"><div class="l">Money in</div><div class="v">{{ p.deposits|gbp }}</div></div>
+  <div class="stat"><div class="l">Total P&amp;L</div><div class="v {{ p.pnl|cls }}">{{ p.pnl|gbp(True) }}</div></div>
+  <div class="stat"><div class="l">Return</div><div class="v {{ p.pnl_pct|cls }}">{{ p.pnl_pct|pct }}</div></div>
+  <div class="stat"><div class="l">Cash</div><div class="v">{{ p.cash|gbp }}</div></div>
+  <div class="stat"><div class="l">Unrealised P&amp;L</div><div class="v {{ p.unrealised|cls }}">{{ p.unrealised|gbp(True) }}</div></div>
+  <div class="stat"><div class="l">Realised P&amp;L</div><div class="v {{ p.realised|cls }}">{{ p.realised|gbp(True) }}</div></div>
+  <div class="stat"><div class="l">{{ p.bench_asset }} buy &amp; hold</div><div class="v {{ p.bench_pnl_pct|cls }}">{{ p.bench_pnl_pct|pct }}</div></div>
+</div>
+{%- endmacro %}
+
+{% macro topup_form(p) -%}
+<form class="topup" data-op="add_topup">
+  <h3>Top up {{ p.name }}</h3>
+  <input type="hidden" name="pot" value="{{ p.key }}">
+  <div class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+    <label class="f">Amount (£)<input class="amt" name="amount" type="number" min="1" step="0.01" required inputmode="decimal" placeholder="500"></label>
+    <label class="f">Date<input class="dt" name="date" type="date" value="{{ today }}" required></label>
+    <label class="f">Note<input name="note" type="text" maxlength="80" placeholder="optional" style="width:150px"></label>
+    <button class="btn primary" type="submit">Add top-up</button>
+  </div>
+  <p class="small muted" style="margin:8px 0 0">Added to the pot's cash at that day's close. The system then invests it by its own rules.</p>
+</form>
+{%- endmacro %}
+
+{% macro positions_table(p) -%}
+{% if p.positions %}
+<div class="scroll"><table class="t">
+<thead><tr><th>Asset</th><th class="n">Units</th><th class="n">Price</th><th class="n">Value</th><th class="n">Cost</th><th class="n">Unrealised</th></tr></thead>
+<tbody>{% for a, x in p.positions.items() %}
+<tr><td><b>{{ a }}</b></td><td class="n">{{ '%.4f'|format(x.units) }}</td><td class="n">{{ x.price|usd }}</td><td class="n">{{ x.value|gbp }}</td><td class="n">{{ x.cost|gbp }}</td><td class="n {{ x.unrealised|cls }}">{{ x.unrealised|gbp(True) }} ({{ x.unrealised_pct|pct }})</td></tr>
+{% endfor %}</tbody></table></div>
+{% else %}<p class="muted small" style="margin:0">No open positions: the pot is in cash.</p>{% endif %}
+{%- endmacro %}
+
+{% macro trades_table(trades, limit=12, fills=True) -%}
+{% if trades %}
+<div class="scroll"><table class="t">
+<thead><tr><th>Date</th><th>Side</th><th>Asset</th><th class="n">Amount</th><th class="n">Price</th><th class="n">Fee</th><th class="n">P&amp;L</th><th>Why</th>{% if fills %}<th>Your fill</th>{% endif %}</tr></thead>
+<tbody>{% for t in trades[:limit] %}
+<tr><td class="mono">{{ t.date|d }}</td><td><span class="pill {{ 't-green' if t.side=='BUY' else 't-red' }}">{{ t.side }}</span></td><td>{{ t.asset }}</td>
+<td class="n">{{ t.gbp|gbp }}</td><td class="n">{{ t.price|usd }}</td><td class="n">{{ t.fee|gbp2 }}</td><td class="n {{ t.pnl|cls }}">{{ t.pnl|gbp(True) if t.pnl is not none else '—' }}</td>
+<td class="small">{{ t.reason }}</td>
+{% if fills %}<td>{% if t.filled %}<span class="pill t-green">recorded</span>{% endif %}
+<details><summary class="small">{{ 'Edit' if t.filled else 'Record' }}</summary>
+<form data-op="set_fill" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+<input type="hidden" name="trade_id" value="{{ t.id }}">
+<input name="price" type="number" step="0.0001" placeholder="price $" class="w100" required aria-label="Fill price in USD">
+<input name="fx" type="number" step="0.0001" placeholder="GBP/USD" class="w100" aria-label="GBP/USD rate">
+<input name="fee_gbp" type="number" step="0.01" placeholder="fee £" class="w100" aria-label="Fee in GBP">
+<button class="btn small primary" type="submit">Save</button>
+</form></details></td>{% endif %}
+</tr>{% endfor %}</tbody></table></div>
+{% if trades|length > limit %}<p class="small muted">Showing the latest {{ limit }} of {{ trades|length }} trades. Full journal on the <a href="portfolio.html#journal">Portfolio</a> page.</p>{% endif %}
+{% else %}<p class="muted small" style="margin:0">No trades yet.</p>{% endif %}
+{%- endmacro %}
+
+{% macro not_started(p, start) -%}
+{% if not p.started %}
+<div class="banner info">This pot starts at the first close on or after <b>{{ start|d }}</b> with {{ p.deposits|gbp }}.
+{% if p.preview %} At that close it will join the system's current position:{{ preview_lines(p) }}{% else %} No order is due at the latest close.{% endif %}</div>
+{% endif %}
+{%- endmacro %}

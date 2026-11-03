@@ -1,0 +1,201 @@
+"""Renders the static website from state/snapshot.json into site/."""
+from __future__ import annotations
+
+import json
+import shutil
+from datetime import date
+from pathlib import Path
+
+import markdown
+import pandas as pd
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+from .. import RESEARCH, SITE, STATE
+from .charts import line_chart
+
+HERE = Path(__file__).parent
+
+PAPERS = [
+    {'slug': 'qqq-regime-system', 'kind': 'TRADING · QQQ', 'version': 'v1.0', 'title': 'QQQ regime trading system + dollar add-on',
+     'desc': 'Regime detector, 50% trend leg, dip-buying leg, dollar add-on and risk flag. Exact rules, data, execution and results.',
+     'stats': [('CAGR 2000–24', '10.4%'), ('Max drawdown', '−15.3%'), ('Holdout 25–26', '8.5%')],
+     'period': 'Trained 1999–2024 with held-out years · final holdout 2025–26 run once',
+     'ext': 'https://claude.ai/artifact/Kjtfn4jJ1JdCrynU9ubXvc'},
+    {'slug': 'qqq-value-plan', 'kind': 'INVESTING · QQQ', 'version': 'v1.0', 'title': 'QQQ value-zone accumulation plan',
+     'desc': 'Contributions wait in cash and buy only in the trend zone or the 200-week zone. Never sells.',
+     'stats': [('Account DD vs DCA', '−34% / −49%'), ('Wealth vs DCA', '−5.4%'), ('Horizon', '10 years')],
+     'period': 'Median of rolling 10-year plans started 2000 onwards'},
+    {'slug': 'btc-trend', 'kind': 'TRADING · BTC', 'version': 'v1.0', 'title': 'BTC trend blend',
+     'desc': 'Five trend signals averaged into a score, volatility sizing, and a flat window 545–910 days after each halving.',
+     'stats': [('CAGR 2015–24', '105%'), ('Max drawdown', '−30%'), ('Calmar', '3.46')],
+     'period': 'Training 2015–2024 · ~180 variants tested, so treat returns as optimistic'},
+]
+CHANGELOG = [
+    ('2026-11-03', 'Platform', 'v1.0 live: signals, pots, top-ups, fills, email alerts.'),
+    ('2026-11-02', 'BTC trend blend', 'Adopted. Cycle bag removed; liquidity and dollar filters shown as context only.'),
+    ('2026-11-02', 'QQQ value plan', 'Adopted. Static drawdown rungs replaced by the trend and 200-week zones.'),
+    ('2026-11-02', 'QQQ regime system', 'v1.0 frozen. Regime turning Trending closes an open dip trade. Gold/TLT hedge dropped; dollar add-on kept.'),
+]
+
+
+# ----------------------------------------------------------------------------- filters
+def _num(x):
+    return x is not None and x == x
+
+
+def f_gbp(x, sign=False):
+    if not _num(x):
+        return '—'
+    v = abs(x)
+    s = f'£{v:,.0f}' if v >= 10000 else f'£{v:,.2f}'
+    if sign:
+        return ('+' if x > 0.004 else ('−' if x < -0.004 else '')) + s
+    return ('−' if x < -0.004 else '') + s
+
+
+def f_gbp2(x):
+    return '—' if not _num(x) else ('−' if x < 0 else '') + f'£{abs(x):,.2f}'
+
+
+def f_usd(x):
+    if not _num(x):
+        return '—'
+    return f'${x:,.0f}' if abs(x) >= 10000 else f'${x:,.2f}'
+
+
+def f_pct(x, sign=True):
+    if not _num(x):
+        return '—'
+    s = f'{abs(x) * 100:.1f}%'
+    if not sign:
+        return s
+    return ('+' if x > 0.0004 else ('−' if x < -0.0004 else '')) + s
+
+
+def f_cls(x):
+    return '' if not _num(x) else ('pos' if x > 0.004 else ('neg' if x < -0.004 else ''))
+
+
+def f_dshort(s):
+    try:
+        return date.fromisoformat(str(s)[:10]).strftime('%d %b')
+    except ValueError:
+        return s or '—'
+
+
+def f_d(s):
+    try:
+        return date.fromisoformat(str(s)[:10]).strftime('%d %b %Y')
+    except ValueError:
+        return s or '—'
+
+
+# ----------------------------------------------------------------------------- helpers
+def _pot_chart(p):
+    c = p['curve']
+    if len(c) < 2:
+        return ''
+    return line_chart([
+        {'name': 'Money in', 'color': '#475467', 'dash': True, 'width': 2, 'points': [(r[0], r[2]) for r in c]},
+        {'name': 'Benchmark', 'color': '#98A2B3', 'width': 2.5, 'points': [(r[0], r[3]) for r in c]},
+        {'name': 'Pot', 'color': '#1D4ED8', 'width': 3, 'points': [(r[0], r[1]) for r in c],
+         'markers': [(t['date'], next((r[1] for r in c if r[0] == t['date']), None), '#0E7A43' if t['side'] == 'BUY' else '#B42318')
+                     for t in p['trades'] if p['kind'] == 'accumulate']},
+    ], label=f"{p['name']} value vs benchmark and money in")
+
+
+def _total_chart(pots):
+    frames = []
+    for p in pots:
+        if len(p['curve']) > 1:
+            df = pd.DataFrame(p['curve'], columns=['date', 'eq', 'dep', 'b']).set_index('date')
+            frames.append(df[['eq', 'dep']].rename(columns=lambda c: f"{p['key']}_{c}"))
+    if not frames:
+        return ''
+    t = pd.concat(frames, axis=1).sort_index().ffill().fillna(0)
+    eq = t[[c for c in t if c.endswith('_eq')]].sum(axis=1)
+    dep = t[[c for c in t if c.endswith('_dep')]].sum(axis=1)
+    return line_chart([
+        {'name': 'Money in', 'color': '#475467', 'dash': True, 'width': 2, 'points': list(zip(t.index, dep))},
+        {'name': 'Total', 'color': '#1D4ED8', 'width': 3, 'points': list(zip(t.index, eq))},
+    ], label='Total value of all pots vs money in')
+
+
+def _value_levels_chart(snap):
+    ch = snap['strategies']['qqq_value'].get('chart') or []
+    if len(ch) < 2:
+        return ''
+    return line_chart([
+        {'name': 'QQQ', 'color': '#0B1220', 'width': 2, 'points': [(r[0], r[1]) for r in ch]},
+        {'name': 'Trend', 'color': '#1D4ED8', 'width': 2.5, 'points': [(r[0], r[2]) for r in ch]},
+        {'name': '200w', 'color': '#0E7A43', 'dash': True, 'width': 2, 'points': [(r[0], r[3]) for r in ch]},
+    ], yfmt='${:,.0f}', label='QQQ close with its 5-year trend line and 200-week average; value zones shaded',
+        zones=[r[4] for r in ch])
+
+
+def _health(pots):
+    out = []
+    for p in pots:
+        if p['page'] != 'trading':
+            continue
+        m, t = p.get('metrics') or {}, p.get('tested') or {}
+        days = m.get('days', 0) if p['started'] else 0
+        if not p['started'] or days < 60:
+            status, tone = 'Collecting data', 'grey'
+        elif m['maxdd'] < 1.5 * t.get('maxdd', -1):
+            status, tone = 'Check: drawdown beyond tested', 'red'
+        elif m['maxdd'] < t.get('maxdd', -1):
+            status, tone = 'At tested worst drawdown', 'amber'
+        else:
+            status, tone = 'Within tested range', 'green'
+        ret = (f_pct(m['cagr']) + ' a year') if m.get('cagr') is not None else (f_pct(m.get('twr_total')) + ' total' if p['started'] else '—')
+        out.append({'name': p['name'], 'since': f_d(p['start']) if p['started'] else 'not started', 'trades': m.get('trades', 0),
+                    'win': f_pct(m['win_rate'], False) if m.get('win_rate') is not None else '—', 'ret': ret,
+                    'tested_ret': f_pct(t.get('cagr')) + ' a year',
+                    'dd_live': f_pct(m.get('maxdd')) if p['started'] else '—', 'dd_tested': f_pct(t.get('maxdd')), 'status': status, 'tone': tone})
+    return out
+
+
+def build(snap: dict | None = None, out: Path = SITE) -> Path:
+    if snap is None:
+        snap = json.loads((STATE / 'snapshot.json').read_text())
+    env = Environment(loader=FileSystemLoader(HERE / 'templates'), autoescape=select_autoescape(['html']))
+    env.filters.update(gbp=f_gbp, gbp2=f_gbp2, usd=f_usd, pct=f_pct, cls=f_cls, d=f_d, dshort=f_dshort)
+    out.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(HERE / 'static', out / 'static', dirs_exist_ok=True)
+    pots = list(snap['pots'].values())
+    charts = {p['key']: _pot_chart(p) for p in pots}
+    charts['value_levels'] = _value_levels_chart(snap)
+    charts['total'] = _total_chart(pots)
+    names = {p['key']: p['name'] for p in pots}
+    events = []
+    sys_names = {'qqq_regime': 'QQQ trading', 'qqq_value': 'QQQ value plan', 'btc_trend': 'BTC trend'}
+    for k, s in snap['strategies'].items():
+        for e in s['history'][:6]:
+            events.append({**e, 'system': sys_names.get(k, k)})
+    events.sort(key=lambda e: e['date'], reverse=True)
+    deposits, applied = [], set()
+    for p in pots:
+        for d in p['deposits_log']:
+            deposits.append({**d, 'pot_name': p['name']})
+            if d.get('id'):
+                applied.add(d['id'])
+    deposits.sort(key=lambda d: d['date'], reverse=True)
+    future = [{**t, 'pot_name': names.get(t['pot'], t['pot'])} for t in snap['config']['topups'] if t.get('id') not in applied]
+    live_preview = [p for p in pots if p.get('status_provisional') and p['bench_asset'] == 'QQQ']
+    base = dict(snap=snap, pots=pots, charts=charts, today=date.today().isoformat(), health=_health(pots),
+                recent_events=events[:10], deposits=deposits, future_topups=future, live_preview=live_preview,
+                papers=[{**r, 'href': f"research/{r['slug']}.html"} for r in PAPERS], changelog=CHANGELOG,
+                js_ctx={'generated': snap['generated_utc']})
+    for page in ('index', 'investing', 'trading', 'portfolio', 'research', 'settings'):
+        html = env.get_template(f'{page}.html').render(page=page, root='', **base)
+        (out / f'{page}.html').write_text(html)
+    (out / 'research').mkdir(exist_ok=True)
+    for r in PAPERS:
+        src = RESEARCH / f"{r['slug']}.md"
+        if src.exists():
+            body = markdown.markdown(src.read_text(), extensions=['tables', 'fenced_code', 'toc'])
+            html = env.get_template('paper.html').render(page='research', root='../', title=r['title'], html=body, **base)
+            (out / 'research' / f"{r['slug']}.html").write_text(html)
+    (out / '.nojekyll').write_text('')
+    return out

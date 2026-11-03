@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}Today{% endblock %}
+{% block body %}
+<div class="pagehead">
+  <div>
+    <div class="kicker">{{ snap.generated_london }}</div>
+    <h1>Today</h1>
+    <p class="sub">What each system says after the latest close, and what to do next. QQQ orders happen at the US close: place them before <b>{{ snap.moc_deadline_uk }} UK</b> ({{ snap.moc_day }}).</p>
+  </div>
+  {% set q = snap.pots.qqq_trading %}
+  {% if q %}{% set lvl = q.status.levels.risk_level %}
+  <span class="pill {{ {'GREEN':'t-green','AMBER':'t-amber','RED':'t-red'}[lvl] }}" style="font-size:14px;padding:8px 14px">Risk flag: {{ lvl }}</span>{% endif %}
+</div>
+
+{% if live_preview %}
+<div class="banner warn"><b>Live preview before the US close.</b> Based on prices at {{ snap.live.fetched_utc }} UTC.
+{% for p in live_preview %}<div style="margin-top:6px"><b>{{ p.name }}:</b> {{ p.status_provisional.action }} — {{ p.status_provisional.action_sub }}{{ m.preview_lines(p, True) }}</div>{% endfor %}
+<div class="small" style="margin-top:6px">Place the orders before <b>{{ snap.moc_deadline_uk }} UK time</b> ({{ snap.moc_day }}): a market-on-close order, or a market order in the last minutes before the close if your broker has no MOC. The post-close run confirms.</div></div>
+{% endif %}
+
+<section class="card" aria-label="Portfolio">
+  <div class="row" style="align-items:center;justify-content:space-between">
+    <h2>All pots</h2>
+    <a href="portfolio.html" class="small">Portfolio details →</a>
+  </div>
+  <div class="stats" style="margin-top:14px">
+    <div class="stat"><div class="l">Total value</div><div class="v">{{ snap.totals.equity|gbp }}</div></div>
+    <div class="stat"><div class="l">Money in</div><div class="v">{{ snap.totals.deposits|gbp }}</div></div>
+    <div class="stat"><div class="l">Total P&amp;L</div><div class="v {{ snap.totals.pnl|cls }}">{{ snap.totals.pnl|gbp(True) }} <span class="small">({{ snap.totals.pnl_pct|pct }})</span></div></div>
+    <div class="stat"><div class="l">Cash waiting</div><div class="v">{{ snap.totals.cash|gbp }}</div></div>
+  </div>
+</section>
+
+<div class="row">
+{% for p in snap.pots.values() %}
+  {% set st = p.status %}
+  <section class="card grow" style="flex-basis:340px;display:flex;flex-direction:column;gap:14px" aria-label="{{ p.name }}">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+      <div><div class="kicker">{{ p.page|capitalize }}</div><h2 style="margin-top:2px">{{ p.name }}</h2>
+      <div class="small muted">Signal as of the {{ st.asof|d }} close</div></div>
+      <a class="small" href="{{ p.page }}.html#{{ p.key }}">Details →</a>
+    </div>
+    {{ m.action_box(st) }}
+    <p style="margin:0;font-size:14px">{{ st.plain }}</p>
+    {% if p.started and p.trades_latest %}
+    <div class="banner ok small">Pot traded at that close:{% for t in p.trades_latest %} <b>{{ t.side }} {{ t.asset }} {{ t.gbp|gbp }}</b>{% if not loop.last %},{% endif %}{% endfor %}.</div>
+    {% endif %}
+    {{ m.not_started(p, snap.config.start_date) }}
+    {% if st.levels.stop %}<div class="kv"><span>Stop (close at or below)</span><b class="neg">{{ st.levels.stop|usd }}</b></div>{% endif %}
+    {% if st.levels.exit_date %}<div class="kv"><span>Time exit</span><b>{{ st.levels.exit_date|d }}</b></div>{% endif %}
+    {% if p.kind == 'accumulate' %}<div class="kv"><span>Would buy on a zone close</span><b>{{ (p.cash * 0.5)|gbp }}</b></div>{% endif %}
+    <div class="kv"><span>Pot value</span><b>{{ p.equity|gbp }} <span class="{{ p.pnl_pct|cls }}">({{ p.pnl_pct|pct }})</span></b></div>
+    <div class="kv"><span>Holding</span><b>{% set hs = p.weights.items()|selectattr('1','gt',0.0005)|list %}{% for a, w in hs %}{{ a }} {{ (w*100)|round|int }}%{% if not loop.last %} · {% endif %}{% else %}cash{% endfor %}</b></div>
+  </section>
+{% endfor %}
+</div>
+
+<div class="row">
+  <section class="card grow" aria-label="Recent alerts">
+    <h2>Alerts</h2>
+    <p class="note">Emails go out when a signal fires: ~25 min before the US close (preview), after the close (confirmed), and after 00:00 UTC for BTC.
+    {% if not snap.email_configured %}<b>Email is not set up yet</b>: see <a href="settings.html#alerts">Settings</a>.{% endif %}</p>
+    {% set evs = recent_events %}
+    {% if evs %}<div class="scroll" style="margin-top:12px"><table class="t"><thead><tr><th>Date</th><th>System</th><th>Signal</th><th class="n">Price</th></tr></thead><tbody>
+    {% for e in evs %}<tr><td class="mono">{{ e.date|d }}</td><td>{{ e.system }}</td><td><span class="pill {{ {'BUY':'t-green','SELL':'t-red','ZONE':'t-blue'}.get(e.kind,'t-grey') }}">{{ e.kind }}</span> {{ e.text }}</td><td class="n">{{ e.price|usd }}</td></tr>{% endfor %}
+    </tbody></table></div>{% endif %}
+  </section>
+</div>
+{% endblock %}

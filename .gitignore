@@ -1,0 +1,8 @@
+site/
+state/snapshot.json
+state/outbox/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.DS_Store

@@ -1,0 +1,48 @@
+# Signals platform: your settings.
+# Edit this file directly, or use the Settings and Portfolio pages (they write here for you).
+# All money is in GBP. Prices are in USD and converted with the GBP/USD close of the same day.
+
+base_currency: GBP
+
+# The pots start following their systems from the first close ON or AFTER this date.
+start_date: '2026-11-03'
+
+pots:
+  qqq_value:
+    name: QQQ value plan
+    strategy: qqq_value
+    page: investing
+    initial_capital: 1000      # GBP deposited on the start date
+    monthly_topup: 0           # GBP added automatically on the 1st trading day of each month (0 = off)
+    fee_pct: 0.15              # per trade, % of the trade value (Trading 212 FX fee on USD assets)
+    cash_rate_pct: 0.0         # yearly interest on uninvested cash, %
+  qqq_trading:
+    name: QQQ trading system
+    strategy: qqq_regime
+    page: trading
+    initial_capital: 500
+    monthly_topup: 0
+    fee_pct: 0.15
+    cash_rate_pct: 0.0
+  btc_trend:
+    name: BTC trend system
+    strategy: btc_trend
+    page: trading
+    initial_capital: 500
+    monthly_topup: 0
+    fee_pct: 0.10
+    cash_rate_pct: 0.0
+
+# One-off top-ups. Each is added to the pot's cash at the close of its date.
+topups: []
+#  - {id: t1, pot: qqq_value, date: '2026-12-01', amount: 500, note: December}
+
+# Your real executions. When a model trade is filled at a different price, record it here
+# (USD price; GBP/USD rate optional). The pot is then valued with your real fill.
+fills: []
+#  - {trade_id: qqq_trading-2026-11-03-QQQ-BUY, price: 691.20, fx: 1.3050}
+
+alerts:
+  email_enabled: true
+  daily_summary: true          # one summary email after the US close, even with no new signal
+  preclose_warning: true       # email ~25 minutes before the US close when a QQQ order is likely

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+<p class="small"><a href="{{ root }}research.html">← Research library</a></p>
+<article class="card paper">{{ html|safe }}</article>
+{% endblock %}

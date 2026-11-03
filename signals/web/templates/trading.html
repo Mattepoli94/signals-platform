@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}Trading{% endblock %}
+{% block body %}
+<div class="pagehead">
+  <div>
+    <div class="kicker">Trading · signals only</div>
+    <h1>Trading systems</h1>
+    <p class="sub">Each card shows the latest signal, every rule with its live value, exactly what to do, and the pot that follows it.</p>
+  </div>
+</div>
+
+{% for p in pots if p.page == 'trading' %}
+{% set st = p.status %}
+<section class="card flush" id="{{ p.key }}" aria-label="{{ p.name }}">
+  <div class="cardhead">
+    <div class="t">
+      <div class="small muted" style="font-weight:600">{{ st.kicker }}</div>
+      <h2 style="font-size:22px;margin-top:2px">{{ st.name }}</h2>
+      <div class="pills">{% for x in st.pills %}<span class="pill t-{{ x.tone }}">{{ x.text }}</span>{% endfor %}
+      <span class="pill t-grey">Signal as of {{ st.asof|d }}</span></div>
+    </div>
+    {{ m.action_box(st) }}
+  </div>
+  <div class="plain">{{ st.plain }}
+  {% if p.status_provisional %}<div class="banner warn small" style="margin-top:10px"><b>Live preview:</b> {{ p.status_provisional.action }} — {{ p.status_provisional.action_sub }}. {{ p.status_provisional.plain }}{{ m.preview_lines(p, True) }}</div>{% endif %}
+  </div>
+  <div class="split">
+    <div class="l">{{ m.checklist(st.groups) }}</div>
+    <div class="r">
+      <h3>Orders and exits</h3>
+      {{ m.orders_list(st.orders) }}
+      <div style="border:1px solid var(--line2);border-radius:10px;padding:12px 14px">
+        <div style="font-size:13px;font-weight:700">{{ st.extra_title }}</div>
+        {% for e in st.extra %}<div class="kv"><span>{{ e.label }}</span><b class="{{ 'neg' if e.tone=='amber' }}">{{ e.value }}</b></div>{% endfor %}
+        <div class="small muted" style="margin-top:6px">{{ st.extra_note }}</div>
+      </div>
+      <p class="small muted" style="margin:0">{{ st.timing }}</p>
+      <div><a class="btn" href="{{ st.paper }}">Read the paper</a></div>
+    </div>
+  </div>
+  <div style="border-top:1px solid var(--line2);padding:20px 22px;display:flex;flex-direction:column;gap:16px">
+    <div class="row" style="justify-content:space-between;align-items:flex-end"><h2>The pot</h2>
+    <span class="small muted">Follows the system from {{ p.start|d }} · fee {{ p.cfg.fee_pct }}% per trade</span></div>
+    {{ m.not_started(p, snap.config.start_date) }}
+    {{ m.pot_stats(p) }}
+    {% if p.curve|length > 1 %}
+    <div class="legend"><span><i style="background:#1D4ED8"></i>Pot</span><span><i style="background:#98A2B3"></i>{{ p.bench_asset }} buy &amp; hold</span><span><i class="dash" style="border-color:#475467"></i>Money in</span></div>
+    <div class="scroll">{{ charts[p.key]|safe }}</div>
+    {% endif %}
+    <div class="row">
+      <div class="grow" style="flex-basis:340px"><h3 style="margin-bottom:8px">Holding</h3>{{ m.positions_table(p) }}</div>
+      <div class="grow" style="flex-basis:340px">{{ m.topup_form(p) }}</div>
+    </div>
+    <details><summary>Trades ({{ p.trades|length }})</summary><div style="margin-top:10px">{{ m.trades_table(p.trades, 15) }}</div></details>
+    <details><summary>Signal history (recent)</summary>
+    {% set h = snap.strategies[p.strategy].history %}
+    <div class="scroll" style="margin-top:10px"><table class="t"><thead><tr><th>Date</th><th>Signal</th><th>What happened</th><th class="n">Price</th></tr></thead><tbody>
+    {% for e in h %}<tr><td class="mono">{{ e.date|d }}</td><td><span class="pill {{ 't-green' if e.kind=='BUY' else 't-red' }}">{{ e.kind }}</span></td><td>{{ e.text }}</td><td class="n">{{ e.price|usd }}</td></tr>{% else %}<tr><td colspan="4" class="muted">No signals in the last 120 sessions.</td></tr>{% endfor %}
+    </tbody></table></div></details>
+  </div>
+</section>
+{% endfor %}
+
+<section class="card" aria-label="Health">
+  <h2>Live vs backtest health</h2>
+  <p class="note">Flags a system when live results drift outside what the research expects. Needs a few months of live data to mean much. Tested figures: QQQ 2000–2024; BTC 2015–2024 training (optimistic).</p>
+  <div class="scroll" style="margin-top:12px"><table class="t">
+  <thead><tr><th>System</th><th class="n">Live since</th><th class="n">Trades</th><th class="n">Win rate</th><th class="n">Return live</th><th class="n">Tested return</th><th class="n">Max DD live</th><th class="n">Max DD tested</th><th>Status</th></tr></thead>
+  <tbody>{% for h in health %}
+  <tr><td><b>{{ h.name }}</b></td><td class="n">{{ h.since }}</td><td class="n">{{ h.trades }}</td><td class="n">{{ h.win }}</td><td class="n">{{ h.ret }}</td><td class="n">{{ h.tested_ret }}</td><td class="n">{{ h.dd_live }}</td><td class="n">{{ h.dd_tested }}</td>
+  <td><span class="pill t-{{ h.tone }}">{{ h.status }}</span></td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endblock %}

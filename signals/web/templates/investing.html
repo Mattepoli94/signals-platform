@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}Investing{% endblock %}
+{% block body %}
+{% for p in pots if p.page == 'investing' %}
+{% set st = p.status %}
+<div class="pagehead" id="{{ p.key }}">
+  <div>
+    <div class="kicker">Investing · accumulation plans</div>
+    <h1>{{ p.name }}</h1>
+    <p class="sub">Money waits in cash and is invested only when QQQ closes in a value zone. Never sells.</p>
+  </div>
+  <a class="btn" href="{{ snap.strategies[p.strategy].paper }}">Read the paper</a>
+</div>
+
+{{ m.not_started(p, snap.config.start_date) }}
+
+<section class="card" style="display:flex;flex-wrap:wrap;gap:22px;align-items:center" aria-label="Signal">
+  {{ m.action_box(st) }}
+  <div style="flex:1 1 420px;min-width:0">
+    <div style="font-size:19px;font-weight:700">{{ st.plain }}</div>
+    <p class="small muted" style="margin:8px 0 0">Signal as of the {{ st.asof|d }} close. {{ snap.strategies[p.strategy].timing }}</p>
+    {% if p.status_provisional %}<p class="banner warn small" style="margin:10px 0 0">Live preview: {{ p.status_provisional.action }} — {{ p.status_provisional.action_sub }}{{ m.preview_lines(p, True) }}</p>{% endif %}
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 26px;font-size:13px;color:var(--muted)">
+    <div>QQQ close<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ st.levels.close|usd }}</div></div>
+    <div>Would buy (50% of cash)<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ (p.cash*0.5)|gbp }}</div></div>
+    <div>5-year trend line<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ st.levels.trend_line|usd }}</div></div>
+    <div>Top of 200-week zone<div class="mono" style="font-size:18px;color:var(--ink);font-weight:600">{{ st.levels.zone_top_200w|usd }}</div></div>
+  </div>
+</section>
+
+<div class="row">
+  <section class="card grow" style="flex-basis:520px" aria-label="Buy conditions">
+    <h2>Buy conditions</h2>
+    <p class="note">A buy fires when both conditions of either zone are met{% if p.cooldown_left %}, and the 10-session cooldown has passed ({{ p.cooldown_left }} sessions left){% endif %}.</p>
+    <div style="margin-top:14px">{{ m.checklist(st.groups) }}</div>
+    <p class="small muted" style="margin:0">Safety valve: {% if p.cfg.monthly_topup %}if cash goes above 24 × your monthly top-up ({{ (p.cfg.monthly_topup*24)|gbp }}), the excess is invested on the 1st trading day of the month.{% else %}active only when a monthly top-up is set (24 × that amount).{% endif %}</p>
+  </section>
+  <section class="card grow" style="flex-basis:380px;display:flex;flex-direction:column;gap:14px" aria-label="The pot">
+    <h2>The pot</h2>
+    {{ m.pot_stats(p) }}
+    {{ m.topup_form(p) }}
+  </section>
+</div>
+
+<section class="card" aria-label="Performance">
+  <div class="row" style="justify-content:space-between;align-items:flex-end;gap:12px">
+    <div><h2>Plan vs QQQ buy &amp; hold</h2>
+    <p class="note">Same deposits on the same days. Buy &amp; hold invests every pound in QQQ immediately.</p></div>
+    <div class="legend"><span><i style="background:#1D4ED8"></i>Value plan {{ p.equity|gbp }}</span><span><i style="background:#98A2B3"></i>QQQ buy &amp; hold {{ p.bench_equity|gbp }}</span><span><i class="dash" style="border-color:#475467"></i>Money in {{ p.deposits|gbp }}</span></div>
+  </div>
+  <div class="scroll" style="margin-top:14px">{{ charts[p.key]|safe }}</div>
+</section>
+
+<section class="card" aria-label="Price and value zones">
+  <div class="row" style="justify-content:space-between;align-items:flex-end;gap:12px">
+    <div><h2>QQQ and its value levels</h2><p class="note">Green bands = closes inside a value zone. Last ~2 years.</p></div>
+    <div class="legend"><span><i style="background:#0B1220"></i>QQQ close (adjusted)</span><span><i style="background:#1D4ED8"></i>5-year trend line</span><span><i class="dash" style="border-color:#0E7A43"></i>200-week average</span></div>
+  </div>
+  <div class="scroll" style="margin-top:14px">{{ charts['value_levels']|safe }}</div>
+</section>
+
+<section class="card" aria-label="Holding"><h2>Holding</h2><div style="margin-top:12px">{{ m.positions_table(p) }}</div>
+<p class="small muted">Dividends credited (after 15% US tax): {{ p.dividends|gbp2 }} · Interest on cash: {{ p.interest|gbp2 }} · Fees: {{ p.fees|gbp2 }}</p></section>
+<section class="card" aria-label="Buys"><h2>Buys</h2><div style="margin-top:12px">{{ m.trades_table(p.trades, 12) }}</div></section>
+{% endfor %}
+{% endblock %}

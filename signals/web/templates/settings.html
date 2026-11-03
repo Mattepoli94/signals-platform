@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Settings{% endblock %}
+{% block body %}
+<div class="pagehead"><div><div class="kicker">Settings</div><h1>Settings</h1>
+<p class="sub">Capital, fees, alerts and data. Changes rebuild every pot's history from the start date.</p></div></div>
+
+<section class="card" id="connection" aria-label="Connection">
+  <h2>How edits are saved</h2>
+  <div id="mode-local" class="banner ok" style="display:none;margin-top:12px">Running on your computer: edits are saved straight to <code>config/portfolio.yaml</code>.</div>
+  <div id="mode-gh" style="display:none;margin-top:12px">
+    <p class="note" style="margin-top:0">On the hosted site, edits are sent to your GitHub repository, which rebuilds the site in about 2 minutes. Paste a fine-grained GitHub token once (stored only in this browser). Give it access to this repository only, with <b>Contents: read and write</b> and <b>Actions: read and write</b>.</p>
+    <form id="ghform" class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:10px">
+      <label class="f">Owner<input name="owner" id="gh-owner" required style="width:160px"></label>
+      <label class="f">Repository<input name="repo" id="gh-repo" required style="width:180px"></label>
+      <label class="f">Token<input name="token" id="gh-token" type="password" required style="width:280px" autocomplete="off"></label>
+      <button class="btn primary" type="submit">Save connection</button>
+      <button class="btn ghost" type="button" id="gh-clear">Forget token</button>
+    </form>
+    <p class="small muted" id="gh-state" style="margin:8px 0 0"></p>
+  </div>
+</section>
+
+<section class="card" id="pots" aria-label="Pots">
+  <h2>Pots</h2>
+  <p class="note">Initial capital is deposited at the start date. A monthly top-up (optional) is added automatically on the first trading day of each month. Use the Portfolio page for one-off top-ups.</p>
+  <form data-op="set_start" class="inline" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:14px">
+    <label class="f">Start date (first close the pots follow)<input name="start_date" type="date" value="{{ snap.config.start_date }}" required class="dt"></label>
+    <button class="btn" type="submit">Save start date</button>
+  </form>
+  <div class="scroll" style="margin-top:16px"><table class="t">
+    <thead><tr><th>Pot</th><th>Initial capital (£)</th><th>Monthly top-up (£)</th><th>Fee per trade (%)</th><th>Interest on cash (% a year)</th><th></th></tr></thead>
+    <tbody>{% for k, c in snap.config.pots.items() %}
+    <tr><td><b>{{ c.name }}</b><div class="small muted">{{ c.strategy }}</div></td>
+    <td colspan="5"><form data-op="set_pot" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+      <input type="hidden" name="pot" value="{{ k }}">
+      <input name="initial_capital" type="number" step="0.01" min="0" value="{{ c.initial_capital }}" class="amt" aria-label="Initial capital for {{ c.name }}">
+      <input name="monthly_topup" type="number" step="0.01" min="0" value="{{ c.monthly_topup }}" class="amt" aria-label="Monthly top-up for {{ c.name }}">
+      <input name="fee_pct" type="number" step="0.01" min="0" value="{{ c.fee_pct }}" class="w100" aria-label="Fee for {{ c.name }}">
+      <input name="cash_rate_pct" type="number" step="0.01" min="0" value="{{ c.cash_rate_pct }}" class="w100" aria-label="Cash interest for {{ c.name }}">
+      <button class="btn small primary" type="submit">Save</button></form></td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small muted">Fees: Trading 212 charges a 0.15% FX fee each time you buy or sell a USD asset from a GBP account. On a system that trades ~60 times a year this costs several % a year; it is included in the pots.</p>
+</section>
+
+<section class="card" id="alerts" aria-label="Alerts">
+  <h2>Email alerts</h2>
+  {% if snap.email_configured %}<p class="banner ok small" style="margin:12px 0 0">Email is configured.</p>
+  {% else %}<p class="banner warn small" style="margin:12px 0 0">Email is not configured yet. Add the SMTP secrets in GitHub (see README → Email alerts). Until then, emails are saved to <code>state/outbox/</code>.</p>{% endif %}
+  {% set a = snap.config.alerts %}
+  <form data-op="set_alerts" style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="email_enabled" value="true" style="height:20px;width:20px" {{ 'checked' if a.email_enabled }}> Send emails when a signal fires</label>
+    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="preclose_warning" value="true" style="height:20px;width:20px" {{ 'checked' if a.preclose_warning }}> Warn ~25 minutes before the US close when a QQQ order is likely</label>
+    <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="daily_summary" value="true" style="height:20px;width:20px" {{ 'checked' if a.daily_summary }}> Daily summary after the US close</label>
+    <div><button class="btn primary" type="submit">Save alert settings</button></div>
+  </form>
+  {% if snap.last_alerts %}<p class="small muted">Last run: {% for x in snap.last_alerts %}“{{ x.subject }}” ({{ x.result }}){% if not loop.last %}; {% endif %}{% endfor %}</p>{% endif %}
+</section>
+
+<section class="card" id="data" aria-label="Data">
+  <h2>Data</h2>
+  <p class="note">Free daily data from Yahoo Finance (prices, FX) and FRED (Fed liquidity). Downloaded automatically after each close; press Refresh to download now.</p>
+  <div class="scroll" style="margin-top:12px"><table class="t"><thead><tr><th>Feed</th><th>Source</th><th class="n">Last close</th><th class="n">Expected</th><th>Status</th></tr></thead><tbody>
+  {% for f in snap.freshness %}<tr><td><b>{{ f.key }}</b> <span class="small muted">{{ f.name }}</span></td><td>{{ f.source }}</td><td class="n">{{ f.last }}</td><td class="n">{{ f.expected }}</td>
+  <td><span class="pill {{ {'ok':'t-green','stale':'t-amber','missing':'t-red'}[f.status] }}">{{ f.status }}</span></td></tr>{% endfor %}</tbody></table></div>
+  {% if snap.refresh %}{% set errs = snap.refresh.items()|selectattr('1.ok','false')|list %}{% if errs %}<p class="banner warn small">Last download failed for: {% for k, r in errs %}{{ k }} ({{ r.error[:80] }}){% if not loop.last %}; {% endif %}{% endfor %}. Upload a CSV below if it keeps failing.</p>{% endif %}{% endif %}
+  <h3 style="margin:18px 0 8px">Upload a CSV</h3>
+  <p class="small muted" style="margin:0 0 10px">Accepts Yahoo, Investing.com, Nasdaq.com and FRED exports (needs a date and a close/price column). Uploaded rows replace stored rows on the same dates.</p>
+  <form id="upload" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+    <label class="f">Asset<select name="asset" required>{% for a in snap.assets %}<option value="{{ a.key }}">{{ a.key }} · {{ a.name }}</option>{% endfor %}</select></label>
+    <label class="f">File<input type="file" name="file" accept=".csv,text/csv" required style="padding-top:8px"></label>
+    <button class="btn primary" type="submit">Upload</button>
+  </form>
+</section>
+{% endblock %}

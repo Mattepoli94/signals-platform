@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}Portfolio{% endblock %}
+{% block body %}
+<div class="pagehead">
+  <div><div class="kicker">Portfolio</div><h1>Pots and money</h1>
+  <p class="sub">Each pot is updated automatically from its system's trades, dividends, interest and your top-ups.</p></div>
+</div>
+
+<section class="card" aria-label="Totals">
+  <div class="stats">
+    <div class="stat"><div class="l">Total value</div><div class="v">{{ snap.totals.equity|gbp }}</div></div>
+    <div class="stat"><div class="l">Money in</div><div class="v">{{ snap.totals.deposits|gbp }}</div></div>
+    <div class="stat"><div class="l">Total P&amp;L</div><div class="v {{ snap.totals.pnl|cls }}">{{ snap.totals.pnl|gbp(True) }}</div></div>
+    <div class="stat"><div class="l">Return</div><div class="v {{ snap.totals.pnl_pct|cls }}">{{ snap.totals.pnl_pct|pct }}</div></div>
+    <div class="stat"><div class="l">Cash</div><div class="v">{{ snap.totals.cash|gbp }}</div></div>
+  </div>
+  <div class="scroll" style="margin-top:16px"><table class="t">
+    <thead><tr><th>Pot</th><th class="n">Started</th><th class="n">Money in</th><th class="n">Value</th><th class="n">P&amp;L</th><th class="n">Cash</th><th>Holding</th><th class="n">Share of total</th></tr></thead>
+    <tbody>{% for p in pots %}
+    <tr><td><a href="{{ p.page }}.html#{{ p.key }}"><b>{{ p.name }}</b></a></td><td class="n">{{ p.start|d if p.started else 'not yet' }}</td>
+    <td class="n">{{ p.deposits|gbp }}</td><td class="n">{{ p.equity|gbp }}</td><td class="n {{ p.pnl|cls }}">{{ p.pnl|gbp(True) }} ({{ p.pnl_pct|pct }})</td><td class="n">{{ p.cash|gbp }}</td>
+    <td>{% for a, w in p.weights.items() if w > 0 %}{{ a }} {{ (w*100)|round|int }}%{% if not loop.last %}, {% endif %}{% else %}cash{% endfor %}</td>
+    <td class="n">{{ (p.equity / snap.totals.equity if snap.totals.equity else 0)|pct(False) }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+
+{% if charts.total %}
+<section class="card" aria-label="Total value">
+  <div class="row" style="justify-content:space-between;align-items:flex-end"><h2>Total value</h2>
+  <div class="legend"><span><i style="background:#1D4ED8"></i>All pots</span><span><i class="dash" style="border-color:#475467"></i>Money in</span></div></div>
+  <div class="scroll" style="margin-top:14px">{{ charts.total|safe }}</div>
+</section>
+{% endif %}
+
+<section class="card" id="topups" aria-label="Top-ups">
+  <h2>Top-ups</h2>
+  <p class="note">Add money to any pot. Each top-up goes into that pot's cash at the close of its date; the system invests it by its own rules.</p>
+  <div class="row" style="margin-top:14px">{% for p in pots %}<div class="grow" style="flex-basis:320px">{{ m.topup_form(p) }}</div>{% endfor %}</div>
+  <h3 style="margin:20px 0 8px">Deposit history</h3>
+  <div class="scroll"><table class="t"><thead><tr><th>Date</th><th>Pot</th><th>Type</th><th class="n">Amount</th><th>Note</th><th></th></tr></thead><tbody>
+  {% for d in deposits %}<tr><td class="mono">{{ d.date|d }}</td><td>{{ d.pot_name }}</td><td>{{ d.kind }}</td><td class="n">{{ d.amount|gbp2 }}</td><td class="small">{{ d.note or '' }}</td>
+  <td>{% if d.kind == 'top-up' and d.id %}<form data-op="delete_topup" data-confirm="Delete this top-up?"><input type="hidden" name="id" value="{{ d.id }}"><button class="btn small ghost" type="submit">Delete</button></form>{% endif %}</td></tr>
+  {% else %}<tr><td colspan="6" class="muted">No deposits yet.</td></tr>{% endfor %}
+  {% for t in future_topups %}<tr><td class="mono">{{ t.date|d }}</td><td>{{ t.pot_name }}</td><td>top-up (scheduled)</td><td class="n">{{ t.amount|gbp2 }}</td><td class="small">{{ t.note or '' }}</td>
+  <td><form data-op="delete_topup" data-confirm="Delete this top-up?"><input type="hidden" name="id" value="{{ t.id }}"><button class="btn small ghost" type="submit">Delete</button></form></td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+
+<section class="card" id="journal" aria-label="Trade journal">
+  <h2>Trade journal</h2>
+  <p class="note">Every trade the systems made for your pots, at the close price. If your real fill was different, record it and the pot is re-valued with your price.</p>
+  {% for p in pots %}
+  <h3 style="margin:18px 0 8px">{{ p.name }}</h3>
+  {{ m.trades_table(p.trades, 200) }}
+  {% endfor %}
+</section>
+{% endblock %}
