@@ -259,3 +259,25 @@ def test_value_plan_fast_crash_history(stored):
     us = s.compute_us(stored)
     assert bool(us.loc['2020-02-27', 'fast_b1']) and bool(us.loc['2020-03-09', 'fast_b2'])
     assert not us.loc['2022-01-01':'2022-03-31', 'fast_b1'].any()      # override skipped Jan 2022
+
+
+def test_journal_execution_decay():
+    from signals.journal import summary
+    j = [{'status': 'confirmed', 'side': 'BUY', 'needs_fill': False, 'slip_pct': 0.002, 'decay_gbp': 1.0,
+          'model': {'pnl': None}, 'actual': {'pnl': None}},
+         {'status': 'confirmed', 'side': 'SELL', 'needs_fill': True, 'slip_pct': None, 'decay_gbp': None,
+          'model': {'pnl': 12.5}, 'actual': {'pnl': 12.5}}]
+    s = summary(j, {})
+    assert s['needs_fill'] == 1 and s['closed'] == 1 and s['wins_ideal'] == 1
+    assert s['decay_gbp'] == 1.0 and round(s['slip_avg_bps']) == 20
+
+
+def test_radar_track_scoring():
+    import pandas as pd
+    from signals import radar_track as T
+    idx = pd.bdate_range('2026-11-02', periods=40)
+    falling = pd.Series([100.0] * 5 + [100 - 2 * i for i in range(35)], index=idx)
+    px = {'spx': falling, 'qqq': falling, 'btc': falling}
+    log = {str(d.date()): {'ndx': {'level': 'AMBER' if i < 3 else 'GREEN'}} for i, d in enumerate(idx[:20])}
+    r = T.score(log, px)['ndx']
+    assert r['n'] == 1 and r['hits'] == 1 and r['episodes'][0]['outcome'] == 'hit'

@@ -40,6 +40,26 @@
       <div class="small" style="color:var(--amber)"><b>Limits:</b> {{ p.perf.caveat }}</div>
     </div>
   </div>
+  {% set L = p.live %}
+  {% if L %}
+  <div class="live">
+    <div class="live-h"><b>Live track record</b> <span class="small muted">since {{ L.since|d }} · {{ L.what }}</span></div>
+    <div class="live-s">
+      <div><span class="pv">{{ L.n }}</span><span class="pl">{{ 'signals' if p.key in ('fast','washout') else 'warnings' }} issued</span></div>
+      <div><span class="pv pos">{{ L.hits or 0 }}</span><span class="pl">{{ 'worked' if p.key in ('fast','washout') else 'correct (event followed)' }}</span></div>
+      <div><span class="pv neg">{{ L.false or 0 }}</span><span class="pl">{{ 'failed' if p.key in ('fast','washout') else 'false alarms' }}</span></div>
+      <div><span class="pv">{{ L.pending or 0 }}</span><span class="pl">still open</span></div>
+      {% if L.missed is defined %}<div><span class="pv">{{ L.missed|length }}</span><span class="pl">events missed (no warning)</span></div>{% endif %}
+      <div><span class="pv">{{ L.days }}</span><span class="pl">days tracked</span></div>
+    </div>
+    {% if L.episodes %}<details class="radar-chart"><summary>Every {{ 'signal' if p.key in ('fast','washout') else 'warning' }} so far</summary>
+    <div class="scroll"><table class="t"><thead><tr><th>From</th><th>To</th><th>Days on</th><th>Outcome</th><th>Detail</th></tr></thead><tbody>
+    {% for e in L.episodes|reverse %}<tr><td class="mono">{{ e.start|d }}</td><td class="mono">{{ e.end|d }}</td><td>{{ e.days }}</td>
+    <td><span class="pill {{ {'hit':'t-green','worked':'t-green','false alarm':'t-red','failed':'t-red'}.get(e.outcome,'t-grey') }}">{{ e.outcome }}</span></td><td class="small">{{ e.detail }}</td></tr>{% endfor %}
+    </tbody></table></div></details>{% endif %}
+    {% if L.missed %}<div class="small muted">Missed: {% for d in L.missed %}{{ d|d }}{% if not loop.last %}, {% endif %}{% endfor %}</div>{% endif %}
+  </div>
+  {% endif %}
   {% if p.history %}<details class="radar-chart"><summary>Past fast crashes and what the plan did</summary>
   <div class="scroll"><table class="t"><thead><tr><th>Crash started</th><th>Buy 1</th><th>Buy 2</th><th>Note</th></tr></thead><tbody>
   {% for h in p.history|reverse %}<tr><td class="mono">{{ h.start|d }}</td><td class="mono">{{ h.buy1|d if h.buy1 else '—' }}</td><td class="mono">{{ h.buy2|d if h.buy2 else '—' }}</td><td class="small">{{ 'In progress' if h.active and not h.buy1 else ('Skipped: override on' if h.skipped else ('Never fell 10.8%' if not h.buy1 else '')) }}</td></tr>{% endfor %}

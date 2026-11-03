@@ -115,6 +115,11 @@ def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
         res = run_pot(pk, pc, s, tables[s.key], px_src, fx,
                       cfg['start_date'], cfg['topups'], cfg['fills'], BENCH[s.key])
         pot_objs[pk] = res
+        # ideal run: the same signals filled exactly at the model price and fee (no recorded fills)
+        has_fills = any(str(f.get('trade_id', '')).startswith(pk + '-') for f in cfg['fills'])
+        ideal = run_pot(pk, pc, s, tables[s.key], px_src, fx, cfg['start_date'], cfg['topups'], [], BENCH[s.key]) if has_fills else res
+        ideal_out = {'equity': ideal.equity, 'pnl': ideal.equity - ideal.deposits, 'realised': ideal.realised, 'fees': ideal.fees,
+                     'trades': {t['id']: {k: t[k] for k in ('price', 'pnl', 'fee', 'gbp', 'units', 'unit_gbp')} for t in ideal.trades}}
         pot_info = {'cash': res.cash, 'cooldown_left': res.cooldown_left, 'weights': res.weights}
         st = s.status(tables[s.key], pot_info)
         prov = s.status(prov_tables[s.key], pot_info, provisional=True) if s.key in prov_tables else None
@@ -154,7 +159,7 @@ def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
             'curve': [[d.strftime('%Y-%m-%d'), r['equity'], r['deposits'], r['bench']] for d, r in curve.iterrows()] if len(curve) else [],
             'cooldown_left': res.cooldown_left, 'last_buy': res.last_buy,
             'status': st, 'status_provisional': prov, 'preview': preview_final, 'preview_provisional': preview_prov,
-            'tested': s.tested, 'latest_date': latest_date, 'expect': expect,
+            'tested': s.tested, 'latest_date': latest_date, 'expect': expect, 'ideal': ideal_out,
         }
 
     strategies_out = {k: {'key': k, 'name': s.name, 'kind': s.kind, 'paper': s.paper, 'timing': s.timing,
@@ -322,8 +327,14 @@ def run(mode: str = 'us', fetch: bool = True, email: bool = True, build: bool = 
         snap['radar']['fetch'] = report.get('radar_fetch')
     except Exception as e:  # noqa: BLE001
         snap['radar'] = {'error': str(e)[:300], 'panels': []}
-    from .journal import update as journal_update
+    from .journal import update as journal_update, summary as journal_summary
     snap['journal'] = journal_update(snap, now)
+    snap['journal_summary'] = journal_summary(snap['journal'], snap['pots'])
+    try:
+        from . import radar_track
+        radar_track.update(snap.get('radar') or {}, now)
+    except Exception as e:  # noqa: BLE001 - tracking must never block the run
+        (snap.get('radar') or {})['track_error'] = str(e)[:200]
     STATE.mkdir(parents=True, exist_ok=True)
     report['alerts'] = send_alerts(snap, mode, now) if (email and mode != 'build') else []
     snap['last_alerts'] = report['alerts']

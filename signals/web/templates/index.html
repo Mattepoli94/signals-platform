@@ -14,6 +14,9 @@
   </a>{% endif %}
 </div>
 
+{% if snap.journal_summary and snap.journal_summary.needs_fill %}
+<div class="banner warn"><b>{{ snap.journal_summary.needs_fill }} trade{{ 's' if snap.journal_summary.needs_fill != 1 }} waiting for your fill.</b> <a href="journal.html">Record what you actually paid in the Journal</a> so the site can track execution against the system.</div>
+{% endif %}
 {% if live_preview %}
 <div class="banner warn"><b>Live preview before the London close.</b> Based on prices at {{ snap.live.fetched_utc }} UTC.
 {% for p in live_preview %}<div style="margin-top:6px"><b>{{ p.name }}:</b> {{ p.status_provisional.action }} — {{ p.status_provisional.action_sub }}{{ m.preview_lines(p, True) }}</div>{% endfor %}
