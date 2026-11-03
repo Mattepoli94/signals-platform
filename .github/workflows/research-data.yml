@@ -34,6 +34,15 @@ jobs:
                           time.sleep(2)
                       os.makedirs('research-data/raw', exist_ok=True)
                       pd.DataFrame(rows).to_csv('research-data/raw/bitmex_funding.csv', index=False); print(sym, len(rows)); continue
+                  if sym == 'DERIBIT_FUNDING':
+                      import requests, os
+                      rows=[]; t0=pd.Timestamp('2019-05-01'); end=pd.Timestamp.utcnow().tz_localize(None)
+                      while t0 < end:
+                          t1=t0+pd.Timedelta(days=30)
+                          r=requests.get('https://www.deribit.com/api/v2/public/get_funding_rate_history',params={'instrument_name':'BTC-PERPETUAL','start_timestamp':int(t0.timestamp()*1000),'end_timestamp':int(t1.timestamp()*1000)},timeout=60)
+                          r.raise_for_status(); rows+=r.json()['result']; t0=t1; time.sleep(0.5)
+                      os.makedirs('research-data/raw', exist_ok=True)
+                      pd.DataFrame(rows).to_csv('research-data/raw/deribit_funding.csv', index=False); print(sym, len(rows)); continue
                   if sym.startswith('URL:'):
                       import requests, os
                       name, url = sym[4:].split('|', 1)
