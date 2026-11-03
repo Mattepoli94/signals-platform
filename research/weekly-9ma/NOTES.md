@@ -39,3 +39,16 @@ Exits on daily closes: stop / target / time; 0.2% round trip; one position at a 
 - Single stocks (S&P 1500, survivorship-biased): (b) +2.7% per trade vs +1.1-1.4% unarmed, but vs S&P only +0.6-1.1%; weekly cross in setup vs S&P ~0. Stock picking adds nothing: trade the index.
 - **As an overlay on the QQQ trading system** (QQQ US close, cash 0%, +50% QQQ while a swing trade is open, capped at 100%): 2000-09 9.8% / -17.3% -> 14.2% / -19.2%; 2010-26 7.6% / -14.1% -> 9.9% / -14.9%. All 27 exit settings add CAGR in both eras (+3.1 to +6.4 pt; +0.5 to +3.0 pt), worst fall 0 to 4.6 pt deeper. One-day lag (EQQQ next London close): 12.2% / -20.5% and 9.8% / -15.9%. The system is only 28% invested on average during these trades (38% overall).
 - Caveats: ~39 trades total; clustered in ~20 corrections; idea proposed by the user after seeing markets (partly in-sample); breadth proxy survivorship-biased. Not adopted - user to decide.
+
+## 4) Two-step entries and regime-dependent entries (3 Nov, /home/claude/wk9/two.py, run8.py, run9.py)
+User: keeps the swing setup separate (manual use). Tested on QQQ and SOXX; exits on the whole position vs average cost; grid stop 8/12%, target 15/25%, 40/60 days (median of 8 settings). Return on the full allocation (cash waiting earns 0).
+- Single entry, daily 9-EMA reclaim (setup armed): QQQ +6.0% / +5.5% per campaign (to 2009 / 2010+), win 73% / 76%; SOXX +4.4% / +5.7%. Best and most consistent.
+- Single entry, weekly 9w reclaim: QQQ +4.2% / +4.8%; SOXX +6.9% / +4.0%.
+- Single entry at breadth washout (first close <= 20 during a flush): QQQ +3.3% / +6.6%, SOXX +4.8% / +7.7%, but worst -13 to -15%.
+- Two steps (half early, half at the 9w reclaim within 40 sessions): all worse per allocated capital: breadth washout + 9w QQQ +0.9% / +5.1%; fast-crash buy 1 + 9w -3.4% / +2.9%; breadth turn + 9w +2.5% / +2.5%; 9-EMA + 9w +3.7% / +3.5%. Step 2 often never comes (stop or no reclaim): used 46-74% of the time. Two steps do cut the worst campaign (e.g. -6.4% vs -12.6%) -> a risk-reduction choice, not a return improvement.
+- Regime question (all entries, any time, no flush filter; edge = average trade minus random entries in the same regime of the instrument's own regime detector):
+  - Without the flush/breadth context, every entry style is within about +-1% of random, and signs flip between eras.
+  - Breakouts (new 50-day closing high) in Trending regimes: QQQ -0.9 / +1.1, SOXX +0.4 / +0.5. Weekly 10-week-high breakouts: about 0.
+  - 9w reclaim below the 200-day: QQQ +2.3 / +1.6, SOXX +2.6 / -0.2. In 'range above 200-day' (consolidation): QQQ -1.2 / +0.5, SOXX -1.0 / -1.1.
+  - Verdict: no reliable regime switch; the edge comes from the flush + breadth context, not the entry pattern.
+- Leaders: the S&P 1500 stock test (section 2) found RS leaders did not beat laggards after a flush (survivorship-biased). A sector-ETF test (no survivorship bias) is the clean next step if wanted.
