@@ -1,26 +1,40 @@
 {
  "btc_trend-2026-11-03-BTC-BUY": {
-  "actual": null,
+  "actual": {
+   "fee": 1.0,
+   "gbp": 250.0,
+   "pnl": null,
+   "price": 77338.226562,
+   "units": 0.004317
+  },
   "asset": "BTC",
   "ccy": "USD",
+  "confirmed_at": "2026-11-04 01:27 UTC",
   "date": "2026-11-03",
   "decay_gbp": null,
   "fill": null,
   "first_seen": "2026-11-03 10:56 UTC",
   "gbp": 250.0,
   "id": "btc_trend-2026-11-03-BTC-BUY",
-  "model": null,
-  "needs_fill": false,
+  "model": {
+   "fee": 1.0,
+   "gbp": 250.0,
+   "pnl": null,
+   "price": 77338.226562,
+   "unit_gbp": 57672.657703,
+   "units": 0.004317
+  },
+  "needs_fill": true,
   "pot": "btc_trend",
   "pot_name": "BTC cycle trend system",
-  "price": 76936.109375,
-  "reason": "Uptrend: the 30-day EMA is +0.3% above the 50-day. Hold 50% of the pot: half size because ADX is 22, below 25 (weak trend). Sell at the close if the 30-day EMA crosses below the 50-day ($80,033 now).",
+  "price": 77338.226562,
+  "reason": "start: join the current position",
   "side": "BUY",
   "slip_pct": null,
-  "status": "preview",
+  "status": "confirmed",
   "stop": null,
   "system": "BTC cycle trend system",
-  "units": 0.004359
+  "units": 0.004317
  },
  "qqq_trading-2026-11-03-EQQQ-BUY": {
   "actual": {

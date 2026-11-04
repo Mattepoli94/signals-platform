@@ -37,7 +37,7 @@
       <a href="settings.html" class="">Settings</a>
       
     </nav>
-    <div class="cur">GBP/USD <b class="mono">1.3413</b></div>
+    <div class="cur">GBP/USD <b class="mono">1.3462</b></div>
   </div>
 </header>
 <div class="statusbar">
@@ -47,14 +47,14 @@
     
     <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-03"><span class="dot ok"></span>QQQ <span class="mono">03 Nov</span></span>
     
-    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-02"><span class="dot ok"></span>BTC <span class="mono">02 Nov</span></span>
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-03"><span class="dot ok"></span>BTC <span class="mono">03 Nov</span></span>
     
     <span class="feed" title="GBP/USD · expected 2026-11-03"><span class="dot ok"></span>GBPUSD <span class="mono">03 Nov</span></span>
     
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Tue 03 Nov 2026, 23:07</span>
+    <span>Updated Wed 04 Nov 2026, 01:27</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -72,7 +72,7 @@
 <section class="card" aria-label="Summary">
   <div class="stats">
     <div class="stat"><div class="l">Suggestions</div><div class="v">2</div></div>
-    <div class="stat"><div class="l">Confirmed at the close</div><div class="v">1</div></div>
+    <div class="stat"><div class="l">Confirmed at the close</div><div class="v">2</div></div>
     <div class="stat"><div class="l">With your fill recorded</div><div class="v">0</div></div>
     <div class="stat"><div class="l">Previews not confirmed</div><div class="v">0</div></div>
   </div>
@@ -80,7 +80,7 @@
 </section>
 
 
-<div class="banner warn"><b>1 confirmed trade waiting for your fill.</b> Record the price you actually got (and the fee) with <b>Record</b> in the table, so the site can compare the system's ideal result with your real execution.</div>
+<div class="banner warn"><b>2 confirmed trades waiting for your fill.</b> Record the price you actually got (and the fee) with <b>Record</b> in the table, so the site can compare the system's ideal result with your real execution.</div>
 <section class="card" aria-label="Ideal vs actual">
   <h2>System vs your execution</h2>
   <p class="note">"Ideal" = every signal filled exactly at the model price and fee. "Actual" = your pots, using the fills you recorded. The gap is execution decay.</p>
@@ -93,7 +93,7 @@
     <div class="stat"><div class="l">Average slippage</div><div class="v">—</div></div>
   </div>
   <div class="scroll" style="margin-top:14px"><table class="t"><thead><tr><th>Pot</th><th class="n">Money in</th><th class="n">Ideal value</th><th class="n">Actual value</th><th class="n">Gap</th></tr></thead><tbody>
-  <tr><td>Nasdaq value plan (EQQQ, ISA)</td><td class="n">£1,000.00</td><td class="n">£1,000.00</td><td class="n">£1,000.00</td><td class="n ">£0.00</td></tr><tr><td>Nasdaq trading system (EQQQ ISA + USD Invest)</td><td class="n">£500.00</td><td class="n">£499.75</td><td class="n">£499.75</td><td class="n ">£0.00</td></tr><tr><td>BTC cycle trend system</td><td class="n">£500.00</td><td class="n">£500.00</td><td class="n">£500.00</td><td class="n ">£0.00</td></tr>
+  <tr><td>Nasdaq value plan (EQQQ, ISA)</td><td class="n">£1,000.00</td><td class="n">£1,000.00</td><td class="n">£1,000.00</td><td class="n ">£0.00</td></tr><tr><td>Nasdaq trading system (EQQQ ISA + USD Invest)</td><td class="n">£500.00</td><td class="n">£499.75</td><td class="n">£499.75</td><td class="n ">£0.00</td></tr><tr><td>BTC cycle trend system</td><td class="n">£500.00</td><td class="n">£499.00</td><td class="n">£499.00</td><td class="n ">£0.00</td></tr>
   </tbody></table></div>
   <p class="small muted" style="margin:10px 0 0">Slippage is positive when your fill was worse than the model price (paid more on a buy, got less on a sell). Decay = slippage × trade size + any fee above the model fee.</p>
 </section>
@@ -133,16 +133,16 @@
       </td>
     </tr>
     
-    <tr data-pot="btc_trend" data-status="preview">
+    <tr data-pot="btc_trend" data-status="confirmed">
       <td class="mono">03 Nov 2026<div class="small muted">seen 2026-11-03 10:56 UTC</div></td>
       <td class="small">BTC cycle trend system</td>
       <td><span class="pill t-green">BUY</span> BTC</td>
-      <td class="n">£250.00<div class="small muted">0.0044</div></td>
-      <td class="n">$76,936</td>
+      <td class="n">£250.00<div class="small muted">0.0043</div></td>
+      <td class="n">$77,338</td>
       <td class="n">—</td>
-      <td class="small" style="max-width:320px">Uptrend: the 30-day EMA is +0.3% above the 50-day. Hold 50% of the pot: half size because ADX is 22, below 25 (weak trend). Sell at the close if the 30-day EMA crosses below the 50-day ($80,033 now).</td>
-      <td><span class="pill t-amber">preview</span></td>
-      <td class="n">—
+      <td class="small" style="max-width:320px">start: join the current position</td>
+      <td><span class="pill t-green">confirmed</span><div><span class="pill t-amber" style="margin-top:4px">fill needed</span></div></td>
+      <td class="n"><span class="small muted">open / bought</span>
         </td>
       <td>
         
@@ -175,7 +175,7 @@
 </main>
 <footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-03 23:07", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-04 01:27", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>
