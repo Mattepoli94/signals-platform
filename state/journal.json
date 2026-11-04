@@ -4,7 +4,7 @@
    "fee": 1.0,
    "gbp": 250.0,
    "pnl": null,
-   "price": 77338.226562,
+   "price": 77345.046875,
    "units": 0.004317
   },
   "asset": "BTC",
@@ -20,8 +20,8 @@
    "fee": 1.0,
    "gbp": 250.0,
    "pnl": null,
-   "price": 77338.226562,
-   "unit_gbp": 57672.657703,
+   "price": 77345.046875,
+   "unit_gbp": 57677.743746,
    "units": 0.004317
   },
   "needs_fill": true,
