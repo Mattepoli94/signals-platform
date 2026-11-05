@@ -115,8 +115,8 @@
    "fee": 0.36,
    "gbp": 240.05,
    "pnl": null,
-   "price": 1.343418,
-   "units": 322.009283
+   "price": 1.344845,
+   "units": 322.351326
   },
   "asset": "USD",
   "ccy": "USDCASH",
@@ -131,9 +131,9 @@
    "fee": 0.36,
    "gbp": 240.05,
    "pnl": null,
-   "price": 1.343418,
-   "unit_gbp": 0.74437,
-   "units": 322.009283
+   "price": 1.344845,
+   "unit_gbp": 0.74358,
+   "units": 322.351326
   },
   "needs_fill": true,
   "pot": "qqq_trading",
