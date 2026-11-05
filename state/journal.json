@@ -74,49 +74,77 @@
   "units": 0.973811
  },
  "qqq_trading-2026-11-05-EQQQ-SELL": {
-  "actual": null,
+  "actual": {
+   "fee": 0.24,
+   "gbp": 480.11,
+   "pnl": -20.13,
+   "price": 49302.0,
+   "units": 0.973811
+  },
   "asset": "EQQQ",
   "ccy": "GBX",
+  "confirmed_at": "2026-11-05 17:47 UTC",
   "date": "2026-11-05",
   "decay_gbp": null,
   "fill": null,
   "first_seen": "2026-11-05 16:00 UTC",
-  "gbp": 503.5576,
+  "gbp": 480.11,
   "id": "qqq_trading-2026-11-05-EQQQ-SELL",
-  "model": null,
-  "needs_fill": false,
+  "model": {
+   "fee": 0.24,
+   "gbp": 480.11,
+   "pnl": -20.13,
+   "price": 49302.0,
+   "unit_gbp": 493.02,
+   "units": 0.973811
+  },
+  "needs_fill": true,
   "pot": "qqq_trading",
   "pot_name": "Nasdaq trading system (EQQQ ISA + USD Invest)",
-  "price": 48997.0,
-  "reason": "Dip trade closed: stop: close at or below entry \u22123%. Sell the dip position at today's London close.",
+  "price": 49302.0,
+  "reason": "stop: close at or below entry \u22123%",
   "side": "SELL",
   "slip_pct": null,
-  "status": "preview",
+  "status": "confirmed",
   "stop": null,
   "system": "Nasdaq-100 regime system + dollar add-on",
-  "units": 1.027731
+  "units": 0.973811
  },
  "qqq_trading-2026-11-05-USD-BUY": {
-  "actual": null,
+  "actual": {
+   "fee": 0.36,
+   "gbp": 240.05,
+   "pnl": null,
+   "price": 1.343418,
+   "units": 322.009283
+  },
   "asset": "USD",
   "ccy": "USDCASH",
+  "confirmed_at": "2026-11-05 17:47 UTC",
   "date": "2026-11-05",
   "decay_gbp": null,
   "fill": null,
   "first_seen": "2026-11-05 16:00 UTC",
-  "gbp": 251.7788,
+  "gbp": 240.05,
   "id": "qqq_trading-2026-11-05-USD-BUY",
-  "model": null,
-  "needs_fill": false,
+  "model": {
+   "fee": 0.36,
+   "gbp": 240.05,
+   "pnl": null,
+   "price": 1.343418,
+   "unit_gbp": 0.74437,
+   "units": 322.009283
+  },
+  "needs_fill": true,
   "pot": "qqq_trading",
   "pot_name": "Nasdaq trading system (EQQQ ISA + USD Invest)",
-  "price": 1.347618,
-  "reason": "Dip trade closed: stop: close at or below entry \u22123%. Sell the dip position at today's London close.",
+  "price": 1.343418,
+  "reason": "stop: close at or below entry \u22123%",
   "side": "BUY",
   "slip_pct": null,
-  "status": "preview",
+  "status": "confirmed",
   "stop": null,
   "system": "Nasdaq-100 regime system + dollar add-on",
-  "units": 339.301669
+  "units": 322.009283
  }
 }
