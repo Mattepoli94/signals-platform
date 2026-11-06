@@ -37,7 +37,7 @@
       <a href="settings.html" class="">Settings</a>
       
     </nav>
-    <div class="cur">GBP/USD <b class="mono">1.3448</b></div>
+    <div class="cur">GBP/USD <b class="mono">1.3451</b></div>
   </div>
 </header>
 <div class="statusbar">
@@ -47,14 +47,14 @@
     
     <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-05"><span class="dot ok"></span>QQQ <span class="mono">05 Nov</span></span>
     
-    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-04"><span class="dot ok"></span>BTC <span class="mono">04 Nov</span></span>
+    <span class="feed" title="Bitcoin (spot, USD) · expected 2026-11-05"><span class="dot ok"></span>BTC <span class="mono">05 Nov</span></span>
     
     <span class="feed" title="GBP/USD · expected 2026-11-05"><span class="dot ok"></span>GBPUSD <span class="mono">05 Nov</span></span>
     
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Thu 05 Nov 2026, 22:56</span>
+    <span>Updated Fri 06 Nov 2026, 01:34</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -82,7 +82,7 @@
 <section class="card" aria-label="Manual pot">
   <div class="stats">
     <div class="stat"><div class="l">Manual pot value</div><div class="v">£1,000.00</div></div>
-    <div class="stat"><div class="l">Share of portfolio (target 30%)</div><div class="v">33%</div></div>
+    <div class="stat"><div class="l">Share of portfolio (target 30%)</div><div class="v">34%</div></div>
     <div class="stat"><div class="l">Risk per trade (0.5%)</div><div class="v">£5.00</div></div>
     <div class="stat"><div class="l">Open trades</div><div class="v ">0 / 5</div></div>
     <div class="stat"><div class="l">Open risk to stops</div><div class="v">£0.00</div></div>
@@ -102,7 +102,7 @@
     <ul class="rules">
       <li><b>Risk per trade:</b> 0.5% of the manual pot (£1,000.00) = <b>£5.00</b> lost if the stop is hit. Size = risk ÷ (entry − stop).</li>
       <li><b>At most 5 open trades</b>, and <b>no more than 3 from the same system</b>.</li>
-      <li><b>Allocation:</b> manual trading is meant to be about 30% of the whole portfolio (now 33%).</li>
+      <li><b>Allocation:</b> manual trading is meant to be about 30% of the whole portfolio (now 34%).</li>
       <li>The site blocks a new trade that breaks a limit, and warns when a trade risks more than the budget.</li>
     </ul>
     <details class="small" style="margin-top:8px"><summary>Change the rules</summary>
@@ -141,7 +141,7 @@
       <label class="f">Ticker<input name="ticker" required placeholder="e.g. NVDA" autocapitalize="characters"></label>
       <label class="f">Direction<select name="side" id="mt-side"><option value="long">Long</option><option value="short">Short</option></select></label>
       <label class="f">Price currency<select name="ccy" id="mt-ccy"><option value="USD">USD ($)</option><option value="GBP">GBP (£)</option><option value="GBX">GBX (pence)</option></select></label>
-      <label class="f">Opened<input type="date" name="opened" value="2026-11-05" class="dt"></label>
+      <label class="f">Opened<input type="date" name="opened" value="2026-11-06" class="dt"></label>
       <label class="f">Entry<input name="entry" id="mt-entry" inputmode="decimal" required></label>
       <label class="f">Stop loss<input name="stop" id="mt-stop" inputmode="decimal" required></label>
       <label class="f">Take profit<input name="target" id="mt-tgt" inputmode="decimal"></label>
@@ -265,7 +265,7 @@
 
 <script>
 (function () {
-  var M = {"budget": 5.0, "by_sys": {"1": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Box system: early entry", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Box", "total_r": 0.0, "trades": 0, "win_rate": null}, "2": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Breakout trading", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Breakout", "total_r": 0.0, "trades": 0, "win_rate": null}, "3": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Mean reversion", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Mean rev.", "total_r": 0.0, "trades": 0, "win_rate": null}, "4": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Trend following: long", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Trend long", "total_r": 0.0, "trades": 0, "win_rate": null}, "5": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Trend following: short", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Trend short", "total_r": 0.0, "trades": 0, "win_rate": null}}, "fx": 1.344845, "max_open": 5, "max_sys": 3, "open": 0, "sides": ["long", "long", "long", "long", "short"]};
+  var M = {"budget": 5.0, "by_sys": {"1": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Box system: early entry", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Box", "total_r": 0.0, "trades": 0, "win_rate": null}, "2": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Breakout trading", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Breakout", "total_r": 0.0, "trades": 0, "win_rate": null}, "3": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Mean reversion", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Mean rev.", "total_r": 0.0, "trades": 0, "win_rate": null}, "4": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Trend following: long", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Trend long", "total_r": 0.0, "trades": 0, "win_rate": null}, "5": {"avg_checks": null, "avg_days": null, "avg_loss": null, "avg_r": null, "avg_rr_planned": null, "avg_win": null, "max_losing_streak": 0, "name": "Trend following: short", "open": 0, "open_now": 0, "pnl": 0.0, "profit_factor": null, "short": "Trend short", "total_r": 0.0, "trades": 0, "win_rate": null}}, "fx": 1.347709, "max_open": 5, "max_sys": 3, "open": 0, "sides": ["long", "long", "long", "long", "short"]};
   var keys = ["1", "2", "3", "4", "5"];
   function $(id) { return document.getElementById(id); }
   function num(id) { var v = parseFloat(($(id).value || '').replace(/[,£$]/g, '')); return isFinite(v) ? v : null; }
@@ -310,7 +310,7 @@
 </main>
 <footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-05 22:56", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-06 01:34", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>
