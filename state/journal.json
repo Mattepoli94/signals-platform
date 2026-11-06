@@ -165,7 +165,7 @@
   "reason": "Dip entry 50% (below 200-day): close below lower Bollinger band. Buy EQQQ at today's London close (reference \u00a3493.62); stop on a close at or below \u00a3478.81; time exit 20 Nov.",
   "side": "BUY",
   "slip_pct": null,
-  "status": "preview",
+  "status": "cancelled",
   "stop": 47881.14,
   "system": "Nasdaq-100 regime system + dollar add-on",
   "units": 0.485706
@@ -188,9 +188,45 @@
   "reason": "Dip entry 50% (below 200-day): close below lower Bollinger band. Buy EQQQ at today's London close (reference \u00a3493.62); stop on a close at or below \u00a3478.81; time exit 20 Nov.",
   "side": "SELL",
   "slip_pct": null,
-  "status": "preview",
+  "status": "cancelled",
   "stop": 47881.14,
   "system": "Nasdaq-100 regime system + dollar add-on",
   "units": 160.133942
+ },
+ "qqq_value-2026-11-06-EQQQ-BUY": {
+  "actual": {
+   "fee": 0.25,
+   "gbp": 500.0,
+   "pnl": null,
+   "price": 49763.0,
+   "units": 1.00426
+  },
+  "asset": "EQQQ",
+  "ccy": "GBX",
+  "date": "2026-11-06",
+  "decay_gbp": null,
+  "fill": null,
+  "first_seen": "2026-11-06 17:38 UTC",
+  "gbp": 500.0,
+  "id": "qqq_value-2026-11-06-EQQQ-BUY",
+  "model": {
+   "fee": 0.25,
+   "gbp": 500.0,
+   "pnl": null,
+   "price": 49763.0,
+   "unit_gbp": 497.63,
+   "units": 1.00426
+  },
+  "needs_fill": true,
+  "pot": "qqq_value",
+  "pot_name": "Nasdaq value plan (EQQQ, ISA)",
+  "price": 49763.0,
+  "reason": "fast-crash buy 1 (50% of cash)",
+  "side": "BUY",
+  "slip_pct": null,
+  "status": "confirmed",
+  "stop": null,
+  "system": "Nasdaq-100 value plan",
+  "units": 1.00426
  }
 }

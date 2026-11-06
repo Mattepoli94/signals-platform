@@ -37,13 +37,13 @@
       <a href="settings.html" class="">Settings</a>
       
     </nav>
-    <div class="cur">GBP/USD <b class="mono">1.3365</b></div>
+    <div class="cur">GBP/USD <b class="mono">1.3368</b></div>
   </div>
 </header>
 <div class="statusbar">
   <div class="in">
     
-    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-05"><span class="dot ok"></span>EQQQ <span class="mono">05 Nov</span></span>
+    <span class="feed" title="Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence) · expected 2026-11-06"><span class="dot ok"></span>EQQQ <span class="mono">06 Nov</span></span>
     
     <span class="feed" title="Invesco QQQ (Nasdaq-100, US) · expected 2026-11-05"><span class="dot ok"></span>QQQ <span class="mono">05 Nov</span></span>
     
@@ -54,7 +54,7 @@
     
     <span class="feed"></span>
     <span class="sp"></span>
-    <span>Updated Fri 06 Nov 2026, 15:52</span>
+    <span>Updated Fri 06 Nov 2026, 17:38</span>
     <span style="display:flex;gap:8px">
     <button type="button" class="btn small primary" data-action="refresh">Refresh data</button>
     <a class="btn small" href="settings.html#data">Upload CSV</a></span>
@@ -71,16 +71,16 @@
 
 <section class="card" aria-label="Summary">
   <div class="stats">
-    <div class="stat"><div class="l">Suggestions</div><div class="v">6</div></div>
-    <div class="stat"><div class="l">Confirmed at the close</div><div class="v">4</div></div>
+    <div class="stat"><div class="l">Suggestions</div><div class="v">7</div></div>
+    <div class="stat"><div class="l">Confirmed at the close</div><div class="v">5</div></div>
     <div class="stat"><div class="l">With your fill recorded</div><div class="v">0</div></div>
-    <div class="stat"><div class="l">Previews not confirmed</div><div class="v">0</div></div>
+    <div class="stat"><div class="l">Previews not confirmed</div><div class="v">2</div></div>
   </div>
   <p class="small muted" style="margin:12px 0 0"><b>preview</b> = shown at ~16:05, waiting for the close · <b>confirmed</b> = the system traded at the close · <b>cancelled</b> = previewed but the close did not confirm it · <b>superseded</b> = no longer in the pot after a settings change (e.g. capital or start date).</p>
 </section>
 
 
-<div class="banner warn"><b>4 confirmed trades waiting for your fill.</b> Record the price you actually got (and the fee) with <b>Record</b> in the table, so the site can compare the system's ideal result with your real execution.</div>
+<div class="banner warn"><b>5 confirmed trades waiting for your fill.</b> Record the price you actually got (and the fee) with <b>Record</b> in the table, so the site can compare the system's ideal result with your real execution.</div>
 <section class="card" aria-label="Ideal vs actual">
   <h2>System vs your execution</h2>
   <p class="note">"Ideal" = every signal filled exactly at the model price and fee. "Actual" = your pots, using the fills you recorded. The gap is execution decay.</p>
@@ -93,7 +93,7 @@
     <div class="stat"><div class="l">Average slippage</div><div class="v">—</div></div>
   </div>
   <div class="scroll" style="margin-top:14px"><table class="t"><thead><tr><th>Pot</th><th class="n">Money in</th><th class="n">Ideal value</th><th class="n">Actual value</th><th class="n">Gap</th></tr></thead><tbody>
-  <tr><td>Nasdaq value plan (EQQQ, ISA)</td><td class="n">£1,000.00</td><td class="n">£1,000.00</td><td class="n">£1,000.00</td><td class="n ">£0.00</td></tr><tr><td>Nasdaq trading system (EQQQ ISA + USD Invest)</td><td class="n">£500.00</td><td class="n">£479.51</td><td class="n">£479.51</td><td class="n ">£0.00</td></tr><tr><td>BTC cycle trend system</td><td class="n">£500.00</td><td class="n">£493.26</td><td class="n">£493.26</td><td class="n ">£0.00</td></tr>
+  <tr><td>Nasdaq value plan (EQQQ, ISA)</td><td class="n">£1,000.00</td><td class="n">£999.75</td><td class="n">£999.75</td><td class="n ">£0.00</td></tr><tr><td>Nasdaq trading system (EQQQ ISA + USD Invest)</td><td class="n">£500.00</td><td class="n">£479.51</td><td class="n">£479.51</td><td class="n ">£0.00</td></tr><tr><td>BTC cycle trend system</td><td class="n">£500.00</td><td class="n">£493.26</td><td class="n">£493.26</td><td class="n ">£0.00</td></tr>
   </tbody></table></div>
   <p class="small muted" style="margin:10px 0 0">Slippage is positive when your fill was worse than the model price (paid more on a buy, got less on a sell). Decay = slippage × trade size + any fee above the model fee.</p>
 </section>
@@ -110,7 +110,30 @@
     <thead><tr><th>Date</th><th>System</th><th>Signal</th><th class="n">Amount</th><th class="n">Price</th><th class="n">Stop</th><th>Why</th><th>Status</th><th class="n">Result</th><th>Your fill</th></tr></thead>
     <tbody>
     
-    <tr data-pot="qqq_trading" data-status="preview">
+    <tr data-pot="qqq_value" data-status="confirmed">
+      <td class="mono">06 Nov 2026<div class="small muted">seen 2026-11-06 17:38 UTC</div></td>
+      <td class="small">Nasdaq value plan (EQQQ, ISA)</td>
+      <td><span class="pill t-green">BUY</span> EQQQ</td>
+      <td class="n">£500.00<div class="small muted">1.0043</div></td>
+      <td class="n">£497.63</td>
+      <td class="n">—</td>
+      <td class="small" style="max-width:320px">fast-crash buy 1 (50% of cash)</td>
+      <td><span class="pill t-green">confirmed</span><div><span class="pill t-amber" style="margin-top:4px">fill needed</span></div></td>
+      <td class="n"><span class="small muted">open / bought</span>
+        </td>
+      <td>
+        
+        <details><summary class="small">Record</summary>
+        <form data-op="set_fill" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+          <input type="hidden" name="trade_id" value="qqq_value-2026-11-06-EQQQ-BUY">
+          <input name="price" type="number" step="0.0001" placeholder="pence" class="w100" required aria-label="Fill price">
+          <input name="fee_gbp" type="number" step="0.01" placeholder="fee £" class="w100" aria-label="Fee in GBP">
+          <button class="btn small primary" type="submit">Save</button>
+        </form></details>
+      </td>
+    </tr>
+    
+    <tr data-pot="qqq_trading" data-status="cancelled">
       <td class="mono">06 Nov 2026<div class="small muted">seen 2026-11-06 15:52 UTC</div></td>
       <td class="small">Nasdaq trading system (EQQQ ISA + USD Invest)</td>
       <td><span class="pill t-red">SELL</span> USD cash</td>
@@ -118,22 +141,15 @@
       <td class="n">1.3365</td>
       <td class="n">47881.1400</td>
       <td class="small" style="max-width:320px">Dip entry 50% (below 200-day): close below lower Bollinger band. Buy EQQQ at today&#39;s London close (reference £493.62); stop on a close at or below £478.81; time exit 20 Nov.</td>
-      <td><span class="pill t-amber">preview</span></td>
+      <td><span class="pill t-grey">cancelled</span></td>
       <td class="n">—
         </td>
       <td>
         
-        <details><summary class="small">Record</summary>
-        <form data-op="set_fill" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
-          <input type="hidden" name="trade_id" value="qqq_trading-2026-11-06-USD-SELL">
-          <input name="price" type="number" step="0.0001" placeholder="GBP/USD" class="w100" required aria-label="Fill price">
-          <input name="fee_gbp" type="number" step="0.01" placeholder="fee £" class="w100" aria-label="Fee in GBP">
-          <button class="btn small primary" type="submit">Save</button>
-        </form></details>
       </td>
     </tr>
     
-    <tr data-pot="qqq_trading" data-status="preview">
+    <tr data-pot="qqq_trading" data-status="cancelled">
       <td class="mono">06 Nov 2026<div class="small muted">seen 2026-11-06 15:52 UTC</div></td>
       <td class="small">Nasdaq trading system (EQQQ ISA + USD Invest)</td>
       <td><span class="pill t-green">BUY</span> EQQQ</td>
@@ -141,18 +157,11 @@
       <td class="n">£493.62</td>
       <td class="n">£478.81</td>
       <td class="small" style="max-width:320px">Dip entry 50% (below 200-day): close below lower Bollinger band. Buy EQQQ at today&#39;s London close (reference £493.62); stop on a close at or below £478.81; time exit 20 Nov.</td>
-      <td><span class="pill t-amber">preview</span></td>
+      <td><span class="pill t-grey">cancelled</span></td>
       <td class="n">—
         </td>
       <td>
         
-        <details><summary class="small">Record</summary>
-        <form data-op="set_fill" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
-          <input type="hidden" name="trade_id" value="qqq_trading-2026-11-06-EQQQ-BUY">
-          <input name="price" type="number" step="0.0001" placeholder="pence" class="w100" required aria-label="Fill price">
-          <input name="fee_gbp" type="number" step="0.01" placeholder="fee £" class="w100" aria-label="Fee in GBP">
-          <button class="btn small primary" type="submit">Save</button>
-        </form></details>
       </td>
     </tr>
     
@@ -267,7 +276,7 @@
 </main>
 <footer><b>Poli's Hedge Fund</b> · platform v2.0.0 · live rules: Nasdaq trading v1.1, Value plan v1.2, BTC trend v2, Risk radar v1, Bottom signals v1.<br>Signals only: no orders are sent anywhere. Past and backtested results do not guarantee future results.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>window.SIGNALS = {"generated": "2026-11-06 15:52", "repo": "Mattepoli94/signals-platform"};</script>
+<script>window.SIGNALS = {"generated": "2026-11-06 17:38", "repo": "Mattepoli94/signals-platform"};</script>
 <script src="static/app.js"></script>
 </body>
 </html>
