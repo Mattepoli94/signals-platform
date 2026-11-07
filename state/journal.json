@@ -36,6 +36,29 @@
   "system": "BTC cycle trend system",
   "units": 0.004317
  },
+ "btc_trend-2026-11-07-BTC-SELL": {
+  "actual": null,
+  "asset": "BTC",
+  "ccy": "USD",
+  "date": "2026-11-07",
+  "decay_gbp": null,
+  "fill": null,
+  "first_seen": "2026-11-07 01:25 UTC",
+  "gbp": 242.999073,
+  "id": "btc_trend-2026-11-07-BTC-SELL",
+  "model": null,
+  "needs_fill": false,
+  "pot": "btc_trend",
+  "pot_name": "BTC cycle trend system",
+  "price": 75805.523438,
+  "reason": "The 30-day EMA ($79,498) is below the 50-day EMA ($79,584): no trend, stay in cash. Buy at the close when the 30-day crosses back above.",
+  "side": "SELL",
+  "slip_pct": null,
+  "status": "preview",
+  "stop": null,
+  "system": "BTC cycle trend system",
+  "units": 0.004313
+ },
  "qqq_trading-2026-11-03-EQQQ-BUY": {
   "actual": {
    "fee": 0.25,

@@ -108,6 +108,11 @@
   }
  },
  "2026-11-06": {
+  "btc": {
+   "level": "GREEN",
+   "score": 0.0,
+   "seen": "2026-11-07 01:25 UTC"
+  },
   "fast": {
    "level": "BUY 1",
    "score": 5.0,
