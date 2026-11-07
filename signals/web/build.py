@@ -44,6 +44,7 @@ PAPERS = [
      'period': 'Platform rules and fees, GBP. 2021–26 is in-sample for all three systems.'},
 ]
 CHANGELOG = [
+    ('2026-11-07', 'Emergency plan', 'New page: the Nov 2026 exit framework for AI and semis (two tranches into the bounce, the 19 Nov checkpoint, warning and jump-ship stops) with QQQ and SOXX tracked daily against the expected bounce and failure paths, the step the framework is at, and the allocation it calls for. SOXX added as a signal-only price feed.'),
     ('2026-11-07', 'Manual trading', 'Gamma levels for the next session (S&P 500 and Nasdaq-100: call wall, put wall, gamma flip, key strikes, CFD/futures equivalents), from Cboe\'s free option chains after each US close, with a live track record of whether the walls held.'),
     ('2026-11-03', 'Manual trading', 'New page: five discretionary systems with their conditions, risk rules (0.5% of the manual pot risked per trade, max 5 open, max 3 per system, 30% allocation), a position-size calculator and a trade journal scored by system (R multiples, win rate, expectancy, P&L).'),
     ('2026-11-03', 'Risk radar page', 'Display only, rules unchanged: the fast-crash plan is shown as four steps (fast crash, override, BUY 1, BUY 2), each with its requirements and an ON / NOT YET / LOCKED state; the capitulation groups are listed separately; the washout is shown per market. Every panel has a two-line "How to use".'),
@@ -193,6 +194,24 @@ def _radar_chart(p):
     ], height=200, yfmt='{:.0f}', label=f"{p['title']}: number of signs on")
 
 
+def _emergency_chart(t):
+    if not t or not t.get('chart_actual'):
+        return ''
+    L = t['levels']
+    dates = [d for d, _ in t['chart_actual']] + [d for d, _ in t['chart_bounce']]
+    d0, d1 = min(dates), max(dates)
+    lvl = lambda v, c: {'name': '', 'color': c, 'dash': True, 'width': 1, 'points': [(d0, v), (d1, v)]}  # noqa: E731
+    fmt = '${:,.0f}'
+    return line_chart([
+        lvl(L['t2'], '#98A2B3'), lvl(L['t1'], '#98A2B3'), lvl(L['strong'], '#C7CDD6'), lvl(L['low'], '#E0A23A'), lvl(L['jump'], '#B42318'),
+        {'name': 'Bounce path', 'color': '#0E7A43', 'dash': True, 'width': 2, 'points': t['chart_bounce']},
+        {'name': 'Failure path', 'color': '#B42318', 'dash': True, 'width': 2, 'points': t['chart_failure']},
+        {'name': t['key'], 'color': '#0B1220', 'width': 2.6, 'points': t['chart_actual'],
+         'markers': [(t['chart_actual'][-1][0], t['chart_actual'][-1][1], '#1D4ED8')]},
+    ], height=300, yfmt=fmt, today=t['date'],
+        label=f"{t['key']} daily close against the expected bounce and failure paths and the plan levels")
+
+
 def _health(pots):
     out = []
     for p in pots:
@@ -237,6 +256,9 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
     if len(mc) >= 2:
         charts['manual'] = line_chart([{'name': 'Manual pot', 'color': '#1D4ED8', 'width': 2, 'points': [(r[0], r[1]) for r in mc]}],
                                       height=200, yfmt='£{:,.0f}', label='Manual pot value after each closed trade')
+    em = snap.get('emergency') or {}
+    charts['em_soxx'] = _emergency_chart(em.get('soxx'))
+    charts['em_qqq'] = _emergency_chart(em.get('qqq'))
     for rp in ((snap.get('radar') or {}).get('panels') or []) + ((snap.get('radar') or {}).get('bottoms') or []):
         if rp.get('hist') and rp.get('amber') is not None:
             charts['radar_' + rp['key']] = _radar_chart(rp)
@@ -262,7 +284,7 @@ def build(snap: dict | None = None, out: Path = SITE) -> Path:
                 rules=[(r['short'], r['version']) for r in PAPERS if r.get('short')],
                 js_ctx={'generated': snap['generated_utc'], 'repo': os.environ.get('GITHUB_REPOSITORY', 'Mattepoli94/signals-platform')})
     base['journal'] = snap.get('journal') or []
-    for page in ('index', 'investing', 'trading', 'manual', 'risk', 'journal', 'portfolio', 'research', 'settings'):
+    for page in ('index', 'emergency', 'investing', 'trading', 'manual', 'risk', 'journal', 'portfolio', 'research', 'settings'):
         html = env.get_template(f'{page}.html').render(page=page, root='', **base)
         (out / f'{page}.html').write_text(html)
     (out / 'research').mkdir(exist_ok=True)

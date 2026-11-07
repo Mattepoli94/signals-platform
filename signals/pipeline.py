@@ -242,6 +242,11 @@ def compute(cfg: dict, now: datetime, mode: str) -> tuple[dict, dict]:
         snap['manual']['context'] = _market_context(data)
     except Exception as e:  # noqa: BLE001
         snap['manual'] = {'error': str(e)[:300]}
+    try:
+        from . import emergency
+        snap['emergency'] = emergency.compute(now.astimezone(D.LDN).strftime('%Y-%m-%d'))
+    except Exception as e:  # noqa: BLE001
+        snap['emergency'] = {'error': str(e)[:300]}
     return _clean(snap), tables
 
 

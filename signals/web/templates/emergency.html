@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Emergency plan{% endblock %}
+{% block body %}
+{% set E = snap.emergency or {} %}
+{% set S = E.soxx or {} %}
+{% set Q = E.qqq or {} %}
+{% macro pill(state) %}<span class="pill {{ {'done':'t-green','act':'t-red','wait':'t-blue','ok':'t-grey'}[state] }}">{{ {'done':'Done','act':'Act now','wait':'Waiting','ok':'Not triggered'}[state] }}</span>{% endmacro %}
+{% macro usd(v) %}{% if v is none %}—{% else %}${{ '{:,.2f}'.format(v) }}{% endif %}{% endmacro %}
+
+<div class="pagehead">
+  <div>
+    <div class="kicker">Exit framework · AI &amp; semis · Nov 2026 · updated after every US close</div>
+    <h1>Emergency plan</h1>
+    <p class="sub">Sell into the bounce, not at the low. Cut high beta hard (70 → 15), keep large cap (30) unless QQQ breaks down. The site checks QQQ and SOXX every day and shows what the framework calls for now.</p>
+  </div>
+</div>
+
+{% if E.error %}<div class="banner warn">The emergency plan could not be computed: {{ E.error }}</div>{% else %}
+
+<div class="banner {{ {'ok':'ok','info':'info','warn':'warn','bad':'bad'}[E.tone] }} em-head" role="status">
+  <div class="kicker">Signal now · {{ E.asof|d }} · session {{ E.session }} of 10 since the 5 Nov low</div>
+  <div class="em-call">{{ E.headline }}</div>
+  <div class="small">Allocation the framework calls for: <b>{{ E.alloc.high_beta }}</b> high beta · <b>{{ E.alloc.large_cap }}</b> large cap · <b>{{ E.alloc.cash }}</b> cash (% of portfolio, starting from 70 · 30 · 0)</div>
+</div>
+
+<section class="card" aria-label="Prices against the plan">
+  <div class="stats">
+    {% for T in [S, Q] %}
+    <div class="stat"><div class="l">{{ T.key }} close {{ T.date|d }}</div><div class="v">{{ usd(T.close) }}</div></div>
+    <div class="stat"><div class="l">{{ T.key }} from the 5 Nov low</div><div class="v {{ T.from_low|cls }}">{{ T.from_low|pct }}</div></div>
+    <div class="stat"><div class="l">{{ T.key }} tracking</div><div class="v" style="font-size:15px;font-family:inherit;line-height:1.35">{{ T.tracking }}{% if T.exp_bounce %}<br><span class="muted">bounce {{ usd(T.exp_bounce) }} · failure {{ usd(T.exp_failure) }}</span>{% endif %}</div></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="card" aria-label="Framework status">
+  <h2>Where we are in the framework</h2>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Step</th><th>Status</th><th>What it means</th></tr></thead>
+    <tbody>{% for st in E.steps %}<tr><td><b>{{ st.name }}</b></td><td>{{ pill(st.state) }}</td><td class="small">{{ st.text }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+
+<section class="card" aria-label="Exit pathway">
+  <h2>Exit pathway</h2>
+  {% set st = {} %}{% for x in E.steps %}{% set _ = st.update({x.id: x.state}) %}{% endfor %}
+  <div class="em-flow">
+    <div class="em-box">Start · fully invested<br><span class="muted">70 high beta · 30 large cap · 0 cash</span></div>
+    <div class="em-arrow">↓</div>
+    <div class="em-box em-q {{ 'on' if st.t1 in ('wait','act') }}">Target 1 by 19 Nov? <span class="muted">SOXX ~149 · QQQ 690</span></div>
+    <div class="em-two">
+      <div class="em-box {{ 'done' if st.t1 == 'done' }}">Yes → sell 35 high beta at target</div>
+      <div class="em-box {{ 'act' if st.t1 == 'act' }}">No, or a new low → sell 35 on the next up day</div>
+    </div>
+    <div class="em-arrow">↓</div>
+    <div class="em-box em-state">35 high beta · 30 large cap · 35 cash</div>
+    <div class="em-arrow">↓</div>
+    <div class="em-box em-q {{ 'on' if st.check == 'wait' }}">19 Nov: strong bounce? <span class="muted">SOXX ≥142.5 · QQQ ≥687</span></div>
+    <div class="em-two">
+      <div class="em-box {{ 'done' if st.t2 == 'done' }}">Yes → sell 20 at SOXX ~157 · 5% trailing stop · deadline 4 Dec</div>
+      <div class="em-box {{ 'act' if st.t2 == 'act' }}">No → sell 20 on the next up day · by 30 Nov</div>
+    </div>
+    <div class="em-arrow">↓</div>
+    <div class="em-box em-state">15 high beta · 30 large cap · 55 cash</div>
+    <div class="em-arrow">↓</div>
+    <div class="em-three">
+      <div class="em-box {{ 'done' if st.back == 'done' }}">We're back<br><span class="muted">10 closes above the 200-day → hold</span></div>
+      <div class="em-box">Neither<br><span class="muted">hold 45%, keep the stops</span></div>
+      <div class="em-box {{ 'act' if st.jump == 'act' }}">Jump ship<br><span class="muted">SOXX &lt;120: −10 high beta · QQQ weekly &lt;585: −15 large cap → 5 · 15 · 80</span></div>
+    </div>
+  </div>
+  <p class="note">Highlighted boxes are where the framework is now (blue = waiting, red = act, green = done). Sell the weakest, highest-beta holdings first.</p>
+</section>
+
+<section class="card" aria-label="Levels">
+  <h2>The levels</h2>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Level</th><th class="n">SOXX</th><th class="n">QQQ</th><th>Past odds</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><b>Target 2</b></td><td class="n">~157</td><td class="n">707</td><td class="small">SOXX 57% (4 of 7) · QQQ ~20% with VIX &lt;37</td><td class="small">Sell tranche 2</td></tr>
+      <tr><td><b>Target 1</b></td><td class="n">~149</td><td class="n">690</td><td class="small">~70% on both</td><td class="small">Sell tranche 1</td></tr>
+      <tr><td><b>19 Nov strong</b></td><td class="n">≥142.5</td><td class="n">≥687</td><td class="small">Strong → Target 2 in 11 of 12 · not strong → 0 of 10</td><td class="small">Decides tranche 2</td></tr>
+      <tr><td><b>19 Nov weak</b></td><td class="n">≤138.5</td><td class="n">≤666</td><td class="small">Target 1 missed in 5 of 5</td><td class="small">Sell both tranches on the next up day</td></tr>
+      <tr><td><b>Warning</b></td><td class="n">&lt;131.90</td><td class="n">&lt;618</td><td class="small">SOX: every case that made a new low became a bear (4 of 4)</td><td class="small">Finish any tranche not sold</td></tr>
+      <tr><td><b>Jump ship</b></td><td class="n">&lt;120</td><td class="n">weekly &lt;585</td><td class="small">Only past bear markets got here</td><td class="small">Cut to 5 · 15 · 80</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="card" aria-label="SOXX against the paths">
+  <h2>SOXX against the expected paths</h2>
+  <p class="note"><span style="color:#0B1220">━</span> SOXX close · <span style="color:#0E7A43">╍</span> bounce path (~55–60%) · <span style="color:#B42318">╍</span> failure path (~15–30%) · grey dashes: 157, 149, 142.5 · amber: the 131.90 low · red: 120 jump ship. The line to watch: a close above 140.2 favours the bounce; a rejection at 139–140 and a close below 133.8 favours failure.</p>
+  <div class="scroll">{{ charts.em_soxx|safe }}</div>
+</section>
+
+<section class="card" aria-label="QQQ against the paths">
+  <h2>QQQ against the expected paths</h2>
+  <p class="note">Grey dashes: 707, 690, 687 · amber: the 647.05 low · red: 585 jump ship. Nvidia reports on 17 Nov after the close; the reaction on 18 Nov likely decides the 19 Nov checkpoint.</p>
+  <div class="scroll">{{ charts.em_qqq|safe }}</div>
+</section>
+
+<section class="card" aria-label="Daily log">
+  <h2>Daily log</h2>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Date</th><th class="n">SOXX</th><th class="n">QQQ</th><th class="n">Session</th><th>SOXX tracking</th><th>Signal</th><th>Allocation</th></tr></thead>
+    <tbody>{% for r in E.log %}<tr><td>{{ r.date|d }}</td><td class="n">{{ '%.2f'|format(r.soxx) }}</td><td class="n">{{ '%.2f'|format(r.qqq) }}</td><td class="n">{{ r.session }}</td><td class="small">{{ r.tracking }}</td><td class="small">{{ r.headline }}</td><td class="small">{{ r.alloc }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="note">Signals only: the site never trades. Odds come from 15 Nasdaq-100 and 7 SOX past cases and are ranges, not precise numbers. Not financial advice.</p>
+</section>
+{% endif %}
+{% endblock %}

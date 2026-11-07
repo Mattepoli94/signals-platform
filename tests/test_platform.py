@@ -359,3 +359,40 @@ def test_gamma_levels_synthetic(tmp_path, monkeypatch):
     st = G.score(log, {'spx': px})['spx']
     assert st['days'] == 1 and st['cw_touch'] == 1 and st['cw_held'] == 1 and st['pw_touch'] == 0
     assert G.next_monthly(datetime(2026, 11, 19)).date().isoformat() == '2026-12-18'
+
+
+# ----------------------------------------------------------------------------- emergency plan
+def _em_track(key, closes):
+    from signals import emergency as E
+    base = D.load(key)['close'].loc[:'2026-11-06']
+    idx = [pd.Timestamp(d) for d in E._FUT[:len(closes)]]
+    return E._track(key, pd.concat([base, pd.Series(closes, index=idx)]))
+
+
+def test_emergency_bounce_path_sells_both_tranches():
+    from signals import emergency as E
+    s = _em_track('SOXX', E.PATHS['SOXX']['bounce'][:13])
+    q = _em_track('QQQ', E.PATHS['QQQ']['bounce'][:13])
+    r = E._decide(s, q, '2026-11-25')
+    st = {x['id']: x['state'] for x in r['steps']}
+    assert st['t1'] == 'done' and st['t2'] == 'done' and st['warn'] == 'ok' and st['jump'] == 'ok'
+    assert r['alloc'] == {'high_beta': 15, 'large_cap': 30, 'cash': 55}
+
+
+def test_emergency_failure_path_triggers_actions_and_jump():
+    from signals import emergency as E
+    s = _em_track('SOXX', E.PATHS['SOXX']['failure'])
+    q = _em_track('QQQ', E.PATHS['QQQ']['failure'])
+    r = E._decide(s, q, '2026-12-18')
+    st = {x['id']: x['state'] for x in r['steps']}
+    assert st['t1'] == 'act' and st['t2'] == 'act' and st['warn'] == 'act' and st['jump'] == 'act'
+    assert r['alloc']['high_beta'] == 5 and r['alloc']['cash'] >= 65
+
+
+def test_emergency_weak_checkpoint_sells_tranche_2():
+    from signals import emergency as E
+    soxx = [134, 135, 137, 139, 140, 139, 138, 138, 138.2]   # T1 never hit, 19 Nov weak
+    qqq = [654, 655, 660, 662, 664, 663, 662, 661, 660]
+    r = E._decide(_em_track('SOXX', soxx), _em_track('QQQ', qqq), '2026-11-19')
+    st = {x['id']: x['state'] for x in r['steps']}
+    assert r['session'] == 10 and st['t1'] == 'act' and st['t2'] == 'act' and r['band'] == 'weak'

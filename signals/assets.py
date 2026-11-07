@@ -20,6 +20,7 @@ ASSETS = {a.key: a for a in [
     Asset('EQQQ', 'Invesco EQQQ Nasdaq-100 UCITS ETF (London, pence)', 'yahoo', 'EQQQ.L', currency='GBX', calendar='lse',
           tradable=True, fair_ref='QQQ', account='ISA'),
     Asset('QQQ', 'Invesco QQQ (Nasdaq-100, US)', 'yahoo', 'QQQ'),
+    Asset('SOXX', 'iShares Semiconductor ETF (signal only, emergency plan)', 'yahoo', 'SOXX'),
     Asset('UUP', 'Invesco DB US Dollar Index Bullish (signal only)', 'yahoo', 'UUP'),
     Asset('BTC', 'Bitcoin (spot, USD)', 'yahoo', 'BTC-USD', calendar='crypto', tradable=True),
     Asset('GBPUSD', 'GBP/USD', 'yahoo', 'GBPUSD=X', currency='FX', calendar='fx', fallback='DEXUSUK', account='Invest'),
