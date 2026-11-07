@@ -38,6 +38,7 @@ PAT = re.compile(r'^([A-Z]+)(\d{6})([CP])(\d{8})$')
 INDICES = {
     'spx': {'name': 'S&P 500', 'cfd': 'US 500', 'chains': ['_SPX', 'SPY'], 'yahoo': '^GSPC', 'fut': 'ES=F', 'bucket': 25},
     'ndx': {'name': 'Nasdaq-100', 'cfd': 'US Tech 100', 'chains': ['_NDX', 'QQQ'], 'yahoo': '^NDX', 'fut': 'NQ=F', 'bucket': 100},
+    'qqq': {'name': 'QQQ', 'cfd': 'QQQ', 'chains': ['QQQ'], 'yahoo': 'QQQ', 'fut': None, 'bucket': 5},
 }
 
 
@@ -94,10 +95,10 @@ def _prep(df, S, now, until, band=0.25):
 def levels_for(key: str, chains: dict, now: datetime, until: pd.Timestamp) -> dict:
     """chains: {chain_symbol: (spot, last_time, df)}. Index chain first; ETF scaled to index points."""
     spec = INDICES[key]
-    idx_sym, etf_sym = spec['chains']
+    idx_sym = spec['chains'][0]
     S_idx, asof, _ = chains[idx_sym]
     parts = []
-    for sym in (idx_sym, etf_sym):
+    for sym in spec['chains']:
         if sym not in chains:
             continue
         S, _, df = chains[sym]
@@ -157,6 +158,8 @@ def levels_for(key: str, chains: dict, now: datetime, until: pd.Timestamp) -> di
 def _futures_offset(spec) -> dict:
     from .data import fetch_yahoo
     out = {}
+    if not spec.get('fut'):
+        return out
     try:
         f = fetch_yahoo(spec['fut'], (datetime.now(timezone.utc) - timedelta(days=10)).strftime('%Y-%m-%d'))['close']
         i = fetch_yahoo(spec['yahoo'], (datetime.now(timezone.utc) - timedelta(days=10)).strftime('%Y-%m-%d'))['close']
@@ -178,15 +181,14 @@ def fetch(now: datetime | None = None) -> dict:
     now = now or datetime.now(timezone.utc)
     DIR.mkdir(parents=True, exist_ok=True)
     rep, chains = {}, {}
-    for spec in INDICES.values():
-        for sym in spec['chains']:
-            try:
-                r = requests.get(CBOE.format(sym), headers=UA, timeout=90)
-                r.raise_for_status()
-                chains[sym] = parse_chain(r.json())
-                rep[sym] = f'ok ({len(chains[sym][2])} options)'
-            except Exception as e:  # noqa: BLE001
-                rep[sym] = f'failed: {str(e)[:100]}'
+    for sym in dict.fromkeys(c for spec in INDICES.values() for c in spec['chains']):
+        try:
+            r = requests.get(CBOE.format(sym), headers=UA, timeout=90)
+            r.raise_for_status()
+            chains[sym] = parse_chain(r.json())
+            rep[sym] = f'ok ({len(chains[sym][2])} options)'
+        except Exception as e:  # noqa: BLE001
+            rep[sym] = f'failed: {str(e)[:100]}'
     until_near = next_monthly(now)
     latest = {'computed': now.strftime('%Y-%m-%d %H:%M UTC'), 'near_expiry': until_near.strftime('%Y-%m-%d'), 'indices': {}}
     for key, spec in INDICES.items():

@@ -71,22 +71,22 @@
 <section class="card" id="gamma" aria-label="Gamma levels">
   <div class="row" style="justify-content:space-between;align-items:flex-start">
     <div><h2>Gamma levels for the next session</h2>
-    <p class="note">Estimated from Cboe's free option chains (S&amp;P: SPX + SPY; Nasdaq: NDX + QQQ) after the US close, when open interest is updated. Levels are in index points, with the matching futures/CFD level ({{ 'US 500' }} / {{ 'US Tech 100' }} usually track futures). {% if GX.indices %}Expiries to {{ GX.near_expiry|d }} (next monthly).{% endif %}</p></div>
+    <p class="note">Estimated from Cboe's free option chains (S&amp;P: SPX + SPY; Nasdaq: NDX + QQQ; QQQ: its own options) after the US close, when open interest is updated. Levels are in index points, with the matching futures/CFD level ({{ 'US 500' }} / {{ 'US Tech 100' }} usually track futures). {% if GX.indices %}Expiries to {{ GX.near_expiry|d }} (next monthly).{% endif %}</p></div>
   </div>
   {% if GX.error %}<p class="note">{{ GX.error }}</p>{% else %}
   <div class="gx-grid">
   {% for key, v in (GX.indices or {}).items() %}{% set n = v.near or {} %}{% set q = v.quarter or {} %}{% set cl = v.cfd_levels or {} %}
     <div class="gx">
       {% if v.error %}<b>{{ v.name }}</b><p class="small muted">{{ v.error }}</p>{% else %}
-      <div class="gx-h"><div><b>{{ v.name }}</b> <span class="small muted">· {{ v.cfd }} CFD</span><div class="small muted">close {{ '{:,.0f}'.format(n.spot) }} · data to {{ (n.asof or '')[:10]|d }}</div></div>
+      <div class="gx-h"><div><b>{{ v.name }}</b> <span class="small muted">· {{ (v.cfd ~ ' CFD') if v.cfd_levels else 'shares or CFD, at the ETF price' }}</span><div class="small muted">close {{ '{:,.0f}'.format(n.spot) }} · data to {{ (n.asof or '')[:10]|d }}</div></div>
         <span class="pill {{ 't-red' if n.regime == 'negative' else 't-green' }}">{{ 'Below gamma flip: moves extend' if n.regime == 'negative' else 'Above gamma flip: calmer, ranges' }}</span></div>
-      <table class="t gx-t"><thead><tr><th>Level</th><th class="n">Index</th><th class="n">{{ v.cfd }} (futures)</th><th class="n">From close</th></tr></thead><tbody>
+      <div class="scroll"><table class="t gx-t"><thead><tr><th>Level</th><th class="n">{{ "Index" if v.cfd_levels else "Price" }}</th>{% if v.cfd_levels %}<th class="n">{{ v.cfd }} CFD*</th>{% endif %}<th class="n">From close</th></tr></thead><tbody>
         {% for lab, k, tone in [('Call wall · resistance', 'call_wall', 'neg'), ('Gamma flip', 'flip', ''), ('Put wall · support', 'put_wall', 'pos')] %}{% if n[k] %}
-        <tr><td><b class="{{ tone }}">{{ lab }}</b></td><td class="n mono">{{ '{:,.0f}'.format(n[k]) }}</td><td class="n mono">{{ '{:,.0f}'.format(cl[k]) if cl[k] else '—' }}</td><td class="n">{{ '%+.1f%%'|format((n[k]/n.spot-1)*100) }}</td></tr>{% endif %}{% endfor %}
-        <tr><td class="small">Biggest + gamma strikes (magnets)</td><td class="n mono small" colspan="3">{{ n.pos_strikes|map('int')|join(', ') or '—' }}</td></tr>
-        <tr><td class="small">Biggest − gamma strikes (moves speed up)</td><td class="n mono small" colspan="3">{{ n.neg_strikes|map('int')|join(', ') or '—' }}</td></tr>
-        <tr><td class="small muted">3-month walls (bigger picture)</td><td class="n mono small muted" colspan="3">call {{ '{:,.0f}'.format(q.call_wall) if q.call_wall }} · put {{ '{:,.0f}'.format(q.put_wall) if q.put_wall }} · flip {{ '{:,.0f}'.format(q.flip) if q.flip else '—' }}</td></tr>
-      </tbody></table>
+        <tr><td><b class="{{ tone }}">{{ lab.split(' · ')[0] }}</b>{% if ' · ' in lab %}<div class="small muted">{{ lab.split(' · ')[1] }}</div>{% endif %}</td><td class="n mono">{{ ('{:,.0f}' if n.spot > 2000 else '{:,.2f}').format(n[k]) }}</td>{% if v.cfd_levels %}<td class="n mono">{{ '{:,.0f}'.format(cl[k]) if cl[k] else '—' }}</td>{% endif %}<td class="n">{{ '%+.1f%%'|format((n[k]/n.spot-1)*100) }}</td></tr>{% endif %}{% endfor %}
+        <tr><td class="small">Magnet strikes (+γ)</td><td class="n mono small" colspan="{{ 3 if v.cfd_levels else 2 }}">{{ n.pos_strikes|map('int')|join(', ') or '—' }}</td></tr>
+        <tr><td class="small">Acceleration strikes (−γ)</td><td class="n mono small" colspan="{{ 3 if v.cfd_levels else 2 }}">{{ n.neg_strikes|map('int')|join(', ') or '—' }}</td></tr>
+        <tr><td class="small muted">3-month walls</td><td class="n mono small muted" colspan="{{ 3 if v.cfd_levels else 2 }}">call {{ '{:,.0f}'.format(q.call_wall) if q.call_wall }} · put {{ '{:,.0f}'.format(q.put_wall) if q.put_wall }} · flip {{ '{:,.0f}'.format(q.flip) if q.flip else '—' }}</td></tr>
+      </tbody></table></div>
       {% set prof = n.profile or [] %}{% set mx = (prof|map('last')|map('abs')|max) if prof else 1 %}
       <details class="small" style="margin-top:8px"><summary>Gamma by strike (±5% of the close)</summary>
         <div class="gx-prof">{% for k, val in prof|reverse %}<div class="gx-row{{ ' gx-spot' if (k - n.spot)|abs < (prof[1][0]-prof[0][0] if prof|length > 1 else 1) / 2 }}"><span class="mono">{{ '{:,.0f}'.format(k) }}</span><span class="gx-bar"><i class="{{ 'p' if val > 0 else 'm' }}" style="width:{{ (val|abs / mx * 100)|round(1) }}%"></i></span></div>{% endfor %}</div>
@@ -95,13 +95,25 @@
     </div>
   {% endfor %}
   </div>
-  <div class="howto" style="margin-top:12px"><b>How to use</b>
-    <p><strong>Above the flip (calm):</strong> fade the walls. Long near the put wall, short near the call wall, stop just beyond the level. Mean-reversion suits this regime (system 3).</p>
-    <p><strong>Below the flip (volatile):</strong> don't fade. Walls tend to break and moves extend: trade with the trend (systems 2, 4, 5), use a break of a wall as the trigger, widen stops and cut size.</p>
-    <p>Best as confluence with your own support/resistance and for 1–5 day trades. Levels reset after the monthly expiry ({{ GX.near_expiry|d if GX.near_expiry }}) and can be swamped by big news (CPI, Fed, earnings).</p>
+  <div class="gx-play">
+    <div class="gx-pb pos-b"><h3>Positive gamma (price above the flip): ranges</h3>
+      <ul>
+        <li><b>Long at the put wall:</b> price dips into it, slows, closes back above → buy. Stop a little below the wall.</li>
+        <li><b>Short or take profit at the call wall:</b> price rallies into it and stalls → sell. Stop a little above.</li>
+        <li><b>Target:</b> the middle or the biggest magnet strike, where price tends to settle.</li>
+        <li><b>Avoid</b> chasing breakouts: most fail and get pulled back into the range.</li>
+      </ul></div>
+    <div class="gx-pb neg-b"><h3>Negative gamma (price below the flip): trends</h3>
+      <ul>
+        <li><b>Don't fade the walls.</b> A clean close through the put wall is a short (breakdown) signal; through the call wall, a long (squeeze) signal.</li>
+        <li><b>Bounce long only on a reclaim:</b> price breaks the put wall, then closes back above it → long, stop under the low.</li>
+        <li><b>First target</b> on a bounce: the call wall; a move back above the flip means the regime is calming.</li>
+        <li><b>Widen stops, halve size:</b> daily ranges are larger and gaps more likely.</li>
+      </ul></div>
   </div>
+  <p class="small muted" style="margin:8px 0 0">Best used as confluence with your own support and resistance, for 1–5 day trades. Levels reset after the monthly expiry ({{ GX.near_expiry|d if GX.near_expiry }}), and big news (CPI, Fed, earnings) can override them.</p>
   {% set sq = GX.squeeze %}
-  <p class="small muted" style="margin:8px 0 0">These are model estimates (dealers assumed long calls, short puts), so the sign of total gamma can differ from other sources: after heavy put buying this model reads more negative.{% if sq %} SqueezeMetrics, which models dealers differently, shows S&amp;P GEX at {{ '%+.1f'|format(sq.gex_bn) }}bn on {{ sq.date|d }}.{% endif %}</p>
+  <p class="small muted" style="margin:8px 0 0">* CFD column = index level plus the current futures premium (Trading 212's index CFDs usually track futures; if yours follows the cash index, use the index column). These are model estimates (dealers assumed long calls, short puts), so the sign of total gamma can differ from other sources: after heavy put buying this model reads more negative.{% if sq %} SqueezeMetrics, which models dealers differently, shows S&amp;P GEX at {{ '%+.1f'|format(sq.gex_bn) }}bn on {{ sq.date|d }}.{% endif %}</p>
   {% set T = GX.track or {} %}
   <details class="small" style="margin-top:10px"><summary><b>Live track record</b> (since {{ GX.since|d if GX.since else 'today' }}): did the walls hold the next day?</summary>
     <table class="t" style="margin-top:8px"><thead><tr><th>Index</th><th class="n">Days scored</th><th class="n">Call wall touched · held</th><th class="n">Put wall touched · held</th><th class="n">Avg day range below / above flip</th></tr></thead><tbody>
