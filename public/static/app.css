@@ -205,3 +205,14 @@ tr.tot td{border-top:2px solid var(--line)}
 .playcard{border:1px solid var(--line2);border-radius:12px;padding:14px 16px;background:#fff}
 .playcard h3{margin:4px 0 6px}.playcard ol{padding-left:18px;margin:8px 0 0;line-height:1.55}
 .potform{margin:8px 0 6px;padding:12px 14px;background:var(--soft);border:1px solid var(--line2);border-radius:10px}
+/* gamma levels */
+.gx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:12px}
+.gx{border:1px solid var(--line2);border-radius:12px;padding:12px 14px;background:#fff;min-width:0}
+.gx-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:6px}
+.gx-t td,.gx-t th{padding:6px 8px}
+.gx-prof{display:flex;flex-direction:column;gap:2px;margin-top:8px;max-height:320px;overflow:auto}
+.gx-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;font-size:12px}
+.gx-row.gx-spot{background:#FFF7E0;border-radius:4px}
+.gx-bar{height:10px;background:#F2F4F7;border-radius:3px;overflow:hidden}
+.gx-bar i{display:block;height:100%}.gx-bar i.p{background:#16A34A}.gx-bar i.m{background:#DC2626}
+.pos{color:#15803D}.neg{color:#B42318}
