@@ -44,6 +44,7 @@ PAPERS = [
      'period': 'Platform rules and fees, GBP. 2021–26 is in-sample for all three systems.'},
 ]
 CHANGELOG = [
+    ('2026-11-07', 'Manual trading', 'Gamma levels for the next session (S&P 500 and Nasdaq-100: call wall, put wall, gamma flip, key strikes, CFD/futures equivalents), from Cboe\'s free option chains after each US close, with a live track record of whether the walls held.'),
     ('2026-11-03', 'Manual trading', 'New page: five discretionary systems with their conditions, risk rules (0.5% of the manual pot risked per trade, max 5 open, max 3 per system, 30% allocation), a position-size calculator and a trade journal scored by system (R multiples, win rate, expectancy, P&L).'),
     ('2026-11-03', 'Risk radar page', 'Display only, rules unchanged: the fast-crash plan is shown as four steps (fast crash, override, BUY 1, BUY 2), each with its requirements and an ON / NOT YET / LOCKED state; the capitulation groups are listed separately; the washout is shown per market. Every panel has a two-line "How to use".'),
     ('2026-11-03', 'Platform', "v2.0: renamed Poli's Hedge Fund. Review and tidy-up: the retired risk flag and unused feeds (TLT, GLD, T-bill, dollar index, Fed liquidity) removed; radar inputs listed in Settings; daily routine on Today. Fixes: “Trend leg off” was labelled BUY in the signal history; the value plan card could show the live pre-close QQQ price as the confirmed close."),

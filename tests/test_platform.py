@@ -337,3 +337,25 @@ def test_manual_trading_rules_and_maths(monkeypatch):
     s = MT.trade_view({'id': 's', 'system': '5', 'ticker': 'S', 'side': 'short', 'ccy': 'USD', 'opened': '2026-10-01', 'entry': 100,
                        'stop': 110, 'units': 2, 'status': 'closed', 'closed': '2026-10-05', 'exit': 90}, pd.Series([1.25], index=[pd.Timestamp('2026-09-01')]), '2026-11-03')
     assert s['pnl_gbp'] == pytest.approx(16) and s['r_multiple'] == pytest.approx(1.0)
+
+
+def test_gamma_levels_synthetic(tmp_path, monkeypatch):
+    from signals import gamma as G
+    from datetime import datetime, timezone
+    now = datetime(2026, 11, 6, 21, 0, tzinfo=timezone.utc)
+    exp = pd.Timestamp('2026-11-20 16:00')
+    rows = []
+    for K in range(6800, 8001, 25):                       # big call OI at 7500, big put OI at 7200
+        rows.append((exp, 'C', float(K), 50000.0 if K == 7500 else 2000.0, 0.18))
+        rows.append((exp, 'P', float(K), 60000.0 if K == 7200 else 2000.0, 0.22))
+    df = pd.DataFrame(rows, columns=['exp', 'cp', 'K', 'oi', 'iv'])
+    lv = G.levels_for('spx', {'_SPX': (7350.0, '2026-11-06T16:15:00', df)}, now, exp)
+    assert lv['call_wall'] == 7500 and lv['put_wall'] == 7200
+    assert lv['flip'] is not None and 7200 < lv['flip'] < 7500
+    # scoring: next day touches the call wall and closes below it -> held
+    log = [{'index': 'spx', 'date': '2026-11-06', 'spot': 7350, 'call_wall': 7500, 'put_wall': 7200, 'flip': 7400,
+            'regime': 'negative', 'gex_bn': -1}]
+    px = pd.DataFrame({'open': [7360], 'high': [7510], 'low': [7300], 'close': [7450]}, index=[pd.Timestamp('2026-11-09')])
+    st = G.score(log, {'spx': px})['spx']
+    assert st['days'] == 1 and st['cw_touch'] == 1 and st['cw_held'] == 1 and st['pw_touch'] == 0
+    assert G.next_monthly(datetime(2026, 11, 19)).date().isoformat() == '2026-12-18'

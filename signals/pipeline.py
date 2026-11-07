@@ -90,6 +90,20 @@ def _history(key: str, t: pd.DataFrame, n: int = 120) -> list:
     return list(reversed(ev))[:25]
 
 
+def _squeeze_last() -> dict | None:
+    """Latest SqueezeMetrics S&P 500 GEX (a second, differently-modelled estimate)."""
+    try:
+        from .radar import _read
+        d = _read('squeeze')
+        if not len(d):
+            return None
+        g = d['gex'].dropna()
+        return {'date': g.index[-1].strftime('%Y-%m-%d'), 'gex_bn': float(g.iloc[-1]) / 1e9,
+                'prev_bn': float(g.iloc[-2]) / 1e9 if len(g) > 1 else None}
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def _market_context(data: dict) -> list:
     """Index conditions the manual systems refer to: trend regime and the 9-week MA."""
     from .strategies.qqq_regime import regime_core
@@ -354,6 +368,18 @@ def run(mode: str = 'us', fetch: bool = True, email: bool = True, build: bool = 
     from . import radar as R
     if fetch and mode in ('us', 'btc'):
         report['radar_fetch'] = R.fetch(now)
+    from . import gamma as GX
+    if fetch and mode == 'us':
+        try:
+            report['gamma_fetch'] = GX.fetch(now)
+        except Exception as e:  # noqa: BLE001 - never block the run
+            report['gamma_fetch'] = {'error': str(e)[:200]}
+    try:
+        snap['gamma'] = _clean(GX.compute())
+        snap['gamma']['fetch'] = report.get('gamma_fetch')
+        snap['gamma']['squeeze'] = _squeeze_last()
+    except Exception as e:  # noqa: BLE001
+        snap['gamma'] = {'error': str(e)[:300]}
     try:
         snap['radar'] = _clean(R.compute())
         snap['radar']['fetch'] = report.get('radar_fetch')

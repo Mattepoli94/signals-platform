@@ -67,6 +67,54 @@
   </section>
 </div>
 
+{% set GX = snap.gamma or {} %}
+<section class="card" id="gamma" aria-label="Gamma levels">
+  <div class="row" style="justify-content:space-between;align-items:flex-start">
+    <div><h2>Gamma levels for the next session</h2>
+    <p class="note">Estimated from Cboe's free option chains (S&amp;P: SPX + SPY; Nasdaq: NDX + QQQ) after the US close, when open interest is updated. Levels are in index points, with the matching futures/CFD level ({{ 'US 500' }} / {{ 'US Tech 100' }} usually track futures). {% if GX.indices %}Expiries to {{ GX.near_expiry|d }} (next monthly).{% endif %}</p></div>
+  </div>
+  {% if GX.error %}<p class="note">{{ GX.error }}</p>{% else %}
+  <div class="gx-grid">
+  {% for key, v in (GX.indices or {}).items() %}{% set n = v.near or {} %}{% set q = v.quarter or {} %}{% set cl = v.cfd_levels or {} %}
+    <div class="gx">
+      {% if v.error %}<b>{{ v.name }}</b><p class="small muted">{{ v.error }}</p>{% else %}
+      <div class="gx-h"><div><b>{{ v.name }}</b> <span class="small muted">· {{ v.cfd }} CFD</span><div class="small muted">close {{ '{:,.0f}'.format(n.spot) }} · data to {{ (n.asof or '')[:10]|d }}</div></div>
+        <span class="pill {{ 't-red' if n.regime == 'negative' else 't-green' }}">{{ 'Below gamma flip: moves extend' if n.regime == 'negative' else 'Above gamma flip: calmer, ranges' }}</span></div>
+      <table class="t gx-t"><thead><tr><th>Level</th><th class="n">Index</th><th class="n">{{ v.cfd }} (futures)</th><th class="n">From close</th></tr></thead><tbody>
+        {% for lab, k, tone in [('Call wall · resistance', 'call_wall', 'neg'), ('Gamma flip', 'flip', ''), ('Put wall · support', 'put_wall', 'pos')] %}{% if n[k] %}
+        <tr><td><b class="{{ tone }}">{{ lab }}</b></td><td class="n mono">{{ '{:,.0f}'.format(n[k]) }}</td><td class="n mono">{{ '{:,.0f}'.format(cl[k]) if cl[k] else '—' }}</td><td class="n">{{ '%+.1f%%'|format((n[k]/n.spot-1)*100) }}</td></tr>{% endif %}{% endfor %}
+        <tr><td class="small">Biggest + gamma strikes (magnets)</td><td class="n mono small" colspan="3">{{ n.pos_strikes|map('int')|join(', ') or '—' }}</td></tr>
+        <tr><td class="small">Biggest − gamma strikes (moves speed up)</td><td class="n mono small" colspan="3">{{ n.neg_strikes|map('int')|join(', ') or '—' }}</td></tr>
+        <tr><td class="small muted">3-month walls (bigger picture)</td><td class="n mono small muted" colspan="3">call {{ '{:,.0f}'.format(q.call_wall) if q.call_wall }} · put {{ '{:,.0f}'.format(q.put_wall) if q.put_wall }} · flip {{ '{:,.0f}'.format(q.flip) if q.flip else '—' }}</td></tr>
+      </tbody></table>
+      {% set prof = n.profile or [] %}{% set mx = (prof|map('last')|map('abs')|max) if prof else 1 %}
+      <details class="small" style="margin-top:8px"><summary>Gamma by strike (±5% of the close)</summary>
+        <div class="gx-prof">{% for k, val in prof|reverse %}<div class="gx-row{{ ' gx-spot' if (k - n.spot)|abs < (prof[1][0]-prof[0][0] if prof|length > 1 else 1) / 2 }}"><span class="mono">{{ '{:,.0f}'.format(k) }}</span><span class="gx-bar"><i class="{{ 'p' if val > 0 else 'm' }}" style="width:{{ (val|abs / mx * 100)|round(1) }}%"></i></span></div>{% endfor %}</div>
+        <div class="muted" style="margin-top:4px">Green = positive gamma (dealers dampen moves, price tends to stick); red = negative (dealers add to moves).</div></details>
+      {% endif %}
+    </div>
+  {% endfor %}
+  </div>
+  <div class="howto" style="margin-top:12px"><b>How to use</b>
+    <p><strong>Above the flip (calm):</strong> fade the walls. Long near the put wall, short near the call wall, stop just beyond the level. Mean-reversion suits this regime (system 3).</p>
+    <p><strong>Below the flip (volatile):</strong> don't fade. Walls tend to break and moves extend: trade with the trend (systems 2, 4, 5), use a break of a wall as the trigger, widen stops and cut size.</p>
+    <p>Best as confluence with your own support/resistance and for 1–5 day trades. Levels reset after the monthly expiry ({{ GX.near_expiry|d if GX.near_expiry }}) and can be swamped by big news (CPI, Fed, earnings).</p>
+  </div>
+  {% set sq = GX.squeeze %}
+  <p class="small muted" style="margin:8px 0 0">These are model estimates (dealers assumed long calls, short puts), so the sign of total gamma can differ from other sources: after heavy put buying this model reads more negative.{% if sq %} SqueezeMetrics, which models dealers differently, shows S&amp;P GEX at {{ '%+.1f'|format(sq.gex_bn) }}bn on {{ sq.date|d }}.{% endif %}</p>
+  {% set T = GX.track or {} %}
+  <details class="small" style="margin-top:10px"><summary><b>Live track record</b> (since {{ GX.since|d if GX.since else 'today' }}): did the walls hold the next day?</summary>
+    <table class="t" style="margin-top:8px"><thead><tr><th>Index</th><th class="n">Days scored</th><th class="n">Call wall touched · held</th><th class="n">Put wall touched · held</th><th class="n">Avg day range below / above flip</th></tr></thead><tbody>
+    {% for key, t in T.items() %}<tr><td>{{ (GX.indices[key] or {}).name }}</td><td class="n">{{ t.days }}</td>
+      <td class="n">{{ t.cw_touch }} · {{ ((t.cw_held / t.cw_touch * 100)|round|int ~ '%') if t.cw_touch else '—' }}</td>
+      <td class="n">{{ t.pw_touch }} · {{ ((t.pw_held / t.pw_touch * 100)|round|int ~ '%') if t.pw_touch else '—' }}</td>
+      <td class="n">{{ '%.1f%%'|format(t.avg_range_neg) if t.avg_range_neg is not none else '—' }} / {{ '%.1f%%'|format(t.avg_range_pos) if t.avg_range_pos is not none else '—' }}</td></tr>{% endfor %}
+    </tbody></table>
+    <p class="muted" style="margin:6px 0 0">"Held" = the next session touched the wall but closed back on the right side. Scored automatically every day from now on; give it a few months before trusting it.</p>
+  </details>
+  {% endif %}
+</section>
+
 <section class="card" id="new" aria-label="Log a new trade">
   <h2>Log a new trade</h2>
   <p class="note">Pick the system, tick the conditions that are met (the journal later checks whether more confluence means better trades), and use the calculator to size it.</p>
