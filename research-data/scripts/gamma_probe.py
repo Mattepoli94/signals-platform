@@ -1,4 +1,5 @@
-import requests, json, gzip
+import requests, json, gzip, os
+os.makedirs("research-data/gamma", exist_ok=True)
 UA={'User-Agent':'Mozilla/5.0'}
 for s in ['_SPX','_NDX','SPY','QQQ']:
     try:
