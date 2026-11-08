@@ -23,6 +23,17 @@ jobs:
           out = []
           for sym in open('research-data/tickers.txt').read().split():
               try:
+                  if sym == 'HL_SNAPSHOT':
+                      import requests, os, json
+                      U='https://api.hyperliquid.xyz/info'
+                      dexs=requests.post(U,json={'type':'perpDexs'},timeout=60).json()
+                      out={'perpDexs':dexs,'ctx':{}}
+                      names=['']+[d['name'] for d in dexs if d]
+                      for n in names:
+                          try: out['ctx'][n]=requests.post(U,json={'type':'metaAndAssetCtxs','dex':n},timeout=60).json()
+                          except Exception as e: out['ctx'][n]=str(e)
+                      os.makedirs('research-data/raw', exist_ok=True)
+                      json.dump(out,open('research-data/raw/hl_snapshot.json','w')); print(sym,len(names)); continue
                   if sym == 'BITMEX_FUNDING':
                       import requests, os
                       rows, start = [], '2016-05-01'
