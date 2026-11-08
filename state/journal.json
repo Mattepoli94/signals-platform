@@ -37,27 +37,41 @@
   "units": 0.004317
  },
  "btc_trend-2026-11-07-BTC-SELL": {
-  "actual": null,
+  "actual": {
+   "fee": 0.97,
+   "gbp": 243.04,
+   "pnl": -7.93,
+   "price": 75753.710938,
+   "units": 0.004317
+  },
   "asset": "BTC",
   "ccy": "USD",
+  "confirmed_at": "2026-11-08 01:30 UTC",
   "date": "2026-11-07",
   "decay_gbp": null,
   "fill": null,
   "first_seen": "2026-11-07 01:25 UTC",
-  "gbp": 242.999073,
+  "gbp": 243.04,
   "id": "btc_trend-2026-11-07-BTC-SELL",
-  "model": null,
-  "needs_fill": false,
+  "model": {
+   "fee": 0.97,
+   "gbp": 243.04,
+   "pnl": -7.93,
+   "price": 75753.710938,
+   "unit_gbp": 56297.138416,
+   "units": 0.004317
+  },
+  "needs_fill": true,
   "pot": "btc_trend",
   "pot_name": "BTC cycle trend system",
-  "price": 75805.523438,
-  "reason": "The 30-day EMA ($79,498) is below the 50-day EMA ($79,584): no trend, stay in cash. Buy at the close when the 30-day crosses back above.",
+  "price": 75753.710938,
+  "reason": "30-day EMA crossed below the 50-day EMA",
   "side": "SELL",
   "slip_pct": null,
-  "status": "preview",
+  "status": "confirmed",
   "stop": null,
   "system": "BTC cycle trend system",
-  "units": 0.004313
+  "units": 0.004317
  },
  "qqq_trading-2026-11-03-EQQQ-BUY": {
   "actual": {
