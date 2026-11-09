@@ -39,9 +39,9 @@
  "btc_trend-2026-11-07-BTC-SELL": {
   "actual": {
    "fee": 0.97,
-   "gbp": 243.04,
-   "pnl": -7.93,
-   "price": 75753.710938,
+   "gbp": 243.02,
+   "pnl": -7.95,
+   "price": 75747.578125,
    "units": 0.004317
   },
   "asset": "BTC",
@@ -55,10 +55,10 @@
   "id": "btc_trend-2026-11-07-BTC-SELL",
   "model": {
    "fee": 0.97,
-   "gbp": 243.04,
-   "pnl": -7.93,
-   "price": 75753.710938,
-   "unit_gbp": 56297.138416,
+   "gbp": 243.02,
+   "pnl": -7.95,
+   "price": 75747.578125,
+   "unit_gbp": 56292.580754,
    "units": 0.004317
   },
   "needs_fill": true,
