@@ -1,1 +1,1 @@
-LASR PURR AEHR AXTI COIN AAOI BE RKLB STLA BMNR ONDS QUBT CIFR IREN ASTS KTOS POET ABAT DPRO FIG ALAB CRDO INTC MU WDC SIMO ARM MRVL QTUM JEDI.L TSLA RDDT URA AVGO TER SOXX QQQ VST GEV ORCL FLUT KWEB
+URL:qqq_chain.json|https://cdn.cboe.com/api/global/delayed_quotes/options/QQQ.json URL:spy_chain.json|https://cdn.cboe.com/api/global/delayed_quotes/options/SPY.json URL:soxx_chain.json|https://cdn.cboe.com/api/global/delayed_quotes/options/SOXX.json URL:vix_chain.json|https://cdn.cboe.com/api/global/delayed_quotes/options/_VIX.json QQQ
