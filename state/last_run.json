@@ -1,6 +1,6 @@
 {
- "mode": "btc",
- "finished_utc": "2026-11-10 01:28",
+ "mode": "preclose",
+ "finished_utc": "2026-11-10 15:50",
  "skipped": null,
  "alerts": [],
  "refresh": {
