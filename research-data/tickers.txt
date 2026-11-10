@@ -1,1 +1,1 @@
-URL:qqq_chain.json|https://cdn.cboe.com/api/global/delayed_quotes/options/QQQ.json URL:spy_chain.json|https://cdn.cboe.com/api/global/delayed_quotes/options/SPY.json URL:soxx_chain.json|https://cdn.cboe.com/api/global/delayed_quotes/options/SOXX.json URL:vix_chain.json|https://cdn.cboe.com/api/global/delayed_quotes/options/_VIX.json QQQ
+QQQ SOXX ^VIX ^NDX ^SOX NVDA AMD AVGO MU SMH ^GSPC
