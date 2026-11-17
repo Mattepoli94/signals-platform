@@ -208,5 +208,35 @@
   "flip": 687.5340725320689,
   "regime": "negative",
   "gex_bn": -2.3902628745001144
+ },
+ {
+  "index": "spx",
+  "date": "2026-11-17",
+  "spot": 7340.5298,
+  "call_wall": 7500.0,
+  "put_wall": 7300.0,
+  "flip": 7606.692368202126,
+  "regime": "negative",
+  "gex_bn": -55.99128559477399
+ },
+ {
+  "index": "ndx",
+  "date": "2026-11-17",
+  "spot": 27001.7852,
+  "call_wall": 27500.0,
+  "put_wall": 26700.0,
+  "flip": 27746.179753332854,
+  "regime": "negative",
+  "gex_bn": -2.7484474553157874
+ },
+ {
+  "index": "qqq",
+  "date": "2026-11-17",
+  "spot": 657.93,
+  "call_wall": 680.0,
+  "put_wall": 650.0,
+  "flip": 680.1041859032865,
+  "regime": "negative",
+  "gex_bn": -2.0907724858127272
  }
 ]
