@@ -230,6 +230,78 @@
   "system": "Nasdaq-100 regime system + dollar add-on",
   "units": 160.133942
  },
+ "qqq_trading-2026-11-20-EQQQ-BUY": {
+  "actual": {
+   "fee": 0.12,
+   "gbp": 242.77,
+   "pnl": null,
+   "price": 47900.0,
+   "units": 0.506566
+  },
+  "asset": "EQQQ",
+  "ccy": "GBX",
+  "date": "2026-11-20",
+  "decay_gbp": null,
+  "fill": null,
+  "first_seen": "2026-11-20 17:46 UTC",
+  "gbp": 242.77,
+  "id": "qqq_trading-2026-11-20-EQQQ-BUY",
+  "model": {
+   "fee": 0.12,
+   "gbp": 242.77,
+   "pnl": null,
+   "price": 47900.0,
+   "unit_gbp": 479.0,
+   "units": 0.506566
+  },
+  "needs_fill": true,
+  "pot": "qqq_trading",
+  "pot_name": "Nasdaq trading system (EQQQ ISA + USD Invest)",
+  "price": 47900.0,
+  "reason": "Dip entry 50% (below 200-day): close below lower Bollinger band",
+  "side": "BUY",
+  "slip_pct": null,
+  "status": "confirmed",
+  "stop": 46463.0,
+  "system": "Nasdaq-100 regime system + dollar add-on",
+  "units": 0.506566
+ },
+ "qqq_trading-2026-11-20-USD-SELL": {
+  "actual": {
+   "fee": 0.19,
+   "gbp": 124.34,
+   "pnl": 2.68,
+   "price": 1.314665,
+   "units": 163.459569
+  },
+  "asset": "USD",
+  "ccy": "USDCASH",
+  "date": "2026-11-20",
+  "decay_gbp": null,
+  "fill": null,
+  "first_seen": "2026-11-20 17:46 UTC",
+  "gbp": 124.34,
+  "id": "qqq_trading-2026-11-20-USD-SELL",
+  "model": {
+   "fee": 0.19,
+   "gbp": 124.34,
+   "pnl": 2.68,
+   "price": 1.314665,
+   "unit_gbp": 0.76065,
+   "units": 163.459569
+  },
+  "needs_fill": true,
+  "pot": "qqq_trading",
+  "pot_name": "Nasdaq trading system (EQQQ ISA + USD Invest)",
+  "price": 1.314665,
+  "reason": "Dip entry 50% (below 200-day): close below lower Bollinger band",
+  "side": "SELL",
+  "slip_pct": null,
+  "status": "confirmed",
+  "stop": null,
+  "system": "Nasdaq-100 regime system + dollar add-on",
+  "units": 163.459569
+ },
  "qqq_value-2026-11-06-EQQQ-BUY": {
   "actual": {
    "fee": 0.25,
@@ -265,5 +337,41 @@
   "stop": null,
   "system": "Nasdaq-100 value plan",
   "units": 1.00426
+ },
+ "qqq_value-2026-11-20-EQQQ-BUY": {
+  "actual": {
+   "fee": 0.25,
+   "gbp": 500.0,
+   "pnl": null,
+   "price": 47900.0,
+   "units": 1.043319
+  },
+  "asset": "EQQQ",
+  "ccy": "GBX",
+  "date": "2026-11-20",
+  "decay_gbp": null,
+  "fill": null,
+  "first_seen": "2026-11-20 17:46 UTC",
+  "gbp": 500.0,
+  "id": "qqq_value-2026-11-20-EQQQ-BUY",
+  "model": {
+   "fee": 0.25,
+   "gbp": 500.0,
+   "pnl": null,
+   "price": 47900.0,
+   "unit_gbp": 479.0,
+   "units": 1.043319
+  },
+  "needs_fill": true,
+  "pot": "qqq_value",
+  "pot_name": "Nasdaq value plan (EQQQ, ISA)",
+  "price": 47900.0,
+  "reason": "fast-crash buy 2 (all cash)",
+  "side": "BUY",
+  "slip_pct": null,
+  "status": "confirmed",
+  "stop": null,
+  "system": "Nasdaq-100 value plan",
+  "units": 1.043319
  }
 }
