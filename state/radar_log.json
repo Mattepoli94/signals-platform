@@ -404,5 +404,27 @@
    "score": null,
    "seen": "2026-11-19 22:02 UTC"
   }
+ },
+ "2026-11-20": {
+  "fast": {
+   "level": "BUY 2",
+   "score": 6.0,
+   "seen": "2026-11-20 22:02 UTC"
+  },
+  "late": {
+   "level": "GREEN",
+   "score": 1.0,
+   "seen": "2026-11-20 22:02 UTC"
+  },
+  "ndx": {
+   "level": "IDLE",
+   "score": 0.0,
+   "seen": "2026-11-20 22:02 UTC"
+  },
+  "washout": {
+   "level": "IDLE",
+   "score": null,
+   "seen": "2026-11-20 22:02 UTC"
+  }
  }
 }

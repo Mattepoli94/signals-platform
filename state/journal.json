@@ -233,10 +233,10 @@
  "qqq_trading-2026-11-20-EQQQ-BUY": {
   "actual": {
    "fee": 0.12,
-   "gbp": 242.77,
+   "gbp": 243.38,
    "pnl": null,
    "price": 47900.0,
-   "units": 0.506566
+   "units": 0.507836
   },
   "asset": "EQQQ",
   "ccy": "GBX",
@@ -248,11 +248,11 @@
   "id": "qqq_trading-2026-11-20-EQQQ-BUY",
   "model": {
    "fee": 0.12,
-   "gbp": 242.77,
+   "gbp": 243.38,
    "pnl": null,
    "price": 47900.0,
    "unit_gbp": 479.0,
-   "units": 0.506566
+   "units": 0.507836
   },
   "needs_fill": true,
   "pot": "qqq_trading",
@@ -269,10 +269,10 @@
  "qqq_trading-2026-11-20-USD-SELL": {
   "actual": {
    "fee": 0.19,
-   "gbp": 124.34,
-   "pnl": 2.68,
-   "price": 1.314665,
-   "units": 163.459569
+   "gbp": 125.25,
+   "pnl": 3.3,
+   "price": 1.308181,
+   "units": 163.848307
   },
   "asset": "USD",
   "ccy": "USDCASH",
@@ -284,11 +284,11 @@
   "id": "qqq_trading-2026-11-20-USD-SELL",
   "model": {
    "fee": 0.19,
-   "gbp": 124.34,
-   "pnl": 2.68,
-   "price": 1.314665,
-   "unit_gbp": 0.76065,
-   "units": 163.459569
+   "gbp": 125.25,
+   "pnl": 3.3,
+   "price": 1.308181,
+   "unit_gbp": 0.76442,
+   "units": 163.848307
   },
   "needs_fill": true,
   "pot": "qqq_trading",
