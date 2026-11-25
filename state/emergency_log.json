@@ -115,5 +115,14 @@
   "tracking": "On or below the failure path",
   "headline": "New low on 2026-11-20: finish selling \u2014 tranche 2 (20 of high beta) on the next up day",
   "alloc": "15 \u00b7 30 \u00b7 55"
+ },
+ {
+  "date": "2026-11-25",
+  "soxx": 118.86,
+  "qqq": 609.83,
+  "session": 14,
+  "tracking": "On or below the failure path",
+  "headline": "Jump ship triggered: cut to the stop allocation",
+  "alloc": "5 \u00b7 30 \u00b7 65"
  }
 ]
