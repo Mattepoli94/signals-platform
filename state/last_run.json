@@ -1,7 +1,14 @@
 {
- "mode": "preclose",
- "finished_utc": "2026-11-26 17:09",
- "skipped": "outside the pre-close window (London time 17:09)",
- "alerts": null,
- "refresh": {}
+ "mode": "close",
+ "finished_utc": "2026-11-26 17:45",
+ "skipped": null,
+ "alerts": [],
+ "refresh": {
+  "EQQQ": "2026-11-26",
+  "QQQ": "2026-11-25",
+  "SOXX": "2026-11-25",
+  "UUP": "2026-11-25",
+  "BTC": "2026-11-25",
+  "GBPUSD": "2026-11-25"
+ }
 }
