@@ -1,7 +1,7 @@
 {
  "mode": "preclose",
- "finished_utc": "2026-11-27 23:23",
- "skipped": "outside the pre-close window (London time 23:23)",
+ "finished_utc": "2026-11-27 23:59",
+ "skipped": "outside the pre-close window (London time 23:59)",
  "alerts": null,
  "refresh": {}
 }
